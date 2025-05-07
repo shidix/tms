@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+
+{% block central_content %}
+    <div class="row toolbar-search p-2 m-0">{% include "managers/managers-search.html" %}</div>
+    <div class="content mt-4">
+        <div class="toolbar-content p-3">
+	        <h2 class="pathway b-right">
+                {%trans 'Administradores'%} <span id="items-counter" class="badge badge-secondary">{{items|length}}</span></h2>
+            <button type="button" class="btn btn-sm ark new" data-url="{%url "managers-form"%}" data-target-modal="common-modal"> 
+                <i class="fas fa-plus"></i> {% trans 'Nuevo Administrador' %}</button> 
+        </div>
+        <div id="client-list" class="ml-list">{% include "managers/managers-list.html" %}</div>
+    </div>
+    {% include "common-modal.html" %}
+{% endblock central_content %}
