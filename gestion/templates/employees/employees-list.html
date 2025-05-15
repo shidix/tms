@@ -5,7 +5,7 @@
 <div class="d-none d-lg-block"> 
     <div class="row main-th py-3 m-0">
         <div class="col-2"> {% trans 'Nombre' %} </div>
-        <div class="col-2"> {% trans 'Teléfono' %} </div>
+        <div class="col-2"> {% if request.user.is_superuser %}[Empresa]{%endif%} {% trans 'Teléfono' %} </div>
         <div class="col-2"> {% trans 'Email' %} </div>
         <div class="col-1"> {% trans 'PIN' %} </div>
         <div class="col-1"> {% trans 'DNI' %} </div>
@@ -14,9 +14,13 @@
     </div>
 
     {% for item in items %}
-        <div class="row list-item pt-2 pb-2 m-0 {%if item.email == ""%}alert alert-warning{%endif%}" id="row_{{item.id}}">
+        <div class="row list-item pt-2 pb-2 m-0 employee {%if item.email == ""%}alert alert-warning{%endif%}  {% if request.user.is_superuser %}comp-{{item.comp.pk}}{%endif%}" id="row_{{item.id}}">
             <div class="col-2">{{ item.name|default:"---" }}</div>
-            <div class="col-2">{{ item.phone|default:"" }}</div>
+            <div class="col-2">
+            {% if request.user.is_superuser %} 
+                <a href="#" onclick= "$('.employee').toggle(); $('.comp-{{item.comp.pk}}').show();">[{{item.comp.name|default:"--"}}]</a>
+            {%endif%} 
+            {{ item.phone|default:"" }}</div>
             <div class="col-2">
                 {% if item.email != "" %}{{ item.email }}{% else %}
                     <span class="text-danger">{%trans "Debe rellenar el correo electrónico para poder realizar los servicios"%}</span>

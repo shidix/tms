@@ -40,12 +40,26 @@
         </div>
     </div>
 
-    <div class="col-6">
+    <div class="col-6 col-lg-3">
         <div class="greybox-sm p-1">
             {% trans "Teléfono" %}
             <input type="text" class="form-control autosave" id="phone" name="phone" value="{{obj.phone|default:""}}" 
                 title="{{obj.phone}}" data-model-name="gestion.employee" data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" 
                 data-target="div-notification" placeholder="Teléfono..." /> <span id="phone__msg"></span>
+        </div>
+    </div>
+        <div class="col-6 col-lg-3">
+        <div class="greybox-sm p-1">
+            {% trans "Empresa" %}
+            <select class="form-control autosave" id="comp" name="comp" data-model-name="gestion.employee" 
+                data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" data-target="div-notification">
+                {% if request.user.is_superuser %}
+                <option value="">--{% trans 'Seleccione una empresa' %}--</option>
+                {% endif %}
+                {% for item in companies %}
+                    <option value="{{item.id}}" {%if obj.comp.pk == item.pk %}selected{%endif%}>{{item.name}}</option>
+                {% endfor %}
+            </select>
         </div>
     </div>
     <div class="col-6">

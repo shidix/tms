@@ -8,14 +8,25 @@ urlpatterns = [
     path('login/', views.pin_login, name="pwa-login"),
     path('logoff/', views.pin_logout, name="pwa-logout"),
 
+    path('company-login/<slug:uuid>', views.pwa_company_login, name="pwa-company-login"),
+    path('company-login/', views.pwa_company_login, name="pwa-company-login"),
+
     # EMPLOYEES
     path('employee/', views.employee_home, name="pwa-employee"),
     path('employee/qr-scan', views.employee_qr_scan, name="pwa-qr-scan"),
     path('employee/qr-scan-finish', views.employee_qr_scan_finish, name="pwa-qr-scan-finish"),
     path('employee/qr-read', views.employee_qr_read, name="pwa-qr-read"),
     path('employee/qr-finish', views.employee_qr_finish, name="pwa-qr-finish"),
-    path('employee/code-read', views.employee_code_read, name="pwa-code-read"),
-    path('employee/code-finish', views.employee_code_finish, name="pwa-code-finish"),
+    path('employee/update-year', views.employee_update_year, name="pwa-update-year"),
+    path('employee/update-month', views.employee_update_month, name="pwa-update-month"),
+    path('employee/check-clock/<slug:uuid>', views.employee_check_clock, name="pwa-check-clock"),
+    #path('employee/code-read', views.employee_code_read, name="pwa-code-read"),
+    #path('employee/code-finish', views.employee_code_finish, name="pwa-code-finish"),
     #path('employee/qr-finish/<int:obj_id>', views.employee_qr_finish, name="pwa-qr-finish"),
+
+    #Mockup
+    path('mockup/', views.mockup, name="pwa-mockup"),
+    path('mockup-logged/', views.mockup_qr_scan, name="pwa-mockup-logged"),
+    path('mockup-pin-code/', views.mockup_pin_code, name="pwa-mockup-pin-code"),
 ]
 

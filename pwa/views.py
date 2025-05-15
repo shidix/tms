@@ -3,11 +3,13 @@ from django.urls import reverse
 from django.http import HttpResponse
 from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
+from datetime import timedelta
 from datetime import datetime
 
 from tms.decorators import group_required_pwa
-from tms.commons import user_in_group, get_or_none, get_param
-from gestion.models import Employee, Manager, Workday
+from tms.commons import user_in_group, get_or_none, get_param, show_exc
+from gestion.models import Employee, Manager, Workday, Company
+import random, json
 
 
 @group_required_pwa("employees")
@@ -46,10 +48,44 @@ def pin_logout(request):
 '''
     EMPLOYEES
 '''
+def get_workday_list(year, month):
+    return Workday.objects.filter(ini_date__year=year, ini_date__month=month, finish=True).order_by("-ini_date")
+
 @group_required_pwa("employees")
 def employee_home(request):
-    workday = Workday.objects.filter(employee=request.user.employee, finish=False).first()
-    return render(request, "pwa/employees/home.html", {"obj": workday})
+    if user_in_group(request.user, "employees"):
+        today = datetime.today()
+        workday = Workday.objects.filter(employee=request.user.employee, finish=False).first()
+        workday_list = Workday.objects.filter(employee=request.user.employee, ini_date__year=today.year, ini_date__month=today.month, finish=True).order_by("-ini_date")
+        context = {
+            "obj": workday, 
+            'item_list': workday_list, 
+            'year_list': range(2025, 2050), 
+            'current_year': today.year, 
+            'month_list': range(1, 13), 
+            'current_month': today.month
+        }
+        return render(request, "pwa/employees/home.html", context)
+    else:
+        # Check if company is set in request  
+        if hasattr(request, 'uuid_company'):
+            return redirect(reverse('pwa-company-login', kwargs={'uuid': request.uuid_company}))
+        return render(request, "pwa/employees/qr-error.html", {})
+
+
+@group_required_pwa("employees")
+def employee_update_year(request):
+    year = get_param(request.GET, "value")
+    month = get_param(request.GET, "month")
+    workday_list = get_workday_list(year, month)
+    return render(request, "pwa/employees/workdays-list.html", {'item_list': workday_list,})
+
+@group_required_pwa("employees")
+def employee_update_month(request):
+    month = get_param(request.GET, "value")
+    year = get_param(request.GET, "year")
+    workday_list = get_workday_list(year, month)
+    return render(request, "pwa/employees/workdays-list.html", {'item_list': workday_list,})
 
 @group_required_pwa("employees")
 def employee_qr_scan(request):
@@ -63,72 +99,230 @@ def employee_qr_scan_finish(request):
 def employee_qr_read(request):
     try:
         qr_val = request.POST["qr_value"].split("/")
-        #client = get_or_none(Manager, qr_val[6])
+        comp = get_or_none(Company, qr_val[6])
+        if comp != request.user.employee.comp:
+            return render(request, "pwa/employees/qr-error.html", {})
         obj = Workday.objects.create(employee=request.user.employee, ini_date=datetime.now())
-        #assistance = Assistance.objects.filter(client = client).order_by("-ini_date").first()
-        #if assistance == None or assistance.finish == True:
-        #    Assistance.objects.create(client=client, employee=request.user.employee)
-        #else:
-        #    assistance.finish = True
-        #    assistance.save()
-        #if client.observations != "":
-        #    return render(request, "pwa/employees/client-obs.html", {"client": client})
         return redirect("pwa-home")
-        #return render(request, "pwa/employees/qr-read.html", {"value": qr_val})
     except Exception as e:
         return render(request, "pwa/employees/qr-error.html", {})
-        #return HttpResponse("Error: QR no válido ({})".format(e))
 
 @group_required_pwa("employees")
-#def employee_qr_finish(request, obj_id):
 def employee_qr_finish(request):
     try:
         qr_val = request.POST["qr_value"].split("/")
-        #client = get_or_none(Manager, qr_val[6])
+        comp = get_or_none(Company, qr_val[6])
+        if comp != request.user.employee.comp:
+            return render(request, "pwa/employees/qr-error.html", {})
         obj = Workday.objects.filter(employee=request.user.employee, finish=False).order_by("-ini_date").first()
-        #obj = get_or_none(Assistance, obj_id)
         obj.end_date = datetime.now() 
         obj.finish = True
         obj.save()
         return redirect("pwa-home")
     except Exception as e:
         return render(request, "pwa/employees/qr-error.html", {})
+    
+def employee_check_clock(request, uuid):
+    try:
+        emp = get_or_none(Employee, uuid, "uuid")
+        if emp == None:
+            return render(request, "pwa/employees/qr-error.html", {})
+        
+        obj = Workday.objects.filter(employee=emp, finish=False).order_by("-ini_date").first()
+        if obj != None:
+            obj.end_date = datetime.now()
+            obj.finish = True
+            obj.save()
+        else:
+            obj = Workday.objects.create(employee=emp, ini_date=datetime.now())
+        return render(request, "pwa/employees/company-sign-in.html", {'comp': emp.comp, 'obj': obj})
+    except Exception as e:
+        print(show_exc(e))
+        return render(request, "pwa/employees/qr-error.html", {})
+
+
+def mockup(request):
+    try:
+        return render(request, "pwa/employees/mockup.html", {})
+
+    except Exception as e:
+        print(show_exc(e))
+        return render(request, "pwa/employees/qr-error.html", {})
+    
+def mockup_qr_scan(request):
+    try:
+        json_data = {"registers":[]}
+
+        start_date = datetime.now().replace(hour=7, minute=0, second=0, microsecond=0)
+
+        for i in range(30):
+            in_date = start_date - timedelta(days=i) + timedelta(hours=random.randint(0, 2), minutes=random.randint(0, 59))
+            out_date = in_date + timedelta(hours=random.randint(6, 10), minutes=random.randint(0, 59))
+            in_item = {
+                "id": i,
+                "name": f"Juan",
+                "surname": f"Pérez",
+                "dni": f"12345678Z",
+                "date": in_date,
+                "type": "IN"
+            }
+            json_data["registers"].append(in_item)
+
+            out_item = {
+                "id": i,
+                "name": f"Juan",
+                "surname": f"Pérez",
+                "dni": f"12345678Z",
+                "date": out_date,
+                "type": "OUT"
+            }
+            json_data["registers"].append(out_item)
+
+
+
+        # Sort the list by date
+        json_data["registers"].sort(key=lambda x: x["date"], reverse=True)
+
+        return render(request, "pwa/employees/mockup-logged.html", {"items": json_data["registers"]})
+    except Exception as e:
+        print(show_exc(e))
+        return render(request, "pwa/employees/qr-error.html", {})
+
+def mockup_pin_code(request):
+    try:
+        in_or_out = random.choice(["IN", "OUT"])
+        return render(request, "pwa/employees/mockup-pin-code.html", {"in_or_out": in_or_out})
+    except Exception as e:
+        print(show_exc(e))
+        return render(request, "pwa/employees/qr-error.html", {})
+
+def pwa_company_login(request, uuid=None):
+    try:
+        if request.method == "POST":
+            uuid = request.POST.get('uuid', None)
+            if uuid == None:
+                return render(request, "pwa/employees/qr-error.html", {})
+            comp = get_or_none(Company, uuid, "uuid")
+            pin = request.POST.get('pin', None)
+            remember = request.POST.get('remember', None)
+
+            if pin != None:
+                try:
+                    emp = Employee.objects.filter(comp=comp, pin=pin).get()
+                    if emp == None:
+                        return render(request, "pwa/employees/company-login.html", {'comp': comp})
+                    if request.user.is_authenticated:
+                        if hasattr(request.user, 'employee'):
+                            if request.user.employee.comp != comp:
+                                return render(request, "pwa/employees/company-login.html", {'comp': comp})
+                            else:
+                                if (Workday.objects.filter(employee=request.user.employee, finish=False).exists()):
+                                    obj = Workday.objects.filter(employee=request.user.employee, finish=False).order_by("-ini_date").first()
+                                    obj.end_date = datetime.now()
+                                    obj.finish = True
+                                    obj.save()
+                                else:
+                                    obj = Workday.objects.create(employee=request.user.employee, ini_date=datetime.now())
+
+                        else:
+                            if request.user.is_superuser:
+                                emp = Employee.objects.filter(comp=comp, pin=pin).get()
+                                if emp != None:
+                                    obj = Workday.objects.filter(employee=emp, finish=False).order_by("-ini_date").first()
+                                    if obj != None:
+                                        obj.end_date = datetime.now()
+                                        obj.finish = True
+                                        obj.save()
+                                    else:
+                                        obj = Workday.objects.create(employee=emp, ini_date=datetime.now())
+                                return render(request, "pwa/employees/company-sign-in.html", {'comp': comp, 'obj': obj})
+
+                    else:
+                        emp = Employee.objects.filter(comp=comp, pin=pin).get()
+                        if emp != None:
+                            obj = Workday.objects.filter(employee=emp, finish=False).order_by("-ini_date").first()
+                            if obj != None:
+                                obj.end_date = datetime.now()
+                                obj.finish = True
+                                obj.save()
+                            else:
+                                obj = Workday.objects.create(employee=emp, ini_date=datetime.now())
+
+                            if remember != "on":
+                                return render(request, "pwa/employees/company-sign-in.html", {'comp': comp, 'obj': obj})
+                            else:
+                                login(request, emp.user)
+                                request.session['pwa_app_session'] = True
+                                return redirect(reverse('pwa-employee'))
+           
+                        else:
+                            return redirect(reverse('pwa-company-login', kwargs={'uuid': uuid}))
+
+                    return render(request, "pwa/employees/company-login.html", {'comp': comp})
+                except Exception as e:
+                    print(show_exc(e))
+                    return render(request, "pwa/employees/qr-error.html", {})
+        else:
+            comp = get_or_none(Company, uuid, "uuid")
+            if comp == None:
+                return render(request, "pwa/employees/qr-error.html", {})
+            if request.user.is_authenticated:
+                if hasattr(request.user, 'employee'):
+                    if request.user.employee.comp != comp:
+                        return render(request, "pwa/employees/company-login.html", {'comp': comp})
+                    else:
+                        return redirect(reverse('pwa-employee'))
+                elif hasattr(request.user, 'manager'):
+                    if request.user.manager.comp != comp:
+                        return render(request, "pwa/employees/company-login.html", {'comp': comp})
+                    else:
+                        return redirect(reverse('pwa-manager'))
+                elif request.user.is_superuser:
+                    return render(request, "pwa/employees/company-login.html", {'comp': comp})
+                else:
+                    return render(request, "pwa/employees/qr-error.html", {})
+            return render(request, "pwa/employees/company-login.html", {'comp': comp})
+    except Exception as e:
+        print(show_exc(e))
+        return render(request, "pwa/employees/qr-error.html", {})
+    return render(request, "pwa/employees/qr-error.html", {})
+
      
-@group_required_pwa("employees")
-def employee_code_read(request):
-    try:
-        code = get_param(request.POST, "code")
-        if code == "":
-            return render(request, "pwa/employees/qr-error.html", {})
-
-        #client = get_or_none(Manager, code, "code")
-        #if client == None:
-        #    return render(request, "pwa/employees/qr-error.html", {})
-
-        obj = Workday.objects.create(employee=request.user.employee, ini_date=datetime.now())
-        #if client.observations != "":
-        #    return render(request, "pwa/employees/client-obs.html", {"client": client})
-        return redirect("pwa-home")
-    except Exception as e:
-        print(e)
-        return render(request, "pwa/employees/qr-error.html", {})
-
-@group_required_pwa("employees")
-def employee_code_finish(request):
-    try:
-        code = get_param(request.POST, "code")
-        if code == "":
-            return render(request, "pwa/employees/qr-error.html", {})
-
-        #client = get_or_none(Manager, code, "code")
-        #if client == None:
-        #    return render(request, "pwa/employees/qr-error.html", {})
-
-        obj = Workday.objects.filter(employee=request.user.employee, finish=False).order_by("-ini_date").first()
-        obj.end_date = datetime.now() 
-        obj.finish = True
-        obj.save()
-        return redirect("pwa-home")
-    except Exception as e:
-        return render(request, "pwa/employees/qr-error.html", {})
- 
+#@group_required_pwa("employees")
+#def employee_code_read(request):
+#    try:
+#        code = get_param(request.POST, "code")
+#        if code == "":
+#            return render(request, "pwa/employees/qr-error.html", {})
+#
+#        #client = get_or_none(Manager, code, "code")
+#        #if client == None:
+#        #    return render(request, "pwa/employees/qr-error.html", {})
+#
+#        obj = Workday.objects.create(employee=request.user.employee, ini_date=datetime.now())
+#        #if client.observations != "":
+#        #    return render(request, "pwa/employees/client-obs.html", {"client": client})
+#        return redirect("pwa-home")
+#    except Exception as e:
+#        print(e)
+#        return render(request, "pwa/employees/qr-error.html", {})
+#
+#@group_required_pwa("employees")
+#def employee_code_finish(request):
+#    try:
+#        code = get_param(request.POST, "code")
+#        if code == "":
+#            return render(request, "pwa/employees/qr-error.html", {})
+#
+#        #client = get_or_none(Manager, code, "code")
+#        #if client == None:
+#        #    return render(request, "pwa/employees/qr-error.html", {})
+#
+#        obj = Workday.objects.filter(employee=request.user.employee, finish=False).order_by("-ini_date").first()
+#        obj.end_date = datetime.now() 
+#        obj.finish = True
+#        obj.save()
+#        return redirect("pwa-home")
+#    except Exception as e:
+#        return render(request, "pwa/employees/qr-error.html", {})
+# 

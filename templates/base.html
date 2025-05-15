@@ -32,10 +32,10 @@
             {% if request.user.is_authenticated %}
 	            <div id="main" class="w-100">
                     <div class="row header sticky-top bg-white m-0">
-                        <div class="col-lg-1 col-3 text-center">
-                            <a href="{% url 'index' %}"><img src="{{request.user|comp_logo}}" width="80px" /></a>
+                        <div class="col-lg-1 col-3 text-center p-1">
+                            <a href="{% url 'index' %}" ><img src="{{request.user|comp_logo}}" height="60px" /></a>
                         </div>	
-        	            <div class="col-lg-3 offset-lg-7 offset-1 col-7 text-right p-0">{% trans "Hola" %}, {{user.name}}Admin</div>
+        	            <div class="col-lg-3 offset-lg-7 offset-1 col-7 text-right p-0">{% trans "Hola" %}, {{request.user.username}}</div>
                             <div class="col-lg-1 col-1 text-center p-0"> 
        	                        <form action="{% url 'auth_logout' %}" method="post" id="frmLogout" class="m-0">
                	                    {% csrf_token %}

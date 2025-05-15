@@ -10,6 +10,14 @@ urlpatterns = [
     path('workdays/remove', views.workdays_remove, name='workdays-remove'),
     path('workdays/client/<int:client_id>/', views.workdays_client, name='workdays-client'),
 
+    #---------------------- ADMINS -----------------------
+    path('admins', views.admins_dashboard, name='admins'),
+    path('admins/list', views.admins_list, name='admins-list'),
+    path('admins/search', views.admins_search, name='admins-search'),
+    path('admins/form', views.admins_form, name='admins-form'),
+    path('admins/remove', views.admins_remove, name='admins-remove'),
+    path('admins/save', views.admins_save, name='admins-save'),
+
     #------------------------- MANAGERS -----------------------
     path('managers', views.managers, name='managers'),
     path('managers/list', views.managers_list, name='managers-list'),
@@ -27,6 +35,7 @@ urlpatterns = [
     path('employees/save-email', views.employees_save_email, name='employees-save-email'),
     path('employees/export', views.employees_export, name='employees-export'),
     #path('employees/import', views.employees_import, name='employees-import'),
+    
 
     #---------------------- AUTO -----------------------
     path('autosave_field/', auto_views.autosave_field, name='autosave_field'),

@@ -1,0 +1,60 @@
+{% extends "pwa-base-login.html" %}
+{% load static i18n pwa_tags %}
+
+{% block content%}
+<div style="max-width: 800px; overflow-y: auto;" class="mx-auto">
+    <div class="row p-3">
+        <div class="col-12 m-1">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">{{comp.name}}</h5>
+                    <p class="card-text">Escanea el QR para acceder a los registros.</p>
+                    <p class="card-text w-75 mx-auto">
+                        <img src="{{comp.get_qr_login}}" alt="QR Code" class="img-fluid">
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 m-1">
+            <form method="POST" action="{% url 'pwa-company-login' %}">
+                {% csrf_token %}
+                <input type="hidden" name="uuid" value="{{comp.uuid}}">
+
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">PIN</h5>
+                        <p class="card-text">Introduce el PIN para fichar.</p>
+                        <p class="card-text">
+                            <div class="form-group w-50 mx-auto">
+                                <label for="pin">PIN</label>
+                                <input type="text" class="form-control input" id="pin" placeholder="Introduce el PIN" name="pin" required>
+                                <div class="invalid-feedback">
+                                    Introduce un PIN válido.
+                                </div>
+                            </div>
+                        </p>
+                        <p class="card-text">
+                            <input type="checkbox" id="remember" name="remember" value="on">
+                            <label for="remember">Ir a zona privada</label>
+                        </p>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const pinInput = document.getElementById('pin');
+    pinInput.addEventListener('input', function() {
+        const pin = pinInput.value;
+        if (pin.length === 4) {
+            // Submit the form when the PIN is 4 digits long
+            const form = pinInput.closest('form');
+            form.submit();
+
+        }
+    });
+</script>
+
+{% endblock %}

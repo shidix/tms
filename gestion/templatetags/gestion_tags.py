@@ -28,11 +28,17 @@ def addstr(arg1,arg2):
     return(mark_safe(str(arg1)+str(arg2)))
 
 @register.filter
-def comp_logo(user):
+def comp_logo(user, company=None):
     try:
         return user.manager.comp.logo.url
     except:
-        return static("/images/logo-asistencia-canaria.jpg")
+        try:
+            return user.employee.comp.logo.url
+        except:
+            try:
+                return company.logo.url
+            except:
+                return static("/images/logo-fichaje.png")
 
 '''
     Simple Tags
@@ -65,3 +71,19 @@ def local_time(mydate):
         canary_time = canary_time.replace(tzinfo=ZoneInfo("UTC"))
         return canary_time
     return mydate
+
+@register.filter
+def toDuration(seconds):
+    hours = seconds // 3600
+    seconds %= 3600
+    minutes = seconds // 60
+    seconds %= 60
+    return f"{hours:02}:{minutes:02}:{seconds:02}"
+
+@register.filter
+def extraday(seconds):
+    if seconds > 86400:
+        return f"(+{seconds // 86400}d)"
+    else:
+        return ""
+

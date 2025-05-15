@@ -7,7 +7,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-        <meta name="description" content="{% trans "Asistencia Canaria"%}">
+        <meta name="description" content="{% trans "Aplicación para el fichaje"%}">
         <meta name="author" content="{% trans "" %}">
 
         <link rel="stylesheet" href="{% static "css/login.css"%}" type="text/css"/>
@@ -22,22 +22,30 @@
         <!-- JQuery -->
         <script src="https://code.jquery.com/jquery-3.5.1.js" ></script>
 
-        <title>{% trans "Asistencia Canaria"%}</title>
+        <title>{% trans "Aplicación para el fichaje"%}</title>
     </head>
     <body>
         <div class="login-container">
             <div class="login-left">
                 <div class="features-container">
-                    <h4 class="apptitle">{% trans "Asistencia Canaria" %}</h4>
-		    {% blocktrans %} <br />
-                        <p>Servicios orientados a cubrir tus necesidades indivisuales/familiares en el ámbito sociosanitario<p>
+                    <h4 class="apptitle">{% trans "Aplicación para el fichaje" %}</h4>
+		    {% blocktrans %}
+		    <p>¡Optimiza la gestión de tu equipo con nuestra innovadora aplicación de fichaje en el trabajo! <br /><br />
+			Simplifica el control de asistencia, reduce errores y ahorra tiempo con una solución fácil de usar y totalmente digital.<br /> <br /> 
+			Desde el registro de entrada y salida hasta el seguimiento en tiempo real, nuestra app te permite gestionar horarios, calcular horas extras y mantener un historial preciso de asistencia, todo desde tu smartphone o pc.<br /><br />
+			Mejora la productividad de tu empresa y garantiza una gestión eficiente del tiempo con nuestra plataforma confiable y segura.<br /> <br />
+			¡Descubre cómo transformar la forma en que controlas el tiempo en tu negocio hoy mismo!<p>
                     {% endblocktrans %}
                 </div>
-               <div><img src="{% static '/images/bg-login.png'%}" width="100%"/></div>
-               <div class="login-left-bottom p-5 text-center">ASISTENCIA CANARIA</div>
+		{% comment %}
+                <div><img src="{% static '/images/bg-login.png'%}" width="100%"/></div>
+		{% endcomment %}
+		<div class="login-left-bottom p-5 text-center x-small"><img src="{% static '/images/logo-fichaje-negative.png'%}" width="50"/><br/><br/>
+		Para saber más sobre la normativa a aplicar consulta la <a href="https://www.mites.gob.es/ficheros/ministerio/GuiaRegistroJornada.pdf" target="blank_">guía sobre el registro de jornada</a>.
+	       </div>
             </div>
             <div class="login-right">
-		    <div class="logo text-center"><a href="https://www.tms.es" target="_blank"><img src="{% static '/images/logo-asistencia-canaria.jpg'%}" width="200"/></a></div>
+		    <div class="logo text-center"><a href="https://www.tms.es" target="_blank"><img src="{% static '/images/logo-fichaje.png'%}" width="100"/></a></div>
                 {% block login-right %}
                     <div class="form-container toggle-container mt-5" id="login-form">
                         <h4 class="title text-center">{% trans "Inicia Sesión" %}

@@ -5,8 +5,8 @@
 }
 
 .btn-primary {
-	background-color: #3b693a !important;
-	border:1px solid #3b693a !important;
+	background-color: #16488b !important;
+	border:1px solid #16488b !important;
 }
 
 .btn-primary:disabled, .btn-primary:hover{
@@ -28,6 +28,10 @@ body{
 	align-items: stretch;
 }
 
+.x-small {
+	font-size: 0.725rem !important;
+}
+
 .title{
 	text-align: left;
 	padding-left: 1rem;
@@ -36,7 +40,7 @@ body{
 
 .apptitle{
 	border-bottom: 1px solid white;
-	color: #f47a00;
+	color: #16488b;
 	width: 95%;
 	margin-bottom: 20px;
 	padding-bottom: 10px;
@@ -47,7 +51,7 @@ body{
 
 
 p{
-	font-size: 1.1rem;
+	font-size: 1rem;
 	font-weight: lighter;
 }
 
@@ -85,9 +89,8 @@ p strong{
 }
 
 .login-left-bottom {
-	background: #bac9a8; 
-	color: #333333;
-	font-weight: 600;
+	background-color: #f1f1f1;
+	color: #838383;
 	width: 100%;
 }
 .features-container{
@@ -95,7 +98,7 @@ p strong{
 	height: 100%;
 	padding: 0 10%;
 	margin: auto;
-	color: #333;
+	color: #545454;
 	background-color: #fff;
 }
 
@@ -130,7 +133,6 @@ p strong{
 
 .logo{
 	width: 100%;
-	height: 80px;
 }
 
 #form-result{

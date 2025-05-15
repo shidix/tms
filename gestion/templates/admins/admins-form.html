@@ -1,0 +1,45 @@
+{% load i18n %}
+<div class="row modal-head m-0">
+    <div class="col-11"><i class="fa fa-medkit orange"></i>&nbsp; {% trans 'Empleados' %} </div>
+    <div class="col-1">
+        <div class="d-flex justify-content-end"> 
+            <button type="button" class="btn btn-lg" data-bs-dismiss="modal" title="{% trans "Close" %}">
+            <i class="fas fa-times"></i></button> </div>
+    </div>
+</div>
+
+<div id="div-notification"></div>
+
+<form id="form-company" class="form m-0" method="POST" enctype="multipart/form-data" action="{% url 'admins-save' %}">
+
+    {% csrf_token %}
+    <input type="hidden" id="id" name="id" value="{{obj.id}}" />
+<div class="row justify-center">
+    <div class="col-6">
+        <div class="greybox-sm p-1">
+            {% trans "Nombre Empresa" %}
+            <input type="text" class="form-control" id="name" name="name" value="{{obj.name|default:""}}" 
+                title="{{obj.name}}" data-model-name="gestion.company" placeholder="Nombre..." /> <span id="name__msg"></span>
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="greybox-sm p-1">
+        {% trans "NIF" %}
+            <input type="text" class="form-control" id="nif" name="nif" value="{{obj.nif|default:""}}" 
+                title="{{obj.nif}}"
+                placeholder="NIF..." /> <span id="nif__msg"></span>
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="greybox-sm p-1">
+        {% trans "Logo" %}
+            <input type="file" class="form-control" id="logo" name="logo" value="{{obj.logo|default:""}}" 
+                title="{{obj.logo}}"placeholder="Logo..." /> <span id="logo__msg"></span>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-end p-2">
+    <input type="submit" class="btn btn-sm" value="{% trans 'Guardar' %}">
+</div>
+</form>

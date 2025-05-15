@@ -4,11 +4,13 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from datetime import datetime
+import uuid
 import os, csv
 
 from tms.decorators import group_required
 from tms.commons import get_float, get_int, get_or_none, get_param, get_session, set_session, show_exc, generate_qr, csv_export
 from .models import Company, Employee, Manager, Workday
+from .forms import CompanyForm
 
 
 def init_session_date(request, key):
@@ -119,8 +121,17 @@ def employees_form(request):
     obj_id = get_param(request.GET, "obj_id")
     obj = get_or_none(Employee, obj_id)
     if obj == None:
-        obj = Employee.objects.create()
-    return render(request, "employees/employees-form.html", {'obj': obj})
+        try:
+            obj = Employee.objects.create(comp=request.user.manager.comp)
+        except:
+            obj = Employee.objects.create()
+    # Check if request.user is a admin or manager
+    if request.user.is_superuser:
+        companies = Company.objects.all()
+    else:
+        companies = Company.objects.filter(pk = request.user.manager.comp.pk)
+
+    return render(request, "employees/employees-form.html", {'obj': obj, 'companies': companies})
 
 @group_required("admins", "managers")
 def employees_remove(request):
@@ -216,5 +227,89 @@ def managers_remove(request):
 @group_required("admins",)
 def managers_workdays(request, obj_id):
     return render(request, "managers/managers-workdays.html", {"obj": get_or_none(Manager, obj_id)})
+
+
+
+
+'''
+    ADMINS
+'''
+@group_required("admins",)
+def get_admins(request):
+    search_value = [get_session(request, "s_adm_name"), get_session(request, "s_adm_nif")]
+    filters_to_search = ["name__icontains", "nif__iexact"]
+
+    full_query = Q()
+    if any(value != "" for value in search_value):
+        for myfilter, value in zip(filters_to_search, search_value):
+            if value != "":
+                full_query |= Q(**{myfilter: value})
+
+    return Company.objects.filter(full_query).order_by("-id")[:50]
+
+
+@group_required("admins",)
+def admins_dashboard(request):
+    try:
+        companies = Company.objects.all()
+        return render(request, "admins/admins.html", {"items": companies})
+    except Exception as e:
+        print(show_exc(e))
+        return render(request, "workdays-client-error.html", {})
+    
+@group_required("admins",)
+def admins_search(request):
+    set_session(request, "s_adm_name", get_param(request.GET, "s_adm_name"))
+    set_session(request, "s_adm_nif", get_param(request.GET, "s_adm_nif"))
+    return render(request, "admins/admins-list.html", {"items": get_admins(request)})
+
+@group_required("admins",)
+def admins_list(request):
+    return render(request, "admins/admins-list.html", {"items": get_admins(request)})
+
+@group_required("admins",)
+def admins_form(request):
+    obj_id = get_param(request.GET, "obj_id")
+    obj = get_or_none(Company, obj_id)
+    new = False
+    if obj == None:
+        new = True
+    return render(request, "admins/admins-form.html", {'obj': obj, 'new': new})
+
+@group_required("admins",)
+def admins_save(request):
+    try:
+        if request.method == "POST":
+            obj = get_or_none(Company, request.POST["id"]) if "id" in request.POST else None
+            if obj == None:
+                obj = Company.objects.create()
+                
+            form = CompanyForm(request.POST, request.FILES, instance=obj)
+            if form.is_valid():
+                obj = form.save(commit=False)
+                if (len(obj.uuid) < 20):
+                    temp_uuid = uuid.uuid4()
+                    while Company.objects.filter(uuid=temp_uuid).exists():
+                        temp_uuid = uuid.uuid4()
+                    obj.uuid = str(temp_uuid)
+                obj.save()
+                return redirect("admins")
+            else:
+                return render(request, "admins/admins-form.html", {'form': form, 'obj': obj, 'new': False})
+        else:
+            return redirect("admins")
+    except Exception as e:
+        print(show_exc(e))
+        return render(request, "workdays-client-error.html", {})
+            # Use the CompanyForm to validate and save the data
+
+
+
+@group_required("admins",)
+def admins_remove(request):
+    obj = get_or_none(Company, request.GET["obj_id"]) if "obj_id" in request.GET else None
+    if obj != None:
+        obj.delete()
+    return render(request, "admins/admins-list.html", {"items": get_admins(request)})
 
 

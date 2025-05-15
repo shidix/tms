@@ -11,7 +11,7 @@ import os
 
 
 class CompanyAdmin(admin.ModelAdmin):
-    list_display = ('name', 'view_logo', 'view_qr')
+    list_display = ('name', 'uuid', 'nif', 'view_logo', 'view_qr')
 
     def view_logo(self, obj):
         if obj.logo:
@@ -24,7 +24,7 @@ class CompanyAdmin(admin.ModelAdmin):
         if obj.qr:
             return format_html('<img src="{}" width="20%"/><br/><a href="{}">Regenerar QR</a>', obj.qr.url, url)
         return format_html('<a href="{}">Generar QR</a>', url)
-    view_logo.short_description = "QR"
+    view_qr.short_description = "QR"
 
     def get_urls(self):
         urls = super().get_urls()
@@ -47,6 +47,9 @@ class CompanyAdmin(admin.ModelAdmin):
 class ManagerAdmin(admin.ModelAdmin):
     list_display = ('name', 'comp')
 
+class EmployeeAdmin(admin.ModelAdmin):
+    list_display = ('name', 'comp')
+
 #
 #class WasteInFacilityAdmin(admin.ModelAdmin):
 #    list_display = ('code', 'facility', 'waste', 'filling_degree', 'toRoute')
@@ -54,4 +57,5 @@ class ManagerAdmin(admin.ModelAdmin):
 #
 admin.site.register(Company, CompanyAdmin)
 admin.site.register(Manager, ManagerAdmin)
+admin.site.register(Employee, EmployeeAdmin)
 #

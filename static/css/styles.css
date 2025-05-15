@@ -76,28 +76,28 @@ h1 {
 }
 
 .row.main-th {
-    background-color: #e7f2d8;
+    background-color: #f1f1f1;
     font-weight: 600;
 }
 
 .list-item {
-	border-bottom: 1px solid #e7f2d8;
+	border-bottom: 1px solid #f1f1f1;
 }
 .list-item:hover {
-	background-color: #e7f2d8;
+	background-color: #f1f1f1;
 }
 
 .list-item-mob {
-	border: 1px solid #e7f2d8;
+	border: 1px solid #f1f1f1;
 }
 .list-item-cl {
-	border: 1px solid #e7f2d8;
+	border: 1px solid #f1f1f1;
 	border-radius: 5px;
 	margin-bottom: 15px !important;
 	 -webkit-box-shadow: 0 1px 5px rgba(0,0,0,0.2);
 }
 .list-item-cl:hover {
-	background-color: #e7f2d8;
+	background-color: #f1f1f1;
 }
 
 th.row.main-th {
@@ -169,21 +169,21 @@ span.status-completed, span.status-in-process, span.status-pending  {
 
 .alert-danger.gesp {
 	background-color: #fff;
-    	border-color: #ffffff #ffffff #e7f2d8 #ffffff !important;
+    	border-color: #ffffff #ffffff #f1f1f1 #ffffff !important;
 	color: red;
 	font-weight: 600;
 	padding: 0;
 }   
 .alert-warning.gesp {
 	background-color: #fff;
-    	border-color: #ffffff #ffffff #e7f2d8 #ffffff !important;
+    	border-color: #ffffff #ffffff #f1f1f1 #ffffff !important;
 	color: #ffa500;
 	font-weight: 600;
 	padding: 0;
 } 
 .alert-danger.gesp:hover, 
 .alert-warning.gesp:hover {
-	background-color: #e7f2d8;
+	background-color: #f1f1f1;
 }
 
 .btn-submit, .btn-submit:hover {
@@ -233,7 +233,7 @@ a.btn.btn-primary:hover, a.btn.btn-secondary:hover, a.btn.btn-primary.ark:hover,
     padding: 0.25rem 0.5rem;
     font-size: .875rem;
     border-radius: 0.2rem;
-    border:1px solid #e7f2d8;
+    border:1px solid #f1f1f1;
     letter-spacing: 0;
 }
 .btn.btn-sm.ark.new i {
@@ -242,7 +242,7 @@ a.btn.btn-primary:hover, a.btn.btn-secondary:hover, a.btn.btn-primary.ark:hover,
 .btn.btn-xs.exp:hover,
 .btn.btn-sm.new:hover,
 .btn.btn-sm.ark.new:hover {
-	background-color: #e7f2d8;
+	background-color: #f1f1f1;
 }
 
 a.btn.btn-primary.ark:hover, a.btn.btn-secondary.ark:hover {
@@ -265,14 +265,14 @@ i.fas.fa-upload:hover { color: #4b7764; }
 i.fas.fa-route.white, i.fa.fa-truck, i.fa.fa-warehouse, i.fas.fa-times, i.far.fa-users, i.fas.fa-users.orange, i.fa.fa-medkit.orange, i.fa.fa-phone, i.fa.fa-envelope,
 i.fas.fa-keyboard.orange {
 	/*font-size: 1.3rem;*/
-	color: #f2902d;
+	color: #16488b;
 }
 i.fas.fa-user.orange,
 i.fas.fa-phone.orange,
 i.fas.fa-envelope.orange,
 i.fas.fa-comments.orange,
 i.fas.fa-map-marker.orange {
-	color: #f2902d;
+	color: #16488b;
 }
 
 img.img-fluid {
@@ -309,7 +309,7 @@ img.img-fluid {
 
 }
 .b-search {
-	border-right:1px solid #f2902d;
+	border-right:1px solid #16488b;
 }
 
 .toolbar-search span {
@@ -392,7 +392,7 @@ span.sub-h2 {
 }
 
 .badge {
-	color: #f2902d !important;
+	color: #16488b !important;
 	font-size: 0.9rem !important;
     text-transform: capitalize;
 }
@@ -477,7 +477,7 @@ input.form-control.login {
 	font-size: 1.3rem;
 	font-weight: 600;
 	letter-spacing: 0;
-	color: #f2902d;
+	color: #16488b;
 	align-items: center;
 }
 
@@ -734,7 +734,7 @@ img.img-cart-line {
      position: fixed;*/
      width: 100%;
   top: 0;
-    border-bottom: 1px solid #e7f2d8;
+    border-bottom: 1px solid #f1f1f1;
     -webkit-box-shadow: 0 1px 5px rgba(0,0,0,0.2);
 
 }
@@ -864,7 +864,7 @@ a.dropdown-toggle { font-size: 1.6rem !important; }
 .row.menu .nav-item:hover {
 }
 .row.menu .nav-item.active .nav-link {
-    border:1px solid #e35000;
+    border:1px solid #16488b;
 }
 
 #sidebar {
@@ -899,17 +899,17 @@ a.dropdown-toggle { font-size: 1.6rem !important; }
 .nav-item.active i {
 	width: 35px;
 	text-align:center;
-	color: #e35000 !important;
+	color: #16488b !important;
 }
 .nav-link:hover {
 	color:#ffffff;
-	color: #e35000 !important;
+	color: #16488b !important;
 }
 .nav-item.active {
 /*	border-radius: 5px;*/
 }
 .nav-item.active .nav-link {
-	color: #e35000 !important;
+	color: #16488b !important;
 }
 .nav-item .nav-link {
 	font-size: 0.8rem;
@@ -919,7 +919,7 @@ a.dropdown-toggle { font-size: 1.6rem !important; }
 }
 .nav-link:hover {
 	border-radius: 5px;
-	color: #e35000 !important;
+	color: #16488b !important;
 }
 
 /* --- Estilo Pestañas --- */
@@ -949,7 +949,7 @@ a.dropdown-toggle { font-size: 1.6rem !important; }
 }
 
 .sep {
-    color: #f2902d;
+    color: #16488b;
     line-height: 4;
     height: 50px !important;
 }
@@ -1345,7 +1345,7 @@ h3.text {
 
 .footer ,
 .row.menu.mv {
-    /*border-top: 1px solid #f2902d;*/
+    /*border-top: 1px solid #16488b;*/
     background: #f5f5f5 !important;
     position: fixed;
     bottom: 0;

@@ -59,11 +59,11 @@ input#code.form-control.btn.asm.w-50 {
 /*********** BUTTONS *************/
 
 .bg-success.asm { 
-    background: #3b693a!important;
+    background: #16488b!important;
 }
 .btn-success.asm { 
-    background: #3b693a;
-    border:1px solid #3b693a;
+    background: #16488b;
+    border:1px solid #16488b;
     font-size: 1.2rem;
     font-weight: 600;
     text-transform: uppercase;
@@ -213,8 +213,8 @@ button.html5-qrcode-element {
     border-radius: 0.25rem;
     transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
     background-color: #fff !important;
-    border: 1px solid #3b693a !important;
-    color: #3b693a !important;
+    border: 1px solid #16488b !important;
+    color: #16488b !important;
     
     margin-top: 30px !important;
 }
