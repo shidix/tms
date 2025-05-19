@@ -31,6 +31,8 @@
             {#<div class="col-2"> {{request.session.s_emp_idate}} {{request.session.s_emp_edate}}</div>#}
             <div class="col-2">{% get_worked_time item request.session.s_emp_idate request.session.s_emp_edate %}</div>
             <div class="col-2 text-right">
+                <a class="btn btn-xs ark" data-url="{% url 'employees-show-qr' %}" alt="qr" width="100%" data-target-modal="common-modal-md" data-uuid="{{item.uuid}}">
+                    <i class="fa fa-qrcode"></i></a>
                 <a class="btn btn-xs ark" data-url="{%url "employees-form"%}" data-target-modal="common-modal" 
                     data-obj_id="{{item.id}}" title="{% trans 'Editar' %}"><i class="fas fa-edit"></i></a> 
                 <a class="btn btn-xs ark" data-url="{% url "employees-remove" %}" data-target="emp-list" data-obj_id="{{item.id}}" 

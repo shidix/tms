@@ -2,6 +2,7 @@ from django import template
 from django.utils.safestring import mark_safe
 from django.templatetags.static import static
 import string, random
+from tms.commons import show_exc
 
 register = template.Library()
 
@@ -74,11 +75,16 @@ def local_time(mydate):
 
 @register.filter
 def toDuration(seconds):
-    hours = seconds // 3600
-    seconds %= 3600
-    minutes = seconds // 60
-    seconds %= 60
-    return f"{hours:02}:{minutes:02}:{seconds:02}"
+    try:
+        seconds = int(seconds)
+        hours = seconds // 3600
+        seconds %= 3600
+        minutes = seconds // 60
+        seconds %= 60
+        return f"{int(hours):02d}:{int(minutes):02d}:{int(seconds):02d}"
+    except Exception as e:
+        print (show_exc(e))
+        return "--:--:--"
 
 @register.filter
 def extraday(seconds):

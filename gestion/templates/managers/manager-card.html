@@ -1,0 +1,33 @@
+{% load i18n static gestion_tags %}
+{%comment%} PC VERSION {%endcomment%}
+<div class="card list-item-cl">
+    <div class="card-body">
+        <div class="row pt-2 pb-2 m-0 {%if item.inactive%}inactive{%endif%}" id="row_{{item.id}}">
+            
+            <div class="col-12 text-center">{% if item.qr %}<img src="{{item.qr.url}}" alt="qr" width="100"/>{% endif %}</div>
+            <div class="col-9"><strong><i class='fas fa-user orange'></i> 
+                {% trans "Nombre" %}</strong><br/> {{ item.name|default:"---" }}</div>
+            <div class="col-3"><strong><i class="fas fa-id-card orange"></i> 
+                DNI <br /></strong> {{item.dni|default_if_none:""}}</div>
+
+            <div class="col-9"><strong><i class='fas fa-map-marker orange'></i> 
+                {% trans "Empresa" %}</strong><br/> {{ item.comp.name|default:"" }}</div>
+                <div class="col-3"><strong><i class='fas fa-code orange'></i> 
+                    {% trans "PIN" %}<br /></strong> {{ item.pin|default:"" }}</div>
+            <div class="col-9"><strong><i class='fas fa-envelope orange'></i> 
+                {% trans "Correo electrónico" %}<br /></strong>{{ item.email|default:"" }}</div>
+            <div class="col-3"><strong><i class='fas fa-phone orange'></i> 
+                {% trans "Teléfono" %}<br /></strong> {{ item.phone|default:"" }}</div>
+
+        </div>
+    </div>
+    <div class="card-footer">
+        <div class="text-right"> 
+            <a class="btn btn-xs ark-alert" href="#" data-url="{% url 'managers-send-login-url' %}" data-uuid="{{item.uuid}}" title="{% trans 'Enviar correo de acceso' %}"><i class="fas fa-paper-plane"></i></a>
+            
+            <a class="btn btn-xs" href="{% url "managers-workdays" item.id %}" title="{% trans 'Asistencias' %}"><i class="fa fa-medkit"></i></a> 
+            <a class="btn btn-xs ark" data-url="{% url "managers-form" %}" data-target-modal="common-modal" data-obj_id="{{item.id}}" title="{% trans 'Editar' %}"><i class="fas fa-edit"></i></a> 
+            <a class="btn btn-xs ark" data-url="{% url "managers-remove" %}" data-target="client-list" data-obj_id="{{item.id}}" title="{% trans 'Borrar' %}" data-confirm="{% trans "Are you sure to remove this element?" %}"><i class="fas fa-trash"></i></a> 
+        </div>
+    </div>
+</div>

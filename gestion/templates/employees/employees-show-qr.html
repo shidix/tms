@@ -1,0 +1,24 @@
+{% load i18n gestion_tags %}
+
+<div class="card">
+    <div class="card-head text-right d-flex justify-content-start">
+        <div class="w-25 p-2 text-left">
+            <img src="{{ item.user|comp_logo }}" alt="Logo {{item.comp.name}}" class="w-100"/>
+        </div>
+
+        <div class="w-75 text-right p-2">
+            <button type="button" class="btn btn-sm text-white" data-bs-dismiss="modal" aria-label="Close">
+                <i class="fas fa-times fa-2x"></i>
+            </button>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="w-100 text-center">
+            <h6 class="card-title">{{item.name}}</h6>
+        </div>
+        <p class="card-title text-center">
+            <img src="{{ item.get_qr_uuid }}" alt="QR Code" class="img-fluid w-75 mx-auto" />
+        </p>
+    </div>
+
+</div>

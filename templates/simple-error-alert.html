@@ -1,0 +1,25 @@
+{% load i18n %}
+
+<script>
+{% if icon == "error" %}
+  var title = "{{ _('!!!UPSSS¡¡¡') }}";
+{% elif icon == "success" %}
+  var title = "{{ _('Todo ha salido bien') }}";
+{% elif icon == "warning" %}
+  var title = "{{ _('Advertencia') }}";
+{% else %}
+  var title = "{{ _('Información') }}";
+{% endif %}
+
+
+console.log(title);
+Swal.fire({
+  title: title,
+  html: '<small><strong>{{exc}}</strong></small>',
+  icon: '{{icon|default:"info"}}',
+  confirmButtonText: 'Aceptar',
+  background: '#f2f2f2',
+  color: '#333',
+});
+</script>
+

@@ -24,8 +24,8 @@
     <div class="col-3">
         <div class="greybox-sm p-1">
             {% trans "PIN" %}
-            <input type="text" class="form-control autosave" id="pin" name="pin" value="{{obj.pin|default:""}}" 
-                title="{{obj.pin}}" data-model-name="gestion.employee" data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" 
+            <input type="text" class="form-control ark_change" id="pin" name="pin" value="{{obj.pin|default:""}}" 
+                title="{{obj.pin}}" data-model-name="gestion.employee" data-obj-id="{{obj.id}}" data-old-value="{{obj.pin}}" data-url="{%url "employees-save-pin"%}" data-obj_id="{{obj.id}}"
                 data-target="div-notification" placeholder="PIN..." /> <span id="pin__msg"></span>
             <button class="btn btn-xs" onclick="$('#pin').val($('#dni').val());$('#pin').change()" 
                 title="{%trans "Cargar DNI"%}"><i class="fas fa-sync"></i> <small>{%trans "Copiar DNI"%}</small></button>

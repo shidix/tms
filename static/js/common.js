@@ -1,10 +1,10 @@
 function setWait() { $("body").addClass("loading"); }
 function unsetWait() { $("body").removeClass("loading"); }
 
-function ajaxGet(url, datas, target, modal_target)
+function ajaxGet(url, datas, target, modal_target, error_function = null)
 {
     setWait();
-    $.ajax({
+    result=$.ajax({
         url : url,
         type : 'GET',
         data : datas,
@@ -23,11 +23,29 @@ function ajaxGet(url, datas, target, modal_target)
             else
                 if (target != "")
                     $('#'+target).html(data);
+            return true;
         },
-        error : function(e){alert("Error: "+e.responseText);},
+        error : function(e){
+            if (error_function != null)
+                error_function(e);
+            else
+               // show error with sweetalert
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    confirmButtonText: 'Aceptar',
+                    background: '#f2f2f2',
+                    color: '#333',
+                    html: e.responseText,
+                });
+            return false;
+        },
         complete : function(){unsetWait();}
-        //complete : function(){$("body").css("cursor", "default"); $("body").removeClass("loading-");}
     });
+    if (result.status == 200)
+        return true;
+    else
+        return false;
 };
 
 function ajaxGetAppend(url, datas, target, modal_target)
@@ -380,7 +398,20 @@ $(document).ready(()=>{
             for(var i in args)
                 if (i != "url")
                     datas[i] = args[i]
-            ajaxGet(url, datas, target, target_modal);
+
+            ajaxGet(url, datas, target, target_modal, function(e){
+                // show error with sweetalert
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    confirmButtonText: 'Aceptar',
+                    background: '#f2f2f2',
+                    color: '#333',
+                    html: e.responseText,
+                });
+            });
+
+
             if (obj.data("show"))
                 $("#" + obj.data("show")).show();
             if (obj.data("hide"))
@@ -462,7 +493,13 @@ $(document).ready(()=>{
             for(var i in args)
                 if (i != "url")
                     datas[i] = args[i]
-            ajaxGet(url, datas, target, target_modal);
+            result = ajaxGet(url, datas, target, target_modal);
+            if (obj.data("old-value")) {
+                if (result) {
+                    obj.data("old-value", value);
+                    obj.val(value);
+                }
+            }
 
             if (obj.data("clear"))
                 clearHtml($("#" + obj.data("clear")));
@@ -745,6 +782,149 @@ $(document).ready(()=>{
             else    answer.html('Unable to copy!');
         } catch (err) { answer.html('Unsupported Browser!'); }
     });
+
+    $("body").on("submit", ".post-form", function(e){
+        var obj = $(this);
+        if (((obj.data("confirm")) && confirm(obj.data("confirm"))) || !(obj.data("confirm")))
+        {
+
+            frm = $(this);
+            target = $(this).data("target");
+            error_target = $(this).data("error-target");
+            // Send the form data using AJAX (post)
+            $.post(frm.attr('action'), frm.serialize(), function(data) {
+                $('#'+target).html(data);
+                //To blink the 
+                // To enphasize the target
+                for (var i = 0; i < 3; i++) {
+                    $('#'+target).fadeTo(100, 0.5).fadeTo(100, 1);
+                }
+                
+            }
+            ).fail(function(data) {
+                if (error_target != "")
+                    $('#'+error_target).html(data.responseText);
+                else {
+                    $('#'+target).html(data.responseText);
+                }
+
+            });
+            // submitForm(frm, target);
+            e.preventDefault();
+        }
+
+    });
+
+    $("body").on("click", ".ark-alert", function(e){
+        var obj = $(this);
+        if (((obj.data("confirm")) && confirm(obj.data("confirm"))) || !(obj.data("confirm")))
+        {
+            url = obj.data("url");
+            var datas = {};
+            var args = obj.data();
+            for(var i in args)
+                if (i != "url")
+                    datas[i] = args[i]
+
+            if (obj.data("icon"))
+                icon = obj.data("icon");
+            else
+                icon = "success"; // success, error, warning, info
+            if (obj.data("title"))
+                title = obj.data("title");
+            else
+                title = "Acción realizada";
+
+            $.ajax({
+                url : url,
+                type : 'GET',
+                data : datas,
+                cache : false,
+                dataType : 'html',
+                beforeSend : function(){},
+                success : function(data){
+                    //alert with sweetalert
+                    Swal.fire({
+                        icon: icon,
+                        title: title,
+                        html: data,
+                        confirmButtonText: 'Aceptar',
+                        background: '#f2f2f2',
+                        color: '#333',
+                    });
+                }
+                ,
+                error : function(e){
+                    // show error with sweetalert
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        confirmButtonText: 'Aceptar',
+                        background: '#f2f2f2',
+                        color: '#333',
+                        html: e.responseText,
+                    });
+                },
+                //complete : function(){unsetWait();}
+            });
+            e.preventDefault();
+        }
+    }
+    );
+
+    $('body').on('click', '.ark-post', function(e){
+        var obj = $(this);
+        if (((obj.data("confirm")) && confirm(obj.data("confirm"))) || !(obj.data("confirm")))
+        {
+            url = obj.data("url");
+            var target = "";
+            var target_modal = "";
+            if (obj.data("target"))
+                target = obj.data("target");
+            if (obj.data("target-modal"))
+                target_modal = obj.data("target-modal");
+
+            if (target == "") {
+                // Create form with url as action and data as params and submit
+                var form = $('<form>', {
+                    action: url,
+                    method: 'POST',
+                    target: target,
+                    style: 'display: none;'
+                });
+                var csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
+                form.append($('<input>', {
+                    type: 'hidden',
+                    name: 'csrfmiddlewaretoken',
+                    value: csrf_token
+                }));
+                var args = obj.data();
+                for(var i in args)
+                    if (i != "url")
+                        form.append($('<input>', {
+                            type: 'hidden',
+                            name: i,
+                            value: args[i]
+                        }));
+                $('body').append(form);
+                form.submit();
+                form.remove();
+
+            }
+            else {
+                var datas = {};
+                var args = obj.data();
+                for(var i in args)
+                    if (i != "url")
+                        datas[i] = args[i]
+                ajaxPost(url, datas, target, target_modal);
+                if (obj.data("show"))
+                    $("#" + obj.data("show")).show();
+            }
+            e.preventDefault();
+        }
+    }
+    );
 
 });
 

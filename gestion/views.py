@@ -3,14 +3,20 @@ from django.core.files.base import ContentFile
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from datetime import datetime
+from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
+
 import uuid
+
 import os, csv
 
 from tms.decorators import group_required
-from tms.commons import get_float, get_int, get_or_none, get_param, get_session, set_session, show_exc, generate_qr, csv_export
+from tms.commons import get_float, get_int, get_or_none, get_param, get_session, set_session, show_exc, generate_qr, csv_export, MESSAGES
 from .models import Company, Employee, Manager, Workday
-from .forms import CompanyForm
+from .forms import CompanyForm, ManagerForm
+
 
 
 def init_session_date(request, key):
@@ -26,24 +32,61 @@ def get_workdays(request):
     if value != "":
         kwargs["employee__name__icontains"] = value
 
+    if not request.user.is_superuser:
+        if Manager.objects.filter(user=request.user).exists():
+            kwargs["employee__comp"] = Manager.objects.get(user=request.user).comp
+        elif Employee.objects.filter(user=request.user).exists():
+            kwargs["employee__comp"] = Employee.objects.get(user=request.user).comp
+        else:
+            raise Exception("No se ha podido obtener la empresa del usuario")
+
     return Workday.objects.filter(**kwargs).order_by("-ini_date")
+
+@login_required
+def change_password(request):
+    try:
+        if request.method == "POST":
+            user = request.user
+            password = request.POST.get("new_password1")
+            user.set_password(password)
+            user.save()
+            # Logout the user after changing the password
+            logout(request)
+            login(request, user)
+            return render(request, "simple-error-alert.html", {"exc": MESSAGES["PASSWORD_CHANGED"],"icon":"success" }, status=200)
+        return render(request, "change-password.html", {})
+    except Exception as e:
+        print(show_exc(e))
+        return HttpResponse(MESSAGES["UNEXPECTED"], status=503)
 
 @group_required("admins", "managers")
 def index(request):
-    init_session_date(request, "s_idate")
-    init_session_date(request, "s_edate")
-    return render(request, "index.html", {"item_list": get_workdays(request)})
+    try:
+        init_session_date(request, "s_idate")
+        init_session_date(request, "s_edate")
+        return render(request, "index.html", {"item_list": get_workdays(request)})
+    except Exception as e:
+        print(show_exc(e))
+        return render(request, "workdays-client-error.html", {})
 
 @group_required("admins",)
 def workdays_list(request):
-    return render(request, "workdays-list.html", {"item_list": get_workdays(request)})
+    try:
+        return render(request, "workdays-list.html", {"item_list": get_workdays(request)})
+    except Exception as e:
+        print(show_exc(e))
+        return render(request, "workdays-client-error.html", {})
 
-@group_required("admins",)
+@group_required("admins","managers")
 def workdays_search(request):
-    set_session(request, "s_name", get_param(request.GET, "s_name"))
-    set_session(request, "s_idate", get_param(request.GET, "s_idate"))
-    set_session(request, "s_edate", get_param(request.GET, "s_edate"))
-    return render(request, "workdays-list.html", {"item_list": get_workdays(request)})
+    try:
+        set_session(request, "s_name", get_param(request.GET, "s_name"))
+        set_session(request, "s_idate", get_param(request.GET, "s_idate"))
+        set_session(request, "s_edate", get_param(request.GET, "s_edate"))
+        return render(request, "workdays-list.html", {"item_list": get_workdays(request)})
+    except Exception as e:
+        print(show_exc(e))
+        return render(request, "workdays-client-error.html", {})
 
 @group_required("admins",)
 def workdays_form(request):
@@ -97,50 +140,92 @@ def get_employees(request):
     if search_value != "":
         for myfilter in filters_to_search:
             full_query |= Q(**{myfilter: search_value})
-    return Employee.objects.filter(full_query)
+
+    if not request.user.is_superuser:
+        if Manager.objects.filter(user=request.user).exists():
+            full_query &= Q(comp=Manager.objects.get(user=request.user).comp)
+        elif Employee.objects.filter(user=request.user).exists():
+            full_query &= Q(comp=Employee.objects.get(user=request.user).comp)
+        else:
+            raise Exception("No se ha podido obtener la empresa del usuario")
+    
+    return Employee.objects.filter(full_query).order_by("comp__name", "name")
 
 @group_required("admins", "managers")
 def employees(request):
-    init_session_date(request, "s_emp_idate")
-    init_session_date(request, "s_emp_edate")
-    return render(request, "employees/employees.html", {"items": get_employees(request)})
+    try:
+        init_session_date(request, "s_emp_idate")
+        init_session_date(request, "s_emp_edate")
+        return render(request, "employees/employees.html", {"items": get_employees(request)})
+    except Exception as e:
+        print(show_exc(e))
+        return render(request, "workdays-client-error.html", {})
 
 @group_required("admins", "managers")
 def employees_list(request):
-    return render(request, "employees/employees-list.html", {"items": get_employees(request)})
+    try:
+        return render(request, "employees/employees-list.html", {"items": get_employees(request)})
+    except Exception as e:
+        print(show_exc(e))
+        return render(request, "workdays-client-error.html", {})
 
 @group_required("admins", "managers")
 def employees_search(request):
-    set_session(request, "s_emp_name", get_param(request.GET, "s_emp_name"))
-    set_session(request, "s_emp_idate", get_param(request.GET, "s_emp_idate"))
-    set_session(request, "s_emp_edate", get_param(request.GET, "s_emp_edate"))
-    return render(request, "employees/employees-list.html", {"items": get_employees(request)})
+    try:
+        set_session(request, "s_emp_name", get_param(request.GET, "s_emp_name"))
+        set_session(request, "s_emp_idate", get_param(request.GET, "s_emp_idate"))
+        set_session(request, "s_emp_edate", get_param(request.GET, "s_emp_edate"))
+        return render(request, "employees/employees-list.html", {"items": get_employees(request)})
+    except Exception as e:
+        print(show_exc(e))
+        return render(request, "workdays-client-error.html", {})
 
 @group_required("admins", "managers")
 def employees_form(request):
-    obj_id = get_param(request.GET, "obj_id")
-    obj = get_or_none(Employee, obj_id)
-    if obj == None:
-        try:
-            obj = Employee.objects.create(comp=request.user.manager.comp)
-        except:
-            obj = Employee.objects.create()
-    # Check if request.user is a admin or manager
-    if request.user.is_superuser:
-        companies = Company.objects.all()
-    else:
-        companies = Company.objects.filter(pk = request.user.manager.comp.pk)
+    try:
+        obj_id = get_param(request.GET, "obj_id")
+        obj = get_or_none(Employee, obj_id)
+        if obj == None:
+            try:
+                obj = Employee.objects.create(comp=request.user.manager.comp)
+            except:
+                obj = Employee.objects.create()
+        # Check if request.user is a admin or manager
+        if request.user.is_superuser:
+            companies = Company.objects.all()
+        else:
+            companies = Company.objects.filter(pk = request.user.manager.comp.pk)
 
-    return render(request, "employees/employees-form.html", {'obj': obj, 'companies': companies})
+        return render(request, "employees/employees-form.html", {'obj': obj, 'companies': companies})
+    except Exception as e:
+        print(show_exc(e))
+        return render(request, "workdays-client-error.html", {})
 
 @group_required("admins", "managers")
 def employees_remove(request):
-    obj = get_or_none(Employee, request.GET["obj_id"]) if "obj_id" in request.GET else None
-    if obj != None:
-        if obj.user != None:
-            obj.user.delete()
-        obj.delete()
-    return render(request, "employees/employees-list.html", {"items": get_employees(request)})
+    try:
+        obj = get_or_none(Employee, request.GET["obj_id"]) if "obj_id" in request.GET else None
+        if obj != None:
+            if obj.user != None:
+                obj.user.delete()
+            obj.delete()
+        return render(request, "employees/employees-list.html", {"items": get_employees(request)})
+    except Exception as e:
+        print(show_exc(e))
+        return render(request, "workdays-client-error.html", {})
+    
+@group_required("admins", "managers")
+def employees_save_pin(request):
+    try:
+        obj = get_or_none(Employee, get_param(request.GET, "obj_id"))
+        new_pin = get_param(request.GET, "value")
+        if Employee.objects.filter(pin=new_pin, comp=obj.comp).exists():
+            return HttpResponse("<strong>El PIN ya existe para esta empresa.</strong>", status=500)
+        obj.pin = new_pin
+        obj.save()
+        return HttpResponse("Guardado!")
+    except Exception as e:
+        return HttpResponse("Error: {}".format(e))
 
 @group_required("admins", "managers")
 def employees_save_email(request):
@@ -163,6 +248,21 @@ def employees_export(request):
         row = [item.name, item.phone, item.email, item.pin, item.dni, hours, minutes]
         values.append(row)
     return csv_export(header, values, "empleados")
+
+@group_required("admins", "managers")
+def employees_show_qr(request):
+    try:
+        uuid = request.GET.get("uuid", None)
+        if uuid == None:
+            return render(request, "workdays-client-error.html", {})
+        obj = Employee.objects.filter(uuid=uuid).first()
+        if obj != None:
+            return render(request, "employees/employees-show-qr.html", {"item": obj})
+        else:
+            return render(request, "workdays-client-error.html", {})
+    except Exception as e:
+        print(show_exc(e))
+        return render(request, "workdays-client-error.html", {})
 
 #@group_required("Administradores",)
 #def employees_import(request):
@@ -211,11 +311,14 @@ def managers_search(request):
 def managers_form(request):
     obj_id = get_param(request.GET, "obj_id")
     obj = get_or_none(Manager, obj_id)
+    companies = Company.objects.all()
     new = False
     if obj == None:
         obj = Manager.objects.create()
+        obj.save_user()
+        obj.save()
         new = True
-    return render(request, "managers/managers-form.html", {'obj': obj, 'new': new})
+    return render(request, "managers/managers-form.html", {'obj': obj, 'new': new, 'companies': companies})
 
 @group_required("admins",)
 def managers_remove(request):
@@ -225,8 +328,92 @@ def managers_remove(request):
     return render(request, "managers/managers-list.html", {"items": get_managers(request)})
 
 @group_required("admins",)
+def managers_save(request):
+    try:
+        if request.method == "POST":
+            obj = get_or_none(Manager, request.POST["id"]) if "id" in request.POST else None
+            if obj == None:
+                uuid_temp = uuid.uuid4()
+                while Manager.objects.filter(uuid=uuid_temp).exists():
+                    uuid_temp = uuid.uuid4()
+                obj = Manager.objects.create(uuid=str(uuid_temp))
+                
+            form = ManagerForm(request.POST, request.FILES, instance=obj)
+            if form.is_valid():
+                obj = form.save(commit=False)
+                if (len(obj.uuid) < 20):
+                    temp_uuid = uuid.uuid4()
+                    while Manager.objects.filter(uuid=temp_uuid).exists():
+                        temp_uuid = uuid.uuid4()
+                    obj.uuid = str(temp_uuid)
+                obj.save()
+                obj.save_user()
+                return render(request, "managers/manager-card.html", {"item": obj})
+            else:
+                companies = Company.objects.all()
+                return render(request, "managers/managers-form.html", {'form': form, 'obj': obj, 'new': False, 'companies':companies}, status=500)
+        else:
+            print(3)
+            return redirect("managers")
+    except Exception as e:
+        print(show_exc(e))
+        return render(request, "simple-error-alert.html", {"exc":"Ha ocurrido un error inesperado. Consulte con el administrador de la plataforma.", "modal": "common-modal"}, status=503)
+
+@group_required("admins",)
 def managers_workdays(request, obj_id):
     return render(request, "managers/managers-workdays.html", {"obj": get_or_none(Manager, obj_id)})
+
+@group_required("admins", "managers")
+def managers_send_login_url(request):
+    try:
+        uuid = request.GET.get("uuid", None)
+        manager = Manager.objects.filter(uuid=uuid).first()
+        if manager != None:
+            abs_url = request.build_absolute_uri(reverse('managers-login-by-uuid', kwargs={'uuid': manager.uuid, 'comp_uuid': manager.comp.uuid}))
+            return HttpResponse(abs_url, status=200)
+        else:
+            return HttpResponse("<small><strong>Ha ocurrido un error inesperado. Consulte con el administrador de la plataforma.</strong></small>", status=503)
+    except Exception as e:
+        print(show_exc(e))
+        if request.user.is_superuser:
+            return HttpResponse(f"<small><strong>{show_exc(e)}</strong></small>", status=503)
+    return HttpResponse("<small><strong>Ha ocurrido un error inesperado. Consulte con el administrador de la plataforma.</strong></small>", status=503)
+
+def managers_view_portal_login_url(request):
+    try:
+        uuid = request.GET.get("uuid", None)
+        company = Company.objects.filter(uuid=uuid).first()
+        if company != None:
+            abs_url = request.build_absolute_uri(reverse('pwa-portal-company-login', kwargs={'uuid': company.uuid}))
+            return HttpResponse(abs_url, status=200)
+        else:
+            return HttpResponse("<small><strong>Ha ocurrido un error inesperado. Consulte con el administrador de la plataforma.</strong></small>", status=503)
+    except Exception as e:
+        print(show_exc(e))
+        if request.user.is_superuser:
+            return HttpResponse(f"<small><strong>{show_exc(e)}</strong></small>", status=503)
+    return HttpResponse("<small><strong>Ha ocurrido un error grave inesperado. Consulte con el administrador de la plataforma.</strong></small>", status=503)
+
+
+def managers_login_by_uuid(request, uuid, comp_uuid):
+    try:
+        obj = Manager.objects.filter(uuid=uuid, comp__uuid = comp_uuid).first()
+        if obj != None:
+            if request.user.is_authenticated:
+                logout(request)
+                request.session.flush()
+            request.session["company"] = obj.pk
+            login(request, obj.user)
+            request.session["user"] = obj.user.pk
+            request.session["user_type"] = "managers"
+            return redirect(reverse("index"))
+        else:
+            return redirect(reverse("index"))
+    except Exception as e:
+        print(show_exc(e))
+        return redirect(reverse("index"))
+
+
 
 
 
@@ -301,8 +488,6 @@ def admins_save(request):
     except Exception as e:
         print(show_exc(e))
         return render(request, "workdays-client-error.html", {})
-            # Use the CompanyForm to validate and save the data
-
 
 
 @group_required("admins",)

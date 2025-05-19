@@ -1,7 +1,7 @@
 # Generate a form for the Company model
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from .models import Company
+from .models import Company, Manager, Employee
 
 class CompanyForm(forms.ModelForm):
     class Meta:
@@ -45,3 +45,63 @@ class CompanyForm(forms.ModelForm):
                     raise forms.ValidationError(_('El tamaño del archivo no puede ser mayor de 5MB.'))
             return logo
 
+class ManagerForm(forms.ModelForm):
+
+    # Custom validation for the pin field
+    def clean_pin(self):
+        pin = self.cleaned_data.get('pin')
+        comp = self.cleaned_data.get('comp')
+        if Manager.objects.filter(pin=pin, comp=comp).exists():
+            raise forms.ValidationError(_('Ya existe un gerente con este PIN para esta empresa.'))
+        return pin
+
+    class Meta:
+        model = Manager
+        fields = ['name', 'email', 'phone', 'pin', 'comp', 'user', 'dni']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control'}),
+            'pin': forms.TextInput(attrs={'class': 'form-control'}),
+            'comp': forms.Select(attrs={'class': 'form-control'}),
+            'user': forms.Select(attrs={'class': 'form-control'}),
+            'dni': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+        labels = {
+            'name': _('Nombre'),
+            'email': _('Email'),
+            'phone': _('Teléfono'),
+        }
+        help_texts = {
+            'name': _('Nombre del gerente'),
+            'email': _('Email del gerente'),
+            'phone': _('Teléfono del gerente'),
+        }
+        error_messages = {
+            'name': {
+                'required': _('Este campo es obligatorio.'),
+            },
+            'email': {
+                'required': _('Este campo es obligatorio.'),
+                'invalid': _('El email no es válido.'),
+            },
+            'phone': {
+                'required': _('Este campo es obligatorio.'),
+                'invalid': _('El teléfono no es válido.'),
+            },
+            'pin': {
+                'required': _('Este campo es obligatorio.'),
+                'invalid': _('El PIN no es válido.'),
+            },
+            'comp': {
+                'required': _('Este campo es obligatorio.'),
+                'invalid': _('La empresa no es válida.'),
+            },
+            'dni': {
+                'required': _('Este campo es obligatorio.'),
+                'invalid': _('El DNI no es válido.'),
+            },
+            'email': {
+                'invalid': _('El email no es válido.'),
+            },
+        }

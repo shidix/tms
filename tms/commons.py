@@ -6,6 +6,17 @@ from PIL import Image
 import sys, datetime, json, string, random, unicodedata, qrcode, io, csv
 
 
+MESSAGES = {
+    "SUCCESS": "Operación realizada correctamente",
+    "ERROR": "Error al realizar la operación",
+    "WARNING": "Advertencia",
+    "INFO": "Información",
+    "DANGER": "Error",
+    "UNEXPECTED": "Ha ocurrido un error inesperado. Consulte con el administrador de la plataforma",
+    "PASSWORD_CHANGED": "Contraseña cambiada correctamente",
+    "PASSWORD_ERROR": "Error al cambiar la contraseña",}
+
+
 '''
     Exceptions
 '''
@@ -100,7 +111,7 @@ def translate(request, json_str):
 
 def normalize_str(string):
     try:
-        return unicodedata.normalize('NFKD', unicode(string,"utf-8")).encode('ascii', 'ignore')
+        return unicodedata.normalize('NFKD', string).decode("utf-8").encode("ascii", "ignore")
     except:
         return unicodedata.normalize('NFKD', string).encode('ascii', 'ignore')
 
@@ -138,7 +149,7 @@ def generate_qr(data, logo):
         pos = ((img.size[0] - img_logo.size[0]) // 2, (img.size[1] - img_logo.size[1]) // 2)
         img.paste(img_logo, pos)
     else:
-        img = qr.make_image(fill_color=color, back_color=color_back)
+        img = qr.make_image(fill_color="black", back_color="white")
 
     byteIO = io.BytesIO()
     img.save(byteIO, format='PNG')

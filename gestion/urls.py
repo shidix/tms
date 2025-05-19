@@ -3,6 +3,8 @@ from . import views, auto_views
 
 urlpatterns = [ 
     path('home', views.index, name='index'),
+    path('change-password', views.change_password, name='change-password'),
+
     path('workdays/list', views.workdays_list, name='workdays-list'),
     path('workdays/search', views.workdays_search, name='workdays-search'),
     path('workdays/form', views.workdays_form, name='workdays-form'),
@@ -24,7 +26,11 @@ urlpatterns = [
     path('managers/search', views.managers_search, name='managers-search'),
     path('managers/form', views.managers_form, name='managers-form'),
     path('managers/remove', views.managers_remove, name='managers-remove'),
+    path('managers/save', views.managers_save, name='managers-save'),
     path('managers/workdays/<int:obj_id>', views.managers_workdays, name='managers-workdays'),
+    path('managers/login-by-uuid/<slug:uuid>/<slug:comp_uuid>', views.managers_login_by_uuid, name='managers-login-by-uuid'),
+    path('managers/send-login-url', views.managers_send_login_url, name='managers-send-login-url'),
+    path('managers/view-portal-login-url', views.managers_view_portal_login_url, name='managers-view-portal-login-url'),
 
     #---------------------- EMPLOYEES -----------------------
     path('employees', views.employees, name='employees'),
@@ -33,7 +39,9 @@ urlpatterns = [
     path('employees/form', views.employees_form, name='employees-form'),
     path('employees/remove', views.employees_remove, name='employees-remove'),
     path('employees/save-email', views.employees_save_email, name='employees-save-email'),
+    path('employees/save-pin', views.employees_save_pin, name='employees-save-pin'),
     path('employees/export', views.employees_export, name='employees-export'),
+    path('employees/show-qr', views.employees_show_qr, name='employees-show-qr'),
     #path('employees/import', views.employees_import, name='employees-import'),
     
 

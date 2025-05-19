@@ -27,7 +27,7 @@ urlpatterns = [
 
     path('accounts/login/<slug:chk>/', auth_views.LoginView.as_view(template_name='login.html'), name='auth_login'),
     path('accounts/login/', auth_views.LoginView.as_view(template_name='login.html'), name='auth_login'),
-    path('logout/', auth_views.LogoutView.as_view(next_page='/accounts/login/'), name='auth_logout'),
+    path('accounts/logout/', auth_views.LogoutView.as_view(next_page='/accounts/login/'), name='auth_logout'),
 ]
 
 from django.conf.urls.static import static

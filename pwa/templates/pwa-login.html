@@ -2,12 +2,18 @@
 {% load static i18n %}
 
 {% block content %}
+
     {% comment %}
     <div class="row m-0 p-0"> <div class="status-bar-login col-4 offset-8 text-end py-2"><small id="conn-status">...</small> <i class='fas fa-wifi'></i></div> </div>
     {% endcomment %}
     <div class="col-12 my-5 py-3 text-center"> <img src="{% static 'images/logo-fichaje.png' %}"> </div>
 
     <div class="col-8 offset-2 mt-2 p-2">
+        <p class="text-center"> Debes solicitar el acceso a la aplicación desde el portal de fichaje de tu empresa. </p>
+        <p class="text-center"> Si no recuerdas la dirección del portal, contacta con el administrador de tu empresa. </p>
+
+
+        {% comment %}
         <form action="{% url 'pwa-login' %}" method="post">
             {% csrf_token %}
             <div class="row">
@@ -20,6 +26,9 @@
             </div>
         </form>
         {% if msg and msg != "" %} <div class="alert alert-danger text-center">{{msg}}</div> {% endif %}
+        {% endcomment %}
     </div>
+
+  
 {% endblock %}
 

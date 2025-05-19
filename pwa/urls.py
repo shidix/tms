@@ -9,6 +9,8 @@ urlpatterns = [
     path('logoff/', views.pin_logout, name="pwa-logout"),
 
     path('company-login/<slug:uuid>', views.pwa_company_login, name="pwa-company-login"),
+    path('company-portal-login/<slug:uuid>', views.pwa_portal_company_login, name="pwa-portal-company-login"),
+
     path('company-login/', views.pwa_company_login, name="pwa-company-login"),
 
     # EMPLOYEES
@@ -20,6 +22,10 @@ urlpatterns = [
     path('employee/update-year', views.employee_update_year, name="pwa-update-year"),
     path('employee/update-month', views.employee_update_month, name="pwa-update-month"),
     path('employee/check-clock/<slug:uuid>', views.employee_check_clock, name="pwa-check-clock"),
+    path('employee/check-clock/<str:uuid>', views.employee_check_clock, name="pwa-check-clock"),
+
+    path('employee/check-clock', views.employee_check_clock, name="pwa-check-clock"),
+
     #path('employee/code-read', views.employee_code_read, name="pwa-code-read"),
     #path('employee/code-finish', views.employee_code_finish, name="pwa-code-finish"),
     #path('employee/qr-finish/<int:obj_id>', views.employee_qr_finish, name="pwa-qr-finish"),

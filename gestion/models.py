@@ -12,6 +12,7 @@ import base64
 from PIL import Image
 from django.shortcuts import render
 import uuid
+from tms.commons import show_exc, MESSAGES
 
 
 
@@ -98,19 +99,31 @@ class Manager(models.Model):
     email = models.EmailField(verbose_name = _('Email de contacto'), default="", null=True)
     user = models.OneToOneField(User, verbose_name='Usuario', on_delete=models.CASCADE, null=True, blank=True, related_name='manager')
     comp = models.ForeignKey(Company, verbose_name=_("Empresa"), on_delete=models.SET_NULL, blank=True, null=True)
+    uuid = models.CharField(max_length=200, verbose_name = _('UUID'), default="")
 
     def __str__(self):
         return self.name
 
     def save_user(self):
-        if self.user == None:
-            self.user = User.objects.create_user(username=self.email, email=self.email)
-            self.save()
-            group = Group.objects.get(name='managers') 
-            group.user_set.add(self.user)
-        else:
-            self.user.username = self.email
-            self.user.save()
+        try:
+            if self.user == None:
+                if User.objects.filter(email=self.email).exists():
+                    self.user = User.objects.get(email=self.email)
+                else:
+                    self.user = User.objects.create_user(username=self.email, email=self.email)
+                self.save()
+                if not Group.objects.filter(name='managers').exists():
+                    group = Group.objects.create(name='managers')
+                else:
+                    group = Group.objects.get(name='managers') 
+                
+                group.user_set.add(self.user)
+            else:
+                self.user.username = self.email
+                self.user.save()
+        except Exception as e:
+            print (show_exc(e))
+
 
     class Meta:
         verbose_name = _('Administrador')
@@ -211,11 +224,12 @@ class Workday(models.Model):
 
     @property
     def duration(self):
-        edate = self.end_date.replace(second=0, microsecond=0) 
-        idate = self.ini_date.replace(second=0, microsecond=0)
+
+        edate = self.end_date.replace(microsecond=0) 
+        idate = self.ini_date.replace(microsecond=0)
         diff = edate - idate
         days, seconds = diff.days, diff.seconds
-        return (seconds // 60)
+        return (diff.total_seconds())
         #hours += seconds // 3600
         #minutes += (seconds % 3600) // 60
         #if minutes > 59:

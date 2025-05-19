@@ -11,11 +11,25 @@
             <div class="card-header bg-danger text-white">
                 <div class="row">
                     <div class="col-md-11">{% trans 'Problem Description' %}</div>
-                    <div class="col-md-1 text-right"><a class="btn btn-sm btn-dark text-white" onclick="$('#msg-error-exc').empty();"><i class="fas fa-times text-white"></i></a></div>
+                    <div class="col-md-1 text-right"><a class="btn btn-sm btn-dark text-white" id="btn-close-modal" onclick="$('#msg-error-exc').empty();"><i class="fas fa-times text-white"></i></a></div>
                 </div>
             </div>
             <div class="card-body">{{exc}}</div>
         </div>
     </div>
+
+    {% if modal %}
+        <script class="on-live">
+                $('#{{modal}}').modal('show');
+                $('.on-live').remove();
+
+                $('#btn-close-modal').off('click').on('click', function() {
+                    $('#{{modal}}').modal('hide');
+                    
+                    $('#msg-error-exc').empty();
+                });
+
+        </script>
+    {% endif %}
 
 {% endblock %}
