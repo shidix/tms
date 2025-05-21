@@ -43,7 +43,7 @@ h3.code {
 
 input.pin {
     border: 1px solid #ced4da;
-    font-size: 1.2rem;;
+    font-size: 1rem;;
 }
 
 input#code.form-control.btn.asm.w-50 {
@@ -51,6 +51,10 @@ input#code.form-control.btn.asm.w-50 {
     background-clip: padding-box;
     border: 1px solid #ced4da;
     
+}
+.lg-font {
+   font-size: 1.3rem;
+   letter-spacing: 0px;
 }
 
 /*********** END UTILS *************/

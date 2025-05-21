@@ -21,6 +21,7 @@
 
         <!-- Shidix -->
         <link rel="stylesheet" href="{% static 'css/styles.css' %}" >
+        <script src="{% static 'canvasjs/canvasjs.min.js' %}"></script>
         <script src="{% static "js/common.js" %}"></script>
         <script src="{% static "js/jquery.countdown360.js" %}"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.21.1/dist/sweetalert2.all.min.js"></script>
@@ -42,14 +43,16 @@
                         </div>	
                         <div class="col-lg-10 col-9">
                             <div class="row justify-content-end">
-                                <div class="col-4 d-flex justify-content-center align-items-center  p-0 ">{% trans "Hola" %}, {{request.user.username}}</div>
-                                <div class="col-8 d-flex justify-content-between align-items-center p-0">
+                                <div class="col-12 col-lg-4 d-flex justify-content-center align-items-center  p-0 ">{% trans "Hola" %}, {{request.user.username}}</div>
+                                <div class="col-12 col-lg-8 d-flex justify-content-between align-items-center p-0">
 
                                     {% if request.user.manager %}
                                         <a class="btn btn-xs m-2" href="{% url 'pwa-portal-company-login' request.user.manager.comp.uuid %}" target="_blank">
-                                            <i class="fas fa-user-clock"></i>&nbsp;{% trans 'Portal de fichaje' %} </a>
+                                            <i class="fas fa-user-clock"></i>&nbsp;<span class="d-none d-lg-inline">{% trans 'Portal de fichaje' %}</span> </a>
 
-                                        <a class="btn btn-xs ark-alert m-2" href="#" data-url="{% url 'managers-view-portal-login-url' %}" data-uuid="{{request.user.manager.comp.uuid}}" title="{% trans 'Url del portal' %}"><i class="fas fa-paper-plane"></i>&nbsp;URL Portal</a>
+                                        <a class="btn btn-xs ark-alert m-2" href="#" data-url="{% url 'managers-view-portal-login-url' %}" data-uuid="{{request.user.manager.comp.uuid}}" title="{% trans 'Url del portal' %}"><i class="fas fa-paper-plane"></i>&nbsp;<span class="d-none d-lg-inline">URL Portal</span></a>
+                                        <a class="btn btn-xs m-2" href="{% url 'pwa-company-private-zone' request.user.manager.comp.uuid %}" target="_blank">
+                                            <i class="fas fa-user-shield"></i>&nbsp;<span class="d-none d-lg-inline">{% trans 'Zona privada' %}</span></a>
 
                                     {% endif %}
                                     <a class="btn btn-xs m-2 ark" href="#" data-url="{% url 'change-password' %}" data-target-modal="common-modal-md" title="{% trans 'Cambiar contraseña' %}">

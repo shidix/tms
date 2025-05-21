@@ -16,24 +16,25 @@
             </div>
         </div>
         <div class="col-12 m-1">
-            <form method="POST" action="{% url 'pwa-company-login' %}">
+            <form method="POST" action="{% url 'pwa-company-private-zone' %}">
                 {% csrf_token %}
                 <input type="hidden" name="uuid" value="{{comp.uuid}}">
 
                 <div class="card">
                     <div class="card-body text-center">
-                        <h5 class="card-title"><strong>PIN</strong></h5>
+                        <h5 class="card-title"><strong>Acceso a la Zona Privada</strong></h5>
                         <p class="card-text ">
-                            <div class="row d-flex justify-content-center align-items-center">
+                            <div class="row d-flex justify-content-center align-items-center m-0">
                                 <div class="form-group col-lg-6 col-10">
-                                    <input type="text" class="form-control input text-center p-5" id="pin" placeholder="Introduce el PIN para fichar" name="pin" required>
+                                    <input type="text" class="form-control input text-center p-5" id="pin" placeholder="Introduce el PIN" name="pin" required>
                                     <div class="invalid-feedback">
                                         Introduce un PIN válido.
                                     </div>
                                 </div>
-                                <div class="form-group col-lg-6 offset-lg-0 col-10 mt-3">
-                                    <input type="submit" class="btn btn-primary w-100 p-5 lg-font" value="Fichar">
+                                <div class="form-group col-lg-12 col-10 mt-3">
+                                    <input type="submit" class="btn btn-primary p-5 lg-font" value="Entrar a Zona Privada">
                                 </div>
+                                <input type="hidden" id="remember" name="remember" value="on">
                             </div>
 
                         </div>

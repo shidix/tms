@@ -10,20 +10,48 @@
 
                     <p class="card-text">
                         {% if not obj.finish %}
-                        Se ha registrado tu hora de entrada
+                        <div class="bg-success text-white p-5 rounded">
+                            <p class="h5"><strong>¡Fichaje de entrada realizado!</strong></p>
+                        </div>
+                        <div class="alert alert-success" role="alert">
+                            {{obj.employee.name}} se ha registrado tu hora de entrada a las {{ obj.ini_date|date:"H:i" }} en {{ obj.employee.comp.name}}
+                        </div>
                         {% else %}
-                        Se ha registrado tu hora de salida
+                        <div class="bg-danger text-white p-5 rounded">
+                            <p class="h5"><strong>¡Fichaje de salida realizado!</strong></p>
+                        </div>
+                        <div class="alert alert-danger" role="alert">
+                            {{obj.employee.name}} se ha registrado tu hora de salida a las {{ obj.end_date|date:"H:i" }} en {{ obj.employee.comp.name}}
+                        </div>
+
                         {% endif %}
                     </p>
-                    <p> Redirigiendo a pantalla de fichaje... </p>
+                    <p> Ahora volveremos al portal de fichaje para que tus compañeros puedan realizar sus fichajes </p>
+                    <!-- Enable countdown -->
+                    <div class="alert alert-info w-50 mx-auto" role="alert" id="countdown">
+                        <strong><p class="h4" id="countdown-timer">10</p></strong>
+                    </div>
+                
+                            
                 </div>
             </div>
         </div>
     </div>
 </div>
 <script>
-    setTimeout(function() {
-        window.location.href = "{% url 'pwa-company-login' comp.uuid %}";
-    }, 3000);
+    // Countdown timer
+    var countdownElement = document.getElementById('countdown-timer');
+    
+    var countdownValue = 10; // 10 seconds
+    var countdownInterval = setInterval(function() {
+        countdownValue--;
+        countdownElement.textContent = countdownValue;
+
+        if (countdownValue <= 0) {
+            clearInterval(countdownInterval);
+            // Redirect to the desired URL
+            window.location.href = "{% url 'pwa-portal-company-login' comp.uuid %}";
+        }
+    }, 1000);
 </script>
 {% endblock %}

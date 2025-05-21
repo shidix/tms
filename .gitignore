@@ -176,3 +176,4 @@ cython_debug/
 migrations
 viewlog.sh
 media
+**.swp

@@ -226,6 +226,7 @@ def pwa_company_login(request, uuid=None):
                     emp = Employee.objects.filter(comp=comp, pin=pin).get()
                     if emp == None:
                         return render(request, "pwa/employees/company-login.html", {'comp': comp})
+                    
                     if request.user.is_authenticated:
                         if hasattr(request.user, 'employee'):
                             if request.user.employee.comp != comp:
@@ -238,6 +239,7 @@ def pwa_company_login(request, uuid=None):
                                     obj.save()
                                 else:
                                     obj = Workday.objects.create(employee=request.user.employee, ini_date=datetime.now())
+                                return render(request, "pwa/employees/company-sign-in.html", {'comp': comp, 'obj': obj})
 
                         else:
                             if request.user.is_superuser:
@@ -298,6 +300,42 @@ def pwa_company_login(request, uuid=None):
         print(show_exc(e))
         return render(request, "pwa/employees/qr-error.html", {})
     return render(request, "pwa/employees/qr-error.html", {})
+
+def pwa_company_private_zone(request, uuid=None):
+    try:            
+        if request.method == "POST":
+            uuid = request.POST.get('uuid', None)
+            comp = get_or_none(Company, uuid, "uuid")
+            if comp == None:
+                return render(request, "pwa/employees/qr-error.html", {'msg': "No se ha encontrado la empresa"})
+            pin = request.POST.get('pin', None)
+            if request.user.is_authenticated:
+                logout(request)           
+            if pin != None:
+                try:
+                    emp = Employee.objects.filter(comp=comp, pin=pin).get()
+                    if emp == None:
+                        return render(request, "pwa/employees/company-private-zone.html", {'comp': comp})
+                    login(request, emp.user)
+                    return redirect(reverse('pwa-employee'))
+                except Exception as e:
+                    print(show_exc(e))
+                    return render(request, "pwa/employees/qr-error.html", {'msg': "Pin no válido"})
+        else:
+            if request.user.is_authenticated:
+                if hasattr(request.user, 'employee'):
+                    return redirect(reverse('pwa-employee'))
+                else:
+                    comp = get_or_none(Company, uuid, "uuid")
+            else:
+                comp = get_or_none(Company, uuid, "uuid")
+            if comp == None:
+                return render(request, "pwa/employees/qr-error.html", {'msg': "No se ha encontrado la empresa"})
+            return render(request, "pwa/employees/company-private-zone.html", {'comp': comp})
+    except Exception as e:
+        print(show_exc(e))
+        return render(request, "pwa/employees/qr-error.html", {'Ha habido un problema, por favor, inténtelo más tarde'})
+    return render(request, "pwa/employees/qr-error.html", {'msg': "No se ha encontrado la empresa"})
 
 def pwa_portal_company_login(request, uuid):
     try:

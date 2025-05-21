@@ -4,9 +4,12 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
+from django.utils.timezone import localtime
+
+
 
 import uuid
 
@@ -16,6 +19,34 @@ from tms.decorators import group_required
 from tms.commons import get_float, get_int, get_or_none, get_param, get_session, set_session, show_exc, generate_qr, csv_export, MESSAGES
 from .models import Company, Employee, Manager, Workday
 from .forms import CompanyForm, ManagerForm
+
+import pandas as pd
+import plotly.express as px
+from plotly.offline import plot
+
+def gantt_plotly_view(tasks):
+
+    # Expandimos en filas de un DataFrame
+    rows = []
+    for task in tasks:
+        for i, (start, end) in enumerate(task["periods"]):
+            rows.append({
+                "Task": task["label"],
+                "Start": pd.to_datetime(start),
+                "Finish": pd.to_datetime(end),
+                "ID": f'{task["label"]}-{i+1}'
+            })
+
+    df = pd.DataFrame(rows)
+
+    # Crear gráfico
+    fig = px.timeline(df, x_start="Start", x_end="Finish", y="Task", color="Task", hover_name="ID")
+    fig.update_yaxes(autorange="reversed")  # Estilo Gantt
+    fig.update_layout(title="Diagrama de Gantt", height=400)
+
+    chart_div = plot(fig, output_type='div')
+    return (chart_div)
+
 
 
 
@@ -64,7 +95,35 @@ def index(request):
     try:
         init_session_date(request, "s_idate")
         init_session_date(request, "s_edate")
-        return render(request, "index.html", {"item_list": get_workdays(request)})
+        items = get_workdays(request)
+        return render(request, "index.html", {"item_list": items}) 
+
+        
+
+        tasks = {}
+        for item in items:
+            if item.employee not in tasks:
+                tasks[item.employee] = []
+            tasks[item.employee].append(item)
+
+        list_tasks = []
+        for key, value in tasks.items():
+            periods = []
+            for item in value:
+                if item.finish == True:
+                    periods.append((item.ini_date.isoformat(), item.end_date.isoformat()))
+                # else:
+                #     end_date = item.ini_date + timedelta(minutes=15)
+                #     if item.ini_date - datetime.now(tz=timezone) < timedelta(hours=7.5):
+                #         end_date = datetime.now(tz=timezone)
+                #     periods.append((item.ini_date.isoformat(), end_date.isoformat()))
+            if (len(periods) > 0):
+                list_tasks.append({"label": key.name, "periods": [(item.ini_date.isoformat(), item.end_date.isoformat()) for item in value if item.finish == True]})
+        if len(list_tasks) > 0:
+            chart_div = gantt_plotly_view(list_tasks)
+            return render(request, "workdays-list.html", {"item_list": items, "gantt": chart_div})
+        else:
+            return render(request, "workdays-list.html", {"item_list": items}) 
     except Exception as e:
         print(show_exc(e))
         return render(request, "workdays-client-error.html", {})
@@ -80,10 +139,38 @@ def workdays_list(request):
 @group_required("admins","managers")
 def workdays_search(request):
     try:
+        timezone = request.session.get("timezone", "UTC")
         set_session(request, "s_name", get_param(request.GET, "s_name"))
         set_session(request, "s_idate", get_param(request.GET, "s_idate"))
         set_session(request, "s_edate", get_param(request.GET, "s_edate"))
-        return render(request, "workdays-list.html", {"item_list": get_workdays(request)})
+        items = get_workdays(request)
+
+
+        tasks = {}
+        for item in items:
+            if item.employee not in tasks:
+                tasks[item.employee] = []
+            tasks[item.employee].append(item)
+
+        list_tasks = []
+        for key, value in tasks.items():
+            periods = []
+            for item in value:
+                if item.finish == True:
+                    periods.append((item.ini_date.isoformat(), item.end_date.isoformat()))
+                # else:
+                #     end_date = item.ini_date + timedelta(minutes=15)
+                #     if item.ini_date - datetime.now(tz=timezone) < timedelta(hours=7.5):
+                #         end_date = datetime.now(tz=timezone)
+                #     periods.append((item.ini_date.isoformat(), end_date.isoformat()))
+            if (len(periods) > 0):
+                list_tasks.append({"label": key.name, "periods": [(item.ini_date.isoformat(), item.end_date.isoformat()) for item in value if item.finish == True]})
+        if len(list_tasks) > 0:
+            chart_div = gantt_plotly_view(list_tasks)
+            return render(request, "workdays-list.html", {"item_list": items, "gantt": chart_div})
+        else:
+            return render(request, "workdays-list.html", {"item_list": items})
+
     except Exception as e:
         print(show_exc(e))
         return render(request, "workdays-client-error.html", {})
