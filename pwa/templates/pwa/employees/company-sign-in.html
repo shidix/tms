@@ -1,5 +1,5 @@
 {% extends "pwa-base-login.html" %}
-{% load static i18n pwa_tags %}
+{% load static i18n pwa_tags gestion_tags %}
 
 {% block content%}
 <div style="max-width: 800px; overflow-y: auto;" class="mx-auto">
@@ -14,14 +14,14 @@
                             <p class="h5"><strong>¡Fichaje de entrada realizado!</strong></p>
                         </div>
                         <div class="alert alert-success" role="alert">
-                            {{obj.employee.name}} se ha registrado tu hora de entrada a las {{ obj.ini_date|date:"H:i" }} en {{ obj.employee.comp.name}}
+                            {{obj.employee.name}} se ha registrado tu hora de entrada a las {{ obj.ini_date|local_time|date:"H:i" }} en {{ obj.employee.comp.name}}
                         </div>
                         {% else %}
                         <div class="bg-danger text-white p-5 rounded">
                             <p class="h5"><strong>¡Fichaje de salida realizado!</strong></p>
                         </div>
                         <div class="alert alert-danger" role="alert">
-                            {{obj.employee.name}} se ha registrado tu hora de salida a las {{ obj.end_date|date:"H:i" }} en {{ obj.employee.comp.name}}
+                            {{obj.employee.name}} se ha registrado tu hora de salida a las {{ obj.end_date|local_time|date:"H:i" }} en {{ obj.employee.comp.name}}
                         </div>
 
                         {% endif %}
@@ -50,7 +50,11 @@
         if (countdownValue <= 0) {
             clearInterval(countdownInterval);
             // Redirect to the desired URL
+            {% if request.user.is_authenticated %}
+            window.location.href = "{% url 'pwa-employee' %}";
+            {% else %}
             window.location.href = "{% url 'pwa-portal-company-login' comp.uuid %}";
+            {% endif %}
         }
     }, 1000);
 </script>

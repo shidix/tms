@@ -11,7 +11,11 @@
                     Parece que este QR/Código no se corresponde con ningún cliente registrado
                 {% endif %}
             </p>
+            {% if comp %}
+            <a class="btn btn-warning asm w-50" href="{% url "pwa-company-login" comp.uuid %}"><strong>Volver</strong></a>
+            {% else %}
             <a class="btn btn-warning asm w-50" href="{% url "pwa-employee" %}"><strong>Volver</strong></a>
+            {% endif %}
         </div>
     </div>
 

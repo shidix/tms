@@ -54,6 +54,7 @@ input#code.form-control.btn.asm.w-50 {
 }
 .lg-font {
    font-size: 1.3rem;
+   font-weight: 600;
    letter-spacing: 0px;
 }
 
@@ -62,12 +63,12 @@ input#code.form-control.btn.asm.w-50 {
 
 /*********** BUTTONS *************/
 
-.bg-success.asm { 
-    background: #16488b!important;
+.bg-success { 
+    background: #4e9a06 !important;
 }
-.btn-success.asm { 
-    background: #16488b;
-    border:1px solid #16488b;
+.btn-success { 
+    background: #4e9a06;
+    border:1px solid #4e9a06;
     font-size: 1.2rem;
     font-weight: 600;
     text-transform: uppercase;
@@ -91,6 +92,16 @@ input#code.form-control.btn.asm.w-50 {
     border: 1px solid #e35000;
     background: #fdf4ef;
 }
+.btn.btn-info {
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-transform: uppercase;
+
+    color: #fff;
+    border: 1px solid #54afe6;
+    background: #54afe6;
+}
+
 
 
 /*********** END BUTTONS *************/

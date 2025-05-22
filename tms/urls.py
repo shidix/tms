@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path, include
 from django.views.generic.base import RedirectView
+from gestion.views import TMSLoginView
 
 urlpatterns = [
     path('', RedirectView.as_view(pattern_name='index')),
@@ -28,6 +29,7 @@ urlpatterns = [
     path('accounts/login/<slug:chk>/', auth_views.LoginView.as_view(template_name='login.html'), name='auth_login'),
     path('accounts/login/', auth_views.LoginView.as_view(template_name='login.html'), name='auth_login'),
     path('accounts/logout/', auth_views.LogoutView.as_view(next_page='/accounts/login/'), name='auth_logout'),
+    # path('test/', TMSLoginView.as_view(), name='test_login'),
 ]
 
 from django.conf.urls.static import static

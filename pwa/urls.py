@@ -33,9 +33,5 @@ urlpatterns = [
     #path('employee/code-finish', views.employee_code_finish, name="pwa-code-finish"),
     #path('employee/qr-finish/<int:obj_id>', views.employee_qr_finish, name="pwa-qr-finish"),
 
-    #Mockup
-    path('mockup/', views.mockup, name="pwa-mockup"),
-    path('mockup-logged/', views.mockup_qr_scan, name="pwa-mockup-logged"),
-    path('mockup-pin-code/', views.mockup_pin_code, name="pwa-mockup-pin-code"),
 ]
 

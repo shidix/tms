@@ -2,60 +2,61 @@
 {% load static i18n pwa_tags %}
 
 {% block content%}
-    <div class="col-12 p-2 mt-3">
+    <div class="col-12 p-2 mt-2">
         <div class="text-start my-2">
             <!-- button for open modal dialog -->
 
 
             <div class="d-flex justify-content-center">
-                <button type="button" class="btn btn-info w-50 p-5 m-1 " data-bs-toggle="modal" data-bs-target="#modal-dialog">
-                    <i class="fa fa-info-circle"></i> {%trans "Mi QR"%}
+                <button type="button" class="btn btn-info w-50 py-5 m-1 " data-bs-toggle="modal" data-bs-target="#modal-dialog">
+			<i class="fa fa-info-circle"></i><br />{%trans "Mi QR"%}
                 </button>
             {% if obj == None %}
                 {% comment %}
                 <a class="btn btn-success asm w-100 py-3" href="{%url 'pwa-qr-scan'%}">Entrar con QR</a>
                 <br/><br/><br/>
                 {% endcomment %}
-                <a class="btn btn-success w-50 p-5 m-1" href="{%url 'pwa-check-clock' employee.uuid %}">Fichar Entrada</a>
+		<a class="btn btn-success w-50 py-5 m-1" href="{%url 'pwa-check-clock' employee.uuid %}"><i class="fa fa-clock-o"></i><br />Fichar Entrada</a>
             {% else %}
                     {% comment %}
                     <a class="btn btn-danger asm w-100 py-3" href="{%url 'pwa-qr-scan-finish'%}">Salir </a>
                     {% endcomment %}
-                <a class="btn btn-danger w-50 m-1 p-5" href="{%url 'pwa-check-clock' employee.uuid %}">Fichar salida</a>
+                <a class="btn btn-danger w-50 m-1 py-5" href="{%url 'pwa-check-clock' employee.uuid %}"><i class="fa fa-clock-o"></i><br />Fichar salida</a>
             </div>
             <br/>
-            <div class="row">
-                <p class="info text-center p-2 col-12">{%trans "Ha iniciado su jornada laboral en: "%}</p>
-                <p class="name text-center p-2 col-12">{{obj.employee.comp.name}}</p>
-                <p  class="date text-center col-12">
-                    <i class="fa fa-clock-o"></i> {%trans "Inicio: "%} {{obj.ini_date|local_time|date:"d-m-Y H:i"}}</span></p>
-            {% endif %}
-            </div>
 
-            <div class="row mt-3">
-                <div class="col-6 text-center">{% trans "Año" %}</div>
-                <div class="col-6 text-center">{% trans "Mes" %}</div>
-            </div>
-            <div class="row mb-4">
-                <div class="col-6 text-center">
-                    <select class="form-control ark_change" id="year" name="year" 
-                        data-url="{% url "pwa-update-year" %}" data-target="workdays-list" data-month="{{current_month}}">
-                        {% for year in year_list %}
-                            <option value="{{year}}" {%if current_year == year%}selected{%endif%}>{{year}}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-6 text-center">
-                    <select class="form-control ark_change" id="month" name="month" 
-                        data-url="{% url "pwa-update-month" %}" data-target="workdays-list" data-year="{{current_year}}">
-                        {% for month in month_list %}
-                            <option value="{{month}}" {%if current_month == month%}selected{%endif%}>{{month}}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
+		    <div class="row">
+			<p class="info text-center p-2 col-12">{%trans "Ha iniciado su jornada laboral en: "%}</p>
+			<p class="name text-center p-2 col-12">{{obj.employee.comp.name}}</p>
+			<p  class="date text-center col-12">
+			    <i class="fa fa-clock-o"></i> {%trans "Inicio: "%} {{obj.ini_date|local_time|date:"d-m-Y H:i"}}</span></p>
+		    {% endif %}
+		    </div>
 
-            <div id="workdays-list">{% include "pwa/employees/workdays-list.html" %}</div>
+	    <div class="m-1 mt-3">
+		    <div class="row m-0" style="align-items: center;">
+			<div class="col-2 text-center">{% trans "Año" %}</div>
+			<div class="col-4 text-center">
+			    <select class="form-control ark_change text-center" id="year" name="year" 
+				data-url="{% url "pwa-update-year" %}" data-target="workdays-list" data-month="{{current_month}}">
+				{% for year in year_list %}
+				    <option value="{{year}}" {%if current_year == year%}selected{%endif%}>{{year}}</option>
+				{% endfor %}
+			    </select>
+			</div>
+			<div class="col-2 text-center">{% trans "Mes" %}</div>
+			<div class="col-4 text-center">
+			    <select class="form-control ark_change text-center" id="month" name="month" 
+				data-url="{% url "pwa-update-month" %}" data-target="workdays-list" data-year="{{current_year}}">
+				{% for month in month_list %}
+				    <option value="{{month}}" {%if current_month == month%}selected{%endif%}>{{month}}</option>
+				{% endfor %}
+			    </select>
+			</div>
+		    </div>
+            	    <div id="workdays-list" class="mt-3" style="border:1px solid #ccc; background-color: white;border-radius: 0.25rem;">{% include "pwa/employees/workdays-list.html" %}</div>
+	      </div>
+
         </div>
     </div>
 

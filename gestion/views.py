@@ -8,6 +8,10 @@ from datetime import datetime, timedelta
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.utils.timezone import localtime
+from django.views.decorators.cache import never_cache
+from django.contrib.auth.views import LoginView
+from django.utils.decorators import method_decorator
+
 
 
 
@@ -22,33 +26,124 @@ from .forms import CompanyForm, ManagerForm
 
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 from plotly.offline import plot
+from zoneinfo import ZoneInfo
 
-def gantt_plotly_view(tasks):
+def localtime(dt, tz=None):
+    if tz is None:
+        tz = ZoneInfo("Atlantic/Canary")
+    return dt.astimezone(tz)
+
+
+
+def gantt_plotly_view(items):
 
     # Expandimos en filas de un DataFrame
-    rows = []
-    for task in tasks:
-        for i, (start, end) in enumerate(task["periods"]):
-            rows.append({
-                "Task": task["label"],
-                "Start": pd.to_datetime(start),
-                "Finish": pd.to_datetime(end),
-                "ID": f'{task["label"]}-{i+1}'
-            })
+    try:
+        import plotly.colors as pc
+        tasks = {}
+        for item in items:
+            if item.employee not in tasks:
+                tasks[item.employee] = []
+            tasks[item.employee].append(item)
 
-    df = pd.DataFrame(rows)
+        list_tasks = []
+        color = 0
+        for key, value in tasks.items():
+            periods = []
+            for item in value:
+                if item.finish == True:
+                    periods.append((item.ini_date.isoformat(), item.end_date.isoformat(), item.pk))
+                else:
+                    try:
+                        periods.append((item.ini_date.isoformat(), item.ini_date.isoformat(), item.pk))
+                    except Exception as e:
+                        print(show_exc(e))
+                        pass
 
-    # Crear gráfico
-    fig = px.timeline(df, x_start="Start", x_end="Finish", y="Task", color="Task", hover_name="ID")
-    fig.update_yaxes(autorange="reversed")  # Estilo Gantt
-    fig.update_layout(title="Diagrama de Gantt", height=400)
+            if (len(periods) > 0):
+                list_tasks.append({"label": key.name, "periods": periods, "color":color})
+            color += 1
 
-    chart_div = plot(fig, output_type='div')
-    return (chart_div)
+        # Usa una paleta de 16 colores distintos (Plotly's qualitative palette)
+        colores = pc.qualitative.Plotly  
+        colores += pc.qualitative.D3  
+        if len(list_tasks) > 0:
+            rows = []
+            milestones  = []
+            for task in list_tasks:  
+                for i, (start, end, uuid) in enumerate(task["periods"]):
+                    diff = pd.to_datetime(end) - pd.to_datetime(start)
+                    index = task
+                    if (diff.total_seconds() > 60):
+                        rows.append({
+                            "Empleado": task["label"],
+                            "Entrada": localtime(pd.to_datetime(start)),
+                            "Salida": localtime(pd.to_datetime(end)),
+                            "ID": f'{task["label"]}-{i+1}',
+                            "UUID": uuid,
+                            "Color": colores[task["color"]],
+                        })
+                    else:
+                        milestones.append({
+                            "Empleado": task["label"],
+                            "Entrada": localtime(pd.to_datetime(start)),
+                            "Salida": localtime(pd.to_datetime(end)),
+                            "ID" : f'{task["label"]}-{i+1}',
+                            "UUID": uuid,
+                            "Color": colores[task["color"]],
+                        })
+            if (len(rows) >0):
+                df = pd.DataFrame(rows)
+                fig = px.timeline(df, x_start="Entrada", x_end="Salida", y="Empleado", color="Empleado", hover_name="Empleado", custom_data=["UUID"],  )
+            else:
+                fig = go.Figure()
+   
+            fig.update_yaxes(autorange="reversed")  # Estilo Gantt
+            fig.update_layout(title="Gráfico de asistencias", height=400)
 
+            for i, milestone in enumerate(milestones):
+                marker = dict(
+                    symbol="diamond",
+                    size=10,
+                    color="black",
+                    line=dict(width=2, color="black"),
+                )
+                fig.add_trace(go.Scatter(
+                    customdata=[[milestone["UUID"]]],
+                    
+                    x=[milestone["Entrada"]],
+                    y=[milestone["Empleado"]],
+                    mode="markers",
+                    marker=marker,
+                    text=milestone["Entrada"].strftime("%H:%M"),
+                    showlegend=False,
+                    name=milestone["Empleado"],
+                    hovertemplate=f"<b>{milestone['Empleado']}</b><br>Entrada: {milestone['Entrada'].strftime('%H:%M')}<br>Salida: {milestone['Salida'].strftime('%H:%M')}<extra></extra>",
+                ))
 
+            chart_div = plot(fig, output_type='div')
+            return (chart_div)
+        else:
+            return None
+    except Exception as e:
+        print(show_exc(e))
+        return None
 
+@method_decorator(never_cache, name='dispatch')
+class TMSLoginView(LoginView):
+    template_name = 'login.html'
+    redirect_authenticated_user = True
+
+    def form_valid(self, form):
+        # Perform the login
+        login(self.request, form.get_user())
+        # Redirect to the next page
+        return redirect(self.get_success_url())
+
+    def get_success_url(self):
+        return reverse('index')
 
 def init_session_date(request, key):
     #if not key in request.session:
@@ -96,34 +191,8 @@ def index(request):
         init_session_date(request, "s_idate")
         init_session_date(request, "s_edate")
         items = get_workdays(request)
-        return render(request, "index.html", {"item_list": items}) 
-
-        
-
-        tasks = {}
-        for item in items:
-            if item.employee not in tasks:
-                tasks[item.employee] = []
-            tasks[item.employee].append(item)
-
-        list_tasks = []
-        for key, value in tasks.items():
-            periods = []
-            for item in value:
-                if item.finish == True:
-                    periods.append((item.ini_date.isoformat(), item.end_date.isoformat()))
-                # else:
-                #     end_date = item.ini_date + timedelta(minutes=15)
-                #     if item.ini_date - datetime.now(tz=timezone) < timedelta(hours=7.5):
-                #         end_date = datetime.now(tz=timezone)
-                #     periods.append((item.ini_date.isoformat(), end_date.isoformat()))
-            if (len(periods) > 0):
-                list_tasks.append({"label": key.name, "periods": [(item.ini_date.isoformat(), item.end_date.isoformat()) for item in value if item.finish == True]})
-        if len(list_tasks) > 0:
-            chart_div = gantt_plotly_view(list_tasks)
-            return render(request, "workdays-list.html", {"item_list": items, "gantt": chart_div})
-        else:
-            return render(request, "workdays-list.html", {"item_list": items}) 
+        gantt = gantt_plotly_view(items)
+        return render(request, "index.html", {"item_list": items, "gantt": gantt}) 
     except Exception as e:
         print(show_exc(e))
         return render(request, "workdays-client-error.html", {})
@@ -139,46 +208,26 @@ def workdays_list(request):
 @group_required("admins","managers")
 def workdays_search(request):
     try:
-        timezone = request.session.get("timezone", "UTC")
         set_session(request, "s_name", get_param(request.GET, "s_name"))
         set_session(request, "s_idate", get_param(request.GET, "s_idate"))
         set_session(request, "s_edate", get_param(request.GET, "s_edate"))
         items = get_workdays(request)
-
-
-        tasks = {}
-        for item in items:
-            if item.employee not in tasks:
-                tasks[item.employee] = []
-            tasks[item.employee].append(item)
-
-        list_tasks = []
-        for key, value in tasks.items():
-            periods = []
-            for item in value:
-                if item.finish == True:
-                    periods.append((item.ini_date.isoformat(), item.end_date.isoformat()))
-                # else:
-                #     end_date = item.ini_date + timedelta(minutes=15)
-                #     if item.ini_date - datetime.now(tz=timezone) < timedelta(hours=7.5):
-                #         end_date = datetime.now(tz=timezone)
-                #     periods.append((item.ini_date.isoformat(), end_date.isoformat()))
-            if (len(periods) > 0):
-                list_tasks.append({"label": key.name, "periods": [(item.ini_date.isoformat(), item.end_date.isoformat()) for item in value if item.finish == True]})
-        if len(list_tasks) > 0:
-            chart_div = gantt_plotly_view(list_tasks)
-            return render(request, "workdays-list.html", {"item_list": items, "gantt": chart_div})
-        else:
-            return render(request, "workdays-list.html", {"item_list": items})
-
+        chart_div = gantt_plotly_view(items)
+        return render(request, "workdays-list.html", {"item_list": items, "gantt": chart_div})
     except Exception as e:
         print(show_exc(e))
         return render(request, "workdays-client-error.html", {})
 
-@group_required("admins",)
+@group_required("admins","managers")
 def workdays_form(request):
     obj = get_or_none(Workday, get_param(request.GET, "obj_id"))
-    context = {'obj': obj, 'emp_list': Employee.objects.all()}
+    if request.user.is_superuser:
+        context = {'obj': obj, 'emp_list': Employee.objects.all()}
+    else:
+        if request.user.manager:
+            context = {'obj': obj, 'emp_list': Employee.objects.filter(comp=request.user.manager.comp)}
+            
+        
     return render(request, "workdays-form.html", context)
 
 @group_required("admins",)

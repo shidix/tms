@@ -40,7 +40,9 @@
                         <span class="employee-name">{{user.employee.name}} </span> 
                     </div> 
                     <div class="col-1 offset-1 pt-3">
+                        {% if request.user.is_authenticated %}
                         <strong><a class="btn btn-light btn-sm powericon" href="{% url 'pwa-logout' %}"><i class="fas fa-power-off"></i></a></strong>
+                        {% endif %}
                     </div>
                 </div>
             </div>

@@ -1,12 +1,14 @@
 {% load i18n gestion_tags %}
 <div class="row list-item-cl pt-2 pb-2 m-0">
-    <div class="col-12"> <small><i class="fas fa-user orange"></i></small> 
+    <div class="col-12 col-lg-4 "> <small><i class="fas fa-user orange"></i></small> 
         <strong>{{item.employee.name}}</strong></div>
-    <div class="col-6 mt-2"> <small>{% trans 'Hora entrada' %}</small> <br />
+    <div class="col-6 mt-2 col-lg-3"><span class="d-block d-lg-none"> <small>{% trans 'Hora entrada' %}</small> <br /></span>
         <span class="badge bg-success-outline datetime w-100" >{{item.ini_date|local_time|date:"d-m-Y H:i"}}</span> </div>
+    <div class="col-6 mt-2 col-lg-3"> <span class="d-block d-lg-none"><small>{% trans 'Hora salida' %}</small> <br /></span>
         {% if item.finish %}
-    <div class="col-6 mt-2"> <small>{% trans 'Hora salida' %}</small> <br />
         <span class="badge bg-danger-outline datetime w-100" >{{item.end_date|local_time|date:"d-m-Y H:i"}}</span>
-    </div>
-    {% endif %}
+        {% endif %}</div>
+
+    <div class="col-12 col-lg-2 text-center">
+        <button class="btn btn-xs ark" data-url="{% url 'workdays-form' %}" data-obj_id="{{item.id}}" data-target-modal="common-modal" id="button-{{item.pk}}"><i class="fas fa-edit"></i></button></div>
 </div>

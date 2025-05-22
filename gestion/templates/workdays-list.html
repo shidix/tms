@@ -7,3 +7,20 @@
 {% endfor %}
 </div>
 
+{% if gantt %}
+<div id="gantt-div" >
+    {{ gantt|safe }}
+</div>
+
+  <script>
+    ganttDiv = document.querySelector("#gantt-div").querySelector(".plotly-graph-div");
+
+    ganttDiv.on('plotly_click', function(data) {
+        
+        const point = data.points[0];
+        const uuid = point.customdata[0];
+        button = $("#button-" + uuid);
+        button.click();
+    });
+  </script>
+{% endif %}

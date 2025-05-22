@@ -42,9 +42,16 @@ def pin_login(request):
     return render(request, "pwa-login.html", {'msg': msg})
 
 def pin_logout(request):
-    comp_uuid = request.user.employee.comp.uuid
-    logout(request)
-    return redirect(reverse('pwa-portal-company-login', kwargs={'uuid': comp_uuid}))
+    try:
+        if request.user.is_aunthenticated:
+            comp_uuid = request.user.employee.comp.uuid
+            logout(request)
+            return redirect(reverse('pwa-portal-company-login', kwargs={'uuid': comp_uuid}))
+        else:
+            return redirect(reverse('pwa-login'))
+    except Exception as e:
+        print(show_exc(e))
+        return redirect(reverse('pwa-login'))
 
 '''
     EMPLOYEES
@@ -155,62 +162,6 @@ def employee_check_clock(request, uuid = None):
         print(show_exc(e))
         return render(request, "pwa/employees/qr-error.html", {})
 
-
-def mockup(request):
-    try:
-        return render(request, "pwa/employees/mockup.html", {})
-
-    except Exception as e:
-        print(show_exc(e))
-        return render(request, "pwa/employees/qr-error.html", {})
-    
-def mockup_qr_scan(request):
-    try:
-        json_data = {"registers":[]}
-
-        start_date = datetime.now().replace(hour=7, minute=0, second=0, microsecond=0)
-
-        for i in range(30):
-            in_date = start_date - timedelta(days=i) + timedelta(hours=random.randint(0, 2), minutes=random.randint(0, 59))
-            out_date = in_date + timedelta(hours=random.randint(6, 10), minutes=random.randint(0, 59))
-            in_item = {
-                "id": i,
-                "name": f"Juan",
-                "surname": f"Pérez",
-                "dni": f"12345678Z",
-                "date": in_date,
-                "type": "IN"
-            }
-            json_data["registers"].append(in_item)
-
-            out_item = {
-                "id": i,
-                "name": f"Juan",
-                "surname": f"Pérez",
-                "dni": f"12345678Z",
-                "date": out_date,
-                "type": "OUT"
-            }
-            json_data["registers"].append(out_item)
-
-
-
-        # Sort the list by date
-        json_data["registers"].sort(key=lambda x: x["date"], reverse=True)
-
-        return render(request, "pwa/employees/mockup-logged.html", {"items": json_data["registers"]})
-    except Exception as e:
-        print(show_exc(e))
-        return render(request, "pwa/employees/qr-error.html", {})
-
-def mockup_pin_code(request):
-    try:
-        in_or_out = random.choice(["IN", "OUT"])
-        return render(request, "pwa/employees/mockup-pin-code.html", {"in_or_out": in_or_out})
-    except Exception as e:
-        print(show_exc(e))
-        return render(request, "pwa/employees/qr-error.html", {})
-
 def pwa_company_login(request, uuid=None):
     try:
         if request.method == "POST":
@@ -225,6 +176,7 @@ def pwa_company_login(request, uuid=None):
                 try:
                     emp = Employee.objects.filter(comp=comp, pin=pin).get()
                     if emp == None:
+                        print(1)
                         return render(request, "pwa/employees/company-login.html", {'comp': comp})
                     
                     if request.user.is_authenticated:
@@ -277,7 +229,7 @@ def pwa_company_login(request, uuid=None):
                     return render(request, "pwa/employees/company-login.html", {'comp': comp})
                 except Exception as e:
                     print(show_exc(e))
-                    return render(request, "pwa/employees/qr-error.html", {})
+                    return render(request, "pwa/employees/qr-error.html", {"comp":comp, 'msg': "Pin no válido"})
         else:
             comp = get_or_none(Company, uuid, "uuid")
             if comp == None:
