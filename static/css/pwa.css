@@ -2,6 +2,10 @@
 .text-white {
     color: #ffffff; 
 }
+
+.text-dark {
+   color: #000000;
+}
 .tiny {
     font-size:0.6em; 
     color: #000000;
@@ -58,6 +62,11 @@ input#code.form-control.btn.asm.w-50 {
    letter-spacing: 0px;
 }
 
+i.fa.fa-info-circle, 
+i.fa.fa-clock-o {
+	font-size: 1.8rem;
+}
+
 /*********** END UTILS *************/
 
 
@@ -78,7 +87,7 @@ input#code.form-control.btn.asm.w-50 {
     -webkit-box-shadow: 0 1px 5px rgba(0,0,0,0.2);
 }
 
-.btn.btn-danger.asm {
+.btn.btn-danger {
     text-transform: uppercase;
     font-size: 1.2rem;
     font-weight: 600;
@@ -162,7 +171,7 @@ img.logo {
 /*********** CONTENT *************/
 
 body {
-    background: #f5f5f5;
+    background: #f1f6f9;
 }
 
 .container-fluid {
@@ -199,6 +208,24 @@ a.asm {
 .column-btns-01, .column-btns-02, .column-btns-03 {
     display:inline-block; 
     vertical-align: top;
+}
+
+.headtb {
+    background: #dde5e9;
+    color: #6c757d;
+}
+
+.itemtb {
+    border-top:1px solid #dfdfdf;
+}
+
+.line-register {
+	align-items: center;
+}
+.workdays-list-box {
+    border:1px solid #ccc; 
+    background-color: white;
+    border-radius: 0.25rem;
 }
 
 /*********** QR *************/
@@ -248,7 +275,7 @@ p.name {
     text-transform: Capitalize;
     font-weight: 600;
     font-size: 1.5rem;
-    color: #f2902d;
+    color: #54afe6;
 }
 p.date {
     color: #333 !important;

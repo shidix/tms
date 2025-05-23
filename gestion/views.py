@@ -86,26 +86,52 @@ def gantt_plotly_view(items):
                             "Color": colores[task["color"]],
                         })
                     else:
+                        if (diff.total_seconds() > 0):
+                            mycolor = "orange"
+                            symbol = "diamond"
+                        else:
+                            mycolor = "red"
+                            symbol = "x"
                         milestones.append({
                             "Empleado": task["label"],
                             "Entrada": localtime(pd.to_datetime(start)),
                             "Salida": localtime(pd.to_datetime(end)),
                             "ID" : f'{task["label"]}-{i+1}',
                             "UUID": uuid,
-                            "Color": colores[task["color"]],
+                            "Color": mycolor,
+                            "Symbol": symbol,
                         })
             if (len(rows) >0):
                 df = pd.DataFrame(rows)
                 fig = px.timeline(df, x_start="Entrada", x_end="Salida", y="Empleado", color="Empleado", hover_name="Empleado", custom_data=["UUID"],  )
             else:
                 fig = go.Figure()
-   
+
+            first_day = list(items)[0].ini_date
+            last_day = list(items)[-1].end_date
+            diff_in_seconds = abs((last_day - first_day).total_seconds())
+
+            if diff_in_seconds > 14 * 24 * 3600:
+                dtick = 12
+            elif diff_in_seconds > 7 * 24 * 3600:
+                dtick = 8
+            elif diff_in_seconds > 3 * 24 * 3600:
+                dtick = 4
+            elif diff_in_seconds > 24 * 3600:
+                dtick = 1
+            elif diff_in_seconds > 12 * 3600:
+                dtick = 0.5
+            else:
+                dtick = 0.25
+            
+
+
             fig.update_yaxes(autorange="reversed")  # Estilo Gantt
-            fig.update_layout(title="Gráfico de asistencias", height=400)
+            fig.update_layout(title="Gráfico de asistencias", height=400, xaxis_dtick=dtick*3600000)
 
             for i, milestone in enumerate(milestones):
                 marker = dict(
-                    symbol="diamond",
+                    symbol=milestone["Symbol"],
                     size=10,
                     color="black",
                     line=dict(width=2, color="black"),
@@ -122,6 +148,22 @@ def gantt_plotly_view(items):
                     name=milestone["Empleado"],
                     hovertemplate=f"<b>{milestone['Empleado']}</b><br>Entrada: {milestone['Entrada'].strftime('%H:%M')}<br>Salida: {milestone['Salida'].strftime('%H:%M')}<extra></extra>",
                 ))
+
+            fig.add_trace(go.Scatter(
+                x=[None],
+                y=[None],
+                mode='markers',
+                name='Fichajes muy cortos',
+                marker=dict(symbol='diamond', size=10, color='black')
+            ))
+
+            fig.add_trace(go.Scatter(
+                x=[None],
+                y=[None],
+                mode='markers',
+                name='Fichajes abiertos',
+                marker=dict(symbol='x', size=10, color='black')
+            ))
 
             chart_div = plot(fig, output_type='div')
             return (chart_div)
@@ -145,6 +187,15 @@ class TMSLoginView(LoginView):
     def get_success_url(self):
         return reverse('index')
 
+def redraw_plotty(request):
+    try:
+        items = get_workdays(request)
+        gantt = gantt_plotly_view(items)
+        return render(request, "gantt.html", {"gantt": gantt})
+    except Exception as e:
+        print(show_exc(e))
+        return render(request, "workdays-client-error.html", {})
+
 def init_session_date(request, key):
     #if not key in request.session:
     set_session(request, key, datetime.now().strftime("%Y-%m-%d"))
@@ -166,7 +217,28 @@ def get_workdays(request):
         else:
             raise Exception("No se ha podido obtener la empresa del usuario")
 
-    return Workday.objects.filter(**kwargs).order_by("-ini_date")
+    items_started_in = Workday.objects.filter(**kwargs).order_by("-ini_date")
+
+    i_date = datetime.strptime("{} 00:00".format(get_session(request, "s_idate")), "%Y-%m-%d %H:%M")
+    e_date = datetime.strptime("{} 23:59".format(get_session(request, "s_edate")), "%Y-%m-%d %H:%M")
+
+    kwargs = {"end_date__gte": i_date, "end_date__lte": e_date}
+    if value != "":
+        kwargs["employee__name__icontains"] = value
+
+    if not request.user.is_superuser:
+        if Manager.objects.filter(user=request.user).exists():
+            kwargs["employee__comp"] = Manager.objects.get(user=request.user).comp
+        elif Employee.objects.filter(user=request.user).exists():
+            kwargs["employee__comp"] = Employee.objects.get(user=request.user).comp
+        else:
+            raise Exception("No se ha podido obtener la empresa del usuario")
+
+    items_finished_in = Workday.objects.filter(**kwargs).order_by("-ini_date")
+
+    # Merge the two querysets
+    items = list(items_started_in) + list(items_finished_in)
+    return set(items)
 
 @login_required
 def change_password(request):
@@ -230,7 +302,7 @@ def workdays_form(request):
         
     return render(request, "workdays-form.html", context)
 
-@group_required("admins",)
+@group_required("admins","managers")
 def workdays_form_save(request):
     from datetime import datetime
     from zoneinfo import ZoneInfo
@@ -254,14 +326,34 @@ def workdays_form_save(request):
     obj.end_date = edate
     obj.finish = True if finish != "" else False
     obj.save()
-    return render(request, "workdays-list.html", {"item_list": get_workdays(request)})
+    items = get_workdays(request)
+    
+    gantt = gantt_plotly_view(items)
+    return render(request, "workdays-list.html", {"item_list":items, "gantt": gantt})
 
-@group_required("admins",)
+@group_required("admins", "managers")
 def workdays_remove(request):
-    obj = get_or_none(Workday, request.GET["obj_id"]) if "obj_id" in request.GET else None
-    if obj != None:
-        obj.delete()
-    return render(request, "workdays-list.html", {"item_list": get_workdays(request)})
+    try:
+        if request.method == "GET":
+            obj = get_or_none(Workday, request.GET["obj_id"]) if "obj_id" in request.GET else None
+            set_session(request, "s_name", get_param(request.GET, "s_name"))
+            set_session(request, "s_idate", get_param(request.GET, "s_idate"))
+            set_session(request, "s_edate", get_param(request.GET, "s_edate"))
+        else:
+            obj = get_or_none(Workday, request.POST["obj_id"]) if "obj_id" in request.POST else None
+            set_session(request, "s_name", get_param(request.POST, "s_name"))
+            set_session(request, "s_idate", get_param(request.POST, "s_idate"))
+            set_session(request, "s_edate", get_param(request.POST, "s_edate"))
+        if obj != None:
+            obj.delete()
+
+        items = get_workdays(request)
+        gantt = gantt_plotly_view(items)
+        return render(request, "workdays-list.html", {"item_list": items, "gantt": gantt})
+    except Exception as e:
+        print(show_exc(e))
+        return render(request, "workdays-client-error.html", {})
+
 
 def workdays_client(request, client_id):
     return render(request, "workdays-client-error.html", {})
@@ -489,7 +581,6 @@ def managers_save(request):
                 companies = Company.objects.all()
                 return render(request, "managers/managers-form.html", {'form': form, 'obj': obj, 'new': False, 'companies':companies}, status=500)
         else:
-            print(3)
             return redirect("managers")
     except Exception as e:
         print(show_exc(e))

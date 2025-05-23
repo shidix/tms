@@ -1,15 +1,8 @@
 {% load i18n gestion_tags %}
-<div class="row">
-{% for item in item_list %}
-    <div class="col-12 col-lg-12 list-item pt-2 pb-2 m-0" id="row_{{item.id}}">
-        {% include "workdays-item.html" %}
-    </div>
-{% endfor %}
-</div>
 
 {% if gantt %}
 <div id="gantt-div" >
-    {{ gantt|safe }}
+  {% include "gantt.html" %}
 </div>
 
   <script>
@@ -24,3 +17,11 @@
     });
   </script>
 {% endif %}
+
+<div class="row">
+{% for item in item_list %}
+    <div class="col-12 col-lg-12 list-item pt-2 pb-2 m-0" id="row_{{item.id}}">
+        {% include "workdays-item.html" %}
+    </div>
+{% endfor %}
+</div>

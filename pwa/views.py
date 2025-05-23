@@ -43,7 +43,7 @@ def pin_login(request):
 
 def pin_logout(request):
     try:
-        if request.user.is_aunthenticated:
+        if request.user.is_authenticated:
             comp_uuid = request.user.employee.comp.uuid
             logout(request)
             return redirect(reverse('pwa-portal-company-login', kwargs={'uuid': comp_uuid}))

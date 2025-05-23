@@ -10,5 +10,7 @@
         {% endif %}</div>
 
     <div class="col-12 col-lg-2 text-center">
-        <button class="btn btn-xs ark" data-url="{% url 'workdays-form' %}" data-obj_id="{{item.id}}" data-target-modal="common-modal" id="button-{{item.pk}}"><i class="fas fa-edit"></i></button></div>
+        <button class="btn btn-xs ark" data-url="{% url 'workdays-form' %}" data-obj_id="{{item.id}}" data-target-modal="common-modal" id="button-{{item.pk}}"><i class="fas fa-edit"></i></button>
+         <a class="btn btn-xs ark" data-url="{% url "workdays-remove" %}" data-target="item_list" data-obj_id="{{item.id}}" id="button-remove-{{item.pk}}" title="{% trans 'Borrar' %}" data-confirm="{% trans "Are you sure to remove this element?" %}"><i class="fas fa-trash"></i></a> 
+    </div>
 </div>

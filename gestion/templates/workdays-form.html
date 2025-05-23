@@ -43,8 +43,14 @@
     </div>
 
     <div class="d-flex justify-content-end p-2">
-        <button class="btn btn-primary saveform" data-bs-dismiss="modal" data-form="form-save" data-target="item-list">
+        <button class="btn btn-primary saveform m-2" data-bs-dismiss="modal" data-form="form-save" data-target="item-list">
             {% trans "Guardar" %}</button>
+        <a class="btn btn-danger saveform m-2" data-bs-dismiss="modal" data-form="form-remove" data-target="item-list" data-confirm="{% trans '¡¡¡Va a a eliminar el registro!!!' %}">
+            {% trans "Eliminar" %}</a>
+
+        
+
+
         {%comment%}
         <button type="button" class="btn btn-primary ark" data-bs-dismiss="modal" data-url="{% url "index" %}"
             data-target="emp-list">{% trans "Guardar" %}</button>
@@ -52,3 +58,19 @@
     </div>
 </form>
 
+<div class="display:none;">
+    <form id="form-remove" method="POST" action="{% url 'workdays-remove' %}">
+        {% csrf_token %}
+        <input type="hidden" name="obj_id" value="{{ obj.pk }}">
+        <input type="hidden" name="s_idate" value="{{ s_idate }}" id="remove-s_idate">
+        <input type="hidden" name="s_edate" value="{{ s_edate }}" id="remove-s_edate">
+        <input type="hidden" name="s_name" value="{{ s_name }}" id="remove-s_name">
+    </form>
+    <script>
+        $('#remove-s_idate').val($('#form-search #s_idate').val());
+        $('#remove-s_edate').val($('#form-search #s_edate').val());
+        $('#remove-s_name').val($('#form-search #s_name').val());
+    </script>
+
+
+</div>

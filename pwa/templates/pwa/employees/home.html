@@ -9,19 +9,19 @@
 
             <div class="d-flex justify-content-center">
                 <button type="button" class="btn btn-info w-50 py-5 m-1 " data-bs-toggle="modal" data-bs-target="#modal-dialog">
-			<i class="fa fa-info-circle"></i><br />{%trans "Mi QR"%}
+			<i class="fa fa-info-circle"></i><br /><br />{%trans "Mi QR"%}
                 </button>
             {% if obj == None %}
                 {% comment %}
                 <a class="btn btn-success asm w-100 py-3" href="{%url 'pwa-qr-scan'%}">Entrar con QR</a>
                 <br/><br/><br/>
                 {% endcomment %}
-		<a class="btn btn-success w-50 py-5 m-1" href="{%url 'pwa-check-clock' employee.uuid %}"><i class="fa fa-clock-o"></i><br />Fichar Entrada</a>
+		<a class="btn btn-success w-50 py-5 m-1" href="{%url 'pwa-check-clock' employee.uuid %}"><i class="fa fa-clock-o"></i><br /><br />Fichar Entrada</a>
             {% else %}
                     {% comment %}
                     <a class="btn btn-danger asm w-100 py-3" href="{%url 'pwa-qr-scan-finish'%}">Salir </a>
                     {% endcomment %}
-                <a class="btn btn-danger w-50 m-1 py-5" href="{%url 'pwa-check-clock' employee.uuid %}"><i class="fa fa-clock-o"></i><br />Fichar salida</a>
+                <a class="btn btn-danger w-50 m-1 py-5" href="{%url 'pwa-check-clock' employee.uuid %}"><i class="fa fa-clock-o"></i><br /><br />Fichar salida</a>
             </div>
             <br/>
 
@@ -34,8 +34,8 @@
 		    </div>
 
 	    <div class="m-1 mt-3">
-		    <div class="row m-0" style="align-items: center;">
-			<div class="col-2 text-center">{% trans "Año" %}</div>
+		    <div class="row m-0 line-register">
+			<div class="col-2 text-center text-dark">{% trans "Año" %}</div>
 			<div class="col-4 text-center">
 			    <select class="form-control ark_change text-center" id="year" name="year" 
 				data-url="{% url "pwa-update-year" %}" data-target="workdays-list" data-month="{{current_month}}">
@@ -44,7 +44,7 @@
 				{% endfor %}
 			    </select>
 			</div>
-			<div class="col-2 text-center">{% trans "Mes" %}</div>
+			<div class="col-2 text-center text-dark">{% trans "Mes" %}</div>
 			<div class="col-4 text-center">
 			    <select class="form-control ark_change text-center" id="month" name="month" 
 				data-url="{% url "pwa-update-month" %}" data-target="workdays-list" data-year="{{current_year}}">
@@ -54,7 +54,7 @@
 			    </select>
 			</div>
 		    </div>
-            	    <div id="workdays-list" class="mt-3" style="border:1px solid #ccc; background-color: white;border-radius: 0.25rem;">{% include "pwa/employees/workdays-list.html" %}</div>
+            	    <div id="workdays-list" class="workdays-list-box mt-3">{% include "pwa/employees/workdays-list.html" %}</div>
 	      </div>
 
         </div>
