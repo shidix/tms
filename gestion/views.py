@@ -264,7 +264,8 @@ def index(request):
         init_session_date(request, "s_edate")
         items = get_workdays(request)
         gantt = gantt_plotly_view(items)
-        return render(request, "index.html", {"item_list": items, "gantt": gantt}) 
+        list_dates = [ datetime.now().date() + timedelta(days=i) for i in range(-6, 1) ]
+        return render(request, "index.html", {"item_list": items, "gantt": gantt, "list_dates": list_dates}) 
     except Exception as e:
         print(show_exc(e))
         return render(request, "workdays-client-error.html", {})
@@ -272,7 +273,8 @@ def index(request):
 @group_required("admins",)
 def workdays_list(request):
     try:
-        return render(request, "workdays-list.html", {"item_list": get_workdays(request)})
+        list_dates = [ datetime.now().date() + timedelta(days=i) for i in range(-6, 1) ]
+        return render(request, "workdays-list.html", {"item_list": get_workdays(request), "list_dates": list_dates})
     except Exception as e:
         print(show_exc(e))
         return render(request, "workdays-client-error.html", {})
@@ -285,7 +287,24 @@ def workdays_search(request):
         set_session(request, "s_edate", get_param(request.GET, "s_edate"))
         items = get_workdays(request)
         chart_div = gantt_plotly_view(items)
-        return render(request, "workdays-list.html", {"item_list": items, "gantt": chart_div})
+        list_dates = [ datetime.now().date() + timedelta(days=i) for i in range(-6, 1) ]
+        return render(request, "workdays-list.html", {"item_list": items, "gantt": chart_div, "list_dates": list_dates})
+    except Exception as e:
+        print(show_exc(e))
+        return render(request, "workdays-client-error.html", {})
+
+@group_required("admins","managers")
+def workdays_search_in_date(request):
+    try:
+        set_session(request, "s_idate", get_param(request.POST, "day"))
+        set_session(request, "s_edate", get_param(request.POST, "day"))
+        items = get_workdays(request)
+        chart_div = gantt_plotly_view(items)
+        # last 7 days in list_dates
+        list_dates = [ (datetime.now().date() + timedelta(days=i)) for i in range(-6, 1) ]
+        current_date = datetime.strptime(get_session(request, "s_idate"), "%Y-%m-%d").date()
+        
+        return render(request, "workdays-list.html", {"item_list": items, "gantt": chart_div, "list_dates": list_dates, 'current_date': current_date})
     except Exception as e:
         print(show_exc(e))
         return render(request, "workdays-client-error.html", {})

@@ -11,6 +11,7 @@ urlpatterns = [
     path('workdays/form-save', views.workdays_form_save, name='workdays-form-save'),
     path('workdays/remove', views.workdays_remove, name='workdays-remove'),
     path('workdays/client/<int:client_id>/', views.workdays_client, name='workdays-client'),
+    path('workdays/search-in-date', views.workdays_search_in_date, name='workdays-search-in-date'),
 
     #---------------------- ADMINS -----------------------
     path('admins', views.admins_dashboard, name='admins'),

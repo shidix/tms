@@ -15,8 +15,12 @@
         button = $("#button-" + uuid);
         button.click();
     });
+
+
+
   </script>
 {% endif %}
+
 
 <div class="row">
 {% for item in item_list %}
@@ -25,3 +29,26 @@
     </div>
 {% endfor %}
 </div>
+
+<script>
+    $(document).ready(function() 
+        {
+            {% if current_date %}
+            $('#s_idate').val("{{current_date|date:'Y-m-d'}}");
+            $('#s_edate').val("{{current_date|date:'Y-m-d'}}");
+            $('.day-search').removeClass('btn-warning').addClass('btn-success');
+            $('.day-{{current_date|date:'D'}}').addClass('btn-warning').removeClass('btn-success');
+ 
+            {% else %}
+            $('#s_idate').val("{{request.session.s_idate}}");
+            $('#s_edate').val("{{request.session.s_edate}}");
+            $('.day-search').removeClass('btn-warning').addClass('btn-success');
+            // last .day-search mark as btn-warning
+
+            $('.day-search').last().addClass('btn-warning').removeClass('btn-success');
+
+
+            {% endif %}
+        }
+    );
+</script>

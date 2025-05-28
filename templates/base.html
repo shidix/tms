@@ -62,7 +62,7 @@
                                         <span class="d-lg-inline d-none">&nbsp; {% trans 'Cambiar contraseña' %}</span>
                                     </a>
 
-                                    <a class="btn btn-xs m-2 ark-post" href="#" data-url="{% url 'auth_logout' %}" title="{% trans 'Salir' %}">
+                                    <a class="btn btn-xs m-2 ark-post" href="#" data-url="{% url 'auth_logout' %}" data-csrf-token={{ csrf_token }} title="{% trans 'Salir' %}">
                                         <i class="fas fa-sign-out-alt"></i>
                                         <span class="d-lg-inline d-none">&nbsp;{% trans 'Salir'%} </span>
                                     </a>

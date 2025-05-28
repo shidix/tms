@@ -876,51 +876,101 @@ $(document).ready(()=>{
         var obj = $(this);
         if (((obj.data("confirm")) && confirm(obj.data("confirm"))) || !(obj.data("confirm")))
         {
+            setWait();
             url = obj.data("url");
             var target = "";
             var target_modal = "";
+            var function_complete = null;
+            if (obj.data("complete"))
+                function_complete = obj.data("complete");
             if (obj.data("target"))
                 target = obj.data("target");
             if (obj.data("target-modal"))
                 target_modal = obj.data("target-modal");
 
-            if (target == "") {
+            var csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
+            if (!csrf_token) {
+                csrf_token = obj.data('csrf-token');
+                if (!csrf_token) {
+                    csrf_token = $('meta[name="csrf-token"]').attr('content');
+                }
+                if (!csrf_token) {
+                    console.error("CSRF token not found. Please ensure it is included in the page.");
+                    return;
+                }
+            }
+
+
                 // Create form with url as action and data as params and submit
-                var form = $('<form>', {
-                    action: url,
-                    method: 'POST',
-                    target: target,
-                    style: 'display: none;'
-                });
-                var csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
-                form.append($('<input>', {
-                    type: 'hidden',
-                    name: 'csrfmiddlewaretoken',
-                    value: csrf_token
-                }));
-                var args = obj.data();
-                for(var i in args)
-                    if (i != "url")
-                        form.append($('<input>', {
-                            type: 'hidden',
-                            name: i,
-                            value: args[i]
-                        }));
-                $('body').append(form);
+            var form = $('<form>', {
+                action: url,
+                method: 'POST',
+                target: target,
+                style: 'display: none;'
+            });
+
+
+            form.append($('<input>', {
+                type: 'hidden',
+                name: 'csrfmiddlewaretoken',
+                value: csrf_token
+            }));
+            var args = obj.data();
+            for(var i in args)
+                if (i != "url")
+                    form.append($('<input>', {
+                        type: 'hidden',
+                        name: i,
+                        value: args[i]
+                    }));
+            $('body').append(form);
+
+            if ((target_modal == "") && (target == ""))
+            {
                 form.submit();
                 form.remove();
+            }
+            else
+            {
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: form.serialize(),
+                    cache: false,
+                    dataType: 'html',
+                    beforeSend: function(){},
+                    success: function(data) {
+                        if (target_modal != "")
+                        {
+                            $('#'+target_modal+"-body").html(data);
+                            $('#'+target_modal).modal('show');
+                        }
+                        else if (target != "")
+                            $('#'+target).html(data);
+                    },
+                    error: function(e) {
+                        // show error with sweetalert
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            confirmButtonText: 'Aceptar',
+                            background: '#f2f2f2',
+                            color: '#333',
+                            html: e.responseText,
+                        });
+                    },
+                    complete : function() {
+                        if (typeof function_complete == 'function') {
+                            function_complete();
+                        }
+                        unsetWait();
+                    }
 
+                });
             }
-            else {
-                var datas = {};
-                var args = obj.data();
-                for(var i in args)
-                    if (i != "url")
-                        datas[i] = args[i]
-                ajaxPost(url, datas, target, target_modal);
-                if (obj.data("show"))
-                    $("#" + obj.data("show")).show();
-            }
+            if (obj.data("show"))
+                $("#" + obj.data("show")).show();
+
             e.preventDefault();
         }
     }

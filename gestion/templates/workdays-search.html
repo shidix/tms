@@ -4,6 +4,14 @@
     {%csrf_token%}
     <div class="row">
         <div class="col-lg-5 col-6">
+            <div class="row mb-1">
+                {% for i in list_dates %}
+                <div class="col p-1"><a class="btn btn-{% if forloop.last %}warning{% else %}success{%endif%} btn-sm ark-post w-100 day-search day-{{i|date:'D'}}" 
+                     data-url="{% url 'workdays-search-in-date' %}" data-csrf-token="{{ csrf_token }}"
+                        data-day="{{i|date:'Y-m-d'}}" title="{{i|date:'D'}}" data-target="item-list">{{i|date:'D'}}</a></div>
+                {% endfor %}
+            </div>
+                    
             <div class="row"> 
                 <div class="col-lg-4 col-4 py-2 text-end d-none d-lg-block"> <span>{% trans "Buscar otra fecha:" %}</span> </div>
                 <div class="col-lg-4 col-6 p-0">
@@ -32,4 +40,30 @@
     </div>
 </form>
 
-     
+<script>
+    $(document).ready(function() {
+        // Set click event for day search buttons => SweetAlert loading message
+        $('.day-search').on('click', function(e) {
+
+
+            Swal.fire({
+                title: 'Buscando jornadas registradas...',
+                text: 'Por favor, espere un momento.',
+                icon: 'info',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                    setTimeout(() => {
+                        Swal.hideLoading();
+                        Swal.close();
+                    }, 2000); // Adjust the timeout as needed
+                }
+            });
+        });
+
+    });
+</script>
+
+       
+
+
