@@ -18,16 +18,22 @@
     <div class="col-6">
         <div class="greybox-sm p-1">
             {% trans "Nombre Empresa" %}
-            <input type="text" class="form-control" id="name" name="name" value="{{obj.name|default:""}}" 
-                title="{{obj.name}}" data-model-name="gestion.company" placeholder="Nombre..." /> <span id="name__msg"></span>
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-user-tie"></i></span>
+                <input type="text" class="form-control" id="name" name="name" value="{{obj.name|default:''}}" 
+                    title="{{obj.name}}" data-model-name="gestion.company" placeholder="Nombre..." /> <span id="name__msg"></span>
+            </div>
         </div>
     </div>
     <div class="col-3">
         <div class="greybox-sm p-1">
         {% trans "NIF" %}
-            <input type="text" class="form-control" id="nif" name="nif" value="{{obj.nif|default:""}}" 
-                title="{{obj.nif}}"
-                placeholder="NIF..." /> <span id="nif__msg"></span>
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                <input type="text" class="form-control" id="nif" name="nif" value="{{obj.nif|default:''}}" 
+                    title="{{obj.nif}}"
+                    placeholder="NIF..." /> <span id="nif__msg"></span>
+            </div>
         </div>
     </div>
     <div class="col-3">
@@ -37,9 +43,42 @@
                 title="{{obj.logo}}"placeholder="Logo..." /> <span id="logo__msg"></span>
         </div>
     </div>
+    <div class="col-2">
+        <div class="greybox-sm p-1">
+        {% trans "Último importe" %}
+            <div class="input-group">
+                <span class="input-group-text">&euro;</span>
+                <input type="number" class="form-control" id="last_payment_amount" name="last_payment_amount" 
+                    value="{{obj.last_payment_amount|default:"0.00"}}" step="0.01"
+                    title="{{obj.last_payment_amount}}" placeholder="0.00" /> <span id="last_payment_amount__msg"></span>
+            </div>
+        </div>
+    </div>
+    <div class="col-5">
+        <div class="greybox-sm p-1">
+        {% trans 'Fecha de último pago' %}
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                <input type="date" class="form-control" id="last_payment" name="last_payment" 
+                    value="{{obj.last_payment|date:'Y-m-d'|default:""}}" 
+                    title="{{obj.last_payment}}" placeholder="Fecha..." /> <span id="last_payment__msg"></span>
+            </div>
+        </div>
+    </div>
+    <div class="col-5">
+        <div class="greybox-sm p-1">
+        {% trans 'Fecha de caducidad' %}
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                <input type="date" class="form-control" id="expiration_date" name="expiration_date" 
+                    value="{{obj.expiration_date|date:'Y-m-d'|default:""}}" 
+                    title="{{obj.expiration_date}}" placeholder="Fecha..." /> <span id="expiration_date__msg"></span>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="d-flex justify-content-end p-2">
-    <input type="submit" class="btn btn-sm" value="{% trans 'Guardar' %}">
+    <input type="submit" class="btn btn-sm btn-success" value="{% trans 'Guardar' %}">
 </div>
 </form>

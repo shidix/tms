@@ -42,6 +42,15 @@
 {% elif user|in_group:"managers" %}
     {%comment%} PC VERSION {%endcomment%}
     <div class="d-none d-lg-block" tyle="border:1px solid blue">
+        {% if request.user.manager %}
+        <div class="row">
+            <div class="col-12">
+                <p class="w-100 badge bg-success m-0 p-3 text-white">
+                    Licencia v&aacute;lida hasta {{request.user.manager.comp.expiration_date|date:"d/m/Y"}} 
+                </p>
+            </div>
+        </div>
+        {% endif %}
         <div class="row menu m-0">
             <div class="col-6 text-center nav-item {%current 'home'%}"><a class="nav-link" aria-current="page" href="{%url 'index'%}">
                 <i class='fas fa-home'></i><span class="px-3">{%trans 'Inicio'%}</span></a></div>

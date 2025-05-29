@@ -4,10 +4,12 @@
 
 <div class="d-none d-lg-block"> 
     <div class="row main-th py-3 m-0">
-        <div class="col-1"> {% trans 'Logo' %}</div>
-        <div class="col-4"> {% trans 'Nombre Empresa' %} </div>
-        <div class="col-3"> {% trans 'NIF Empresa' %} </div>
-        <div class="col-3"> {% trans 'Numero de empleados' %} </div>
+        <div class="col-1"> <i class="fas fa-image"></i>&nbsp;{% trans 'Logo' %}</div>
+        <div class="col-4"> <i class="fas fa-user-tie"></i>&nbsp;{% trans 'Nombre Empresa' %} </div>
+        <div class="col-2"> <i class="fas fa-id-card"></i>&nbsp;{% trans 'NIF Empresa' %} </div>
+        <div class="col-1 text-center"><i class="fas fa-users"></i>&nbsp; {% trans 'Empleados' %} </div>
+        <div class="col-2"><i class="fas fa-euro-sign"></i>&nbsp; {% trans 'Último pago' %}</div>
+        <div class="col-1"><i class="fas fa-calendar"></i>&nbsp; {% trans 'Activo hasta' %}</div>
         <div class="col-1"></div>
     </div>
 
@@ -17,8 +19,12 @@
                 {{item.view_logo}}
             </div>
             <div class="col-4 d-flex align-items-center">{{item.name}}</div>
-            <div class="col-3 d-flex align-items-center">{{item.nif}}</div>
-            <div class="col-3 d-flex align-items-center">{{item.employees.count}}</div>
+            <div class="col-2 d-flex align-items-center">{{item.nif}}</div>
+            <div class="col-1 d-flex align-items-center justify-content-center">
+                <span class="badge bg-info">{{item.employees.count}}</span>
+            </div>
+            <div class="col-2 d-flex align-items-center">{{item.last_payment}} ({{item.last_payment_amount}} &euro;)</div>
+            <div class="col-1 d-flex align-items-center">{{item.expiration_date}}</div>
     
             <div class="col-1 text-right d-flex align-items-center">
                 <a class="btn btn-xs" href="{% url 'pwa-company-login' item.uuid %}" target="_blank">
@@ -35,6 +41,6 @@
 
 <script>
     $(document).ready(function() {
-        $('.active-False').addClass('bg-danger');
+        $('.active-False').addClass('text-danger');
     });
 </script>

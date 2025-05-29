@@ -6,11 +6,12 @@ from .models import Company, Manager, Employee
 class CompanyForm(forms.ModelForm):
     class Meta:
         model = Company
-        fields = ['name', 'logo', 'nif']
+        fields = ['name', 'logo', 'nif', 'last_payment_amount', 'last_payment', 'expiration_date']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'logo': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'nif': forms.TextInput(attrs={'class': 'form-control'}),
+            
         }
         labels = {
             'name': _('Nombre'),
@@ -21,6 +22,9 @@ class CompanyForm(forms.ModelForm):
             'name': _('Nombre de la empresa'),
             'logo': _('Selecciona el archivo a subir'),
             'nif': _('Número de identificación fiscal'),
+            'last_payment_amount': _('Último importe pagado'),
+            'last_payment': _('Fecha del último pago'),
+            'expiration_date': _('Fecha de expiración'),
         }
         error_messages = {
             'name': {
@@ -31,6 +35,19 @@ class CompanyForm(forms.ModelForm):
             },
             'nif': {
                 'required': _('Este campo es obligatorio.'),
+            },
+            'last_payment_amount': {
+                'required': _('Este campo es obligatorio.'),
+                'invalid': _('El importe del último pago no es válido.'),
+            },
+            'last_payment': {
+                'required': _('Este campo es obligatorio.'),
+                'invalid': _('La fecha del último pago no es válida.'),
+            },
+
+            'expiration_date': {
+                'required': _('Este campo es obligatorio.'),
+                'invalid': _('La fecha de expiración no es válida.'),
             },
         }
         # Add custom validation for the logo field

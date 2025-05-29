@@ -40,12 +40,16 @@
 
 	            <div id="main" class="w-100">
                     <div class="row header sticky-top bg-white m-0">
-                        <div class="col-lg-2 col-3 text-center p-1">
+                        <div class="col-lg-1 col-3 text-center p-1">
                             <a href="{% url 'index' %}" ><img src="{{request.user|comp_logo}}" height="60px" /></a>
                         </div>	
-                        <div class="col-lg-10 col-9">
+                        <div class="col-lg-11 col-9">
                             <div class="row justify-content-end">
-                                <div class="col-12 col-lg-4 d-flex justify-content-center align-items-center  p-0 ">{% trans "Hola" %}, {{request.user.username}}</div>
+                                <div class="col-12 col-lg-4 d-flex justify-content-center align-items-center  p-0 ">
+
+                                  {% trans "Hola" %}, {{request.user.username}}
+
+                                </div>
                                 <div class="col-12 col-lg-8 d-flex justify-content-between align-items-center p-0">
 
                                     {% if request.user.manager %}
@@ -77,7 +81,7 @@
                         </div>
 
                     </div>
-
+  
                     {%comment%} PC VERSION {%endcomment%}
                     <div class="d-none d-lg-block"> {% include "sidebar_items.html" %} </div>
                   </div>

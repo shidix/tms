@@ -123,8 +123,6 @@ def gantt_plotly_view(items):
                 dtick = 0.5
             else:
                 dtick = 0.25
-            
-
 
             fig.update_yaxes(autorange="reversed")  # Estilo Gantt
             fig.update_layout(title="", height=400, xaxis_dtick=dtick*3600000)
@@ -684,7 +682,7 @@ def get_admins(request):
 @group_required("admins",)
 def admins_dashboard(request):
     try:
-        companies = Company.objects.all()
+        companies = Company.objects.all().order_by("-expiration_date", "-last_payment")
         return render(request, "admins/admins.html", {"items": companies})
     except Exception as e:
         print(show_exc(e))
