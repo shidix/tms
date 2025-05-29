@@ -66,7 +66,7 @@ class Company(models.Model):
     nif = models.CharField(max_length=20, verbose_name = _('NIF'), default="")
     uuid = models.CharField(max_length=200, verbose_name = _('UUID'), default="")
     last_payment = models.DateField(verbose_name=_('Fecha último pago'), default=datetime.date.today)
-    last_payment_amoung = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Último pago'), default=0.00)
+    last_payment_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Último pago'), default=0.00)
     expiration_date = models.DateField(verbose_name=_('Fecha de expiración'), default=datetime.date(2001, 1, 1))
 
     def __str__(self):
