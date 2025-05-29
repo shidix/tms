@@ -65,9 +65,21 @@ class Company(models.Model):
     qr = models.ImageField(upload_to=upload_qr, blank=True, verbose_name="QR", help_text="Select file to upload")
     nif = models.CharField(max_length=20, verbose_name = _('NIF'), default="")
     uuid = models.CharField(max_length=200, verbose_name = _('UUID'), default="")
+    last_payment = models.DateField(verbose_name=_('Fecha último pago'), default=datetime.date.today)
+    last_payment_amoung = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Último pago'), default=0.00)
+    expiration_date = models.DateField(verbose_name=_('Fecha de expiración'), default=datetime.date(2001, 1, 1))
 
     def __str__(self):
         return self.name
+    
+    def is_active(self):
+        try:
+            if self.expiration_date:
+                return self.expiration_date >= datetime.date.today()
+        except Exception as e:
+            print(show_exc(e))
+            return False
+        return False
     
     @property
     def employees(self):
@@ -129,8 +141,6 @@ class Manager(models.Model):
                 
                 group.user_set.add(self.user)
             else:
-                # self.user.username = self.email
-                # Check if user in managers group
                 if not self.user.groups.filter(name='managers').exists():
                     print("Adding user to group")
                     group = Group.objects.get(name='managers') 
@@ -175,7 +185,6 @@ class Employee(models.Model):
         idate = "{} 00:00".format(ini_date)
         edate = "{} 23:59".format(end_date)
         item_list = self.workdays.filter(ini_date__gte=idate, end_date__lte=edate)
-        #item_list = self.assistances.filter(ini_date__gte=ini_date, end_date__lte=end_date)
         hours = 0
         minutes = 0
         for item in item_list:
@@ -184,14 +193,12 @@ class Employee(models.Model):
                 days, seconds = diff.days, diff.seconds
                 hours += seconds // 3600
                 minutes += (seconds % 3600) // 60
-                #hours = days * 24 + seconds // 3600
-                #seconds = seconds % 60
+
         if minutes > 59:
             hours += minutes // 60
             minutes = minutes % 60
         return hours, minutes
-        #return "{}:{}".format(hours, minutes) 
-        #return "{} horas y {}  minutos".format(hours, minutes) 
+
 
     def get_qr_uuid(self):
         if len(self.uuid) < 10 :
@@ -203,27 +210,6 @@ class Employee(models.Model):
         data = reverse ('pwa-check-clock', kwargs={'uuid': self.uuid})
         data = "{}{}".format(settings.MAIN_URL, data)
         img_data = generate_qr_image(data, self.comp.logo.path)
-
-        # qr = qrcode.QRCode(
-        #     version=1,
-        #     error_correction=qrcode.constants.ERROR_CORRECT_H,
-        #     box_size=10,
-        #     border=4,
-        # )
-        # qr.add_data(data)
-        # qr.make(fit=True)
-        # img = qr.make_image(fill_color="black", back_color="white").convert('RGB')
-
-        # logo = Image.open(self.comp.logo.path)
-        # scale = 0.5**0.5
-        # logo_size = (int(logo.size[0] * scale), int(logo.size[1] * scale))
-        # logo.thumbnail(logo_size)
-        # pos = ((img.size[0] - logo.size[0]) // 2, (img.size[1] - logo.size[1]) // 2)
-        # img.paste(logo, pos)
-        # buffer = BytesIO()
-        # img.save(buffer, format="PNG")
-        # img_str = base64.b64encode(buffer.getvalue()).decode()
-        # img_data = "data:image/png;base64,{}".format(img_str)
         return img_data
 
     class Meta:
