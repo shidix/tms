@@ -2,11 +2,12 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from .models import Company, Manager, Employee
+import re
 
 class CompanyForm(forms.ModelForm):
     class Meta:
         model = Company
-        fields = ['name', 'logo', 'nif', 'last_payment_amount', 'last_payment', 'expiration_date']
+        fields = ['name', 'logo', 'nif', 'last_payment_amount', 'last_payment', 'expiration_date', 'ccc']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'logo': forms.ClearableFileInput(attrs={'class': 'form-control'}),
@@ -25,6 +26,7 @@ class CompanyForm(forms.ModelForm):
             'last_payment_amount': _('Último importe pagado'),
             'last_payment': _('Fecha del último pago'),
             'expiration_date': _('Fecha de expiración'),
+            'ccc': _('Código Cuenta Cotización'),
         }
         error_messages = {
             'name': {
@@ -49,18 +51,33 @@ class CompanyForm(forms.ModelForm):
                 'required': _('Este campo es obligatorio.'),
                 'invalid': _('La fecha de expiración no es válida.'),
             },
+            'ccc': {
+                'required': _('Este campo es obligatorio.'),
+                'invalid': _('El código de cuenta de cotización no es válido.'),
+            },
         }
-        # Add custom validation for the logo field
-        def clean_logo(self):
-            logo = self.cleaned_data.get('logo')
-            if logo:
-                # Check if the file is an image
-                if not logo.name.endswith(('.png', '.jpg', '.jpeg', '.gif')):
-                    raise forms.ValidationError(_('El archivo debe ser una imagen.'))
-                # Check the file size (5MB limit)
-                if logo.size > 5 * 1024 * 1024:
-                    raise forms.ValidationError(_('El tamaño del archivo no puede ser mayor de 5MB.'))
-            return logo
+    # Add custom validation for the logo field
+    def clean_logo(self):
+        logo = self.cleaned_data.get('logo')
+        if logo:
+            # Check if the file is an image
+            if not logo.name.endswith(('.png', '.jpg', '.jpeg', '.gif')):
+                raise forms.ValidationError(_('El archivo debe ser una imagen.'))
+            # Check the file size (5MB limit)
+            if logo.size > 5 * 1024 * 1024:
+                raise forms.ValidationError(_('El tamaño del archivo no puede ser mayor de 5MB.'))
+        return logo
+    
+    # Add custom validation for the NIF field
+    def clean_nif(self):
+        nif = self.cleaned_data.get('nif')
+        if not nif:
+            raise forms.ValidationError(_('El NIF es obligatorio.'))
+        # Validar con regex el formato básico del NIF español
+        if not re.match(r'^[0-9]{8}[A-Z]$', nif.upper()) and not re.match(r'^[XYZ][0-9]{7}[A-Z]$', nif.upper()) and not re.match(r'^[A-Z][0-9]{7,8}$', nif.upper()):
+            raise forms.ValidationError(_('El NIF no es válido.'))
+        return nif.upper()
+        
 
 class ManagerForm(forms.ModelForm):
 

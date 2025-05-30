@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.auth.models import User, Group
 from django.db import models
 from django.utils.translation import gettext_lazy as _ 
+from django.utils import timezone
 from django.utils.html import format_html
 from django.urls import reverse
 
@@ -68,6 +69,7 @@ class Company(models.Model):
     last_payment = models.DateField(verbose_name=_('Fecha último pago'), default=datetime.date.today)
     last_payment_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Último pago'), default=0.00)
     expiration_date = models.DateField(verbose_name=_('Fecha de expiración'), default=datetime.date(2001, 1, 1))
+    ccc = models.CharField(max_length=40, verbose_name=_('Código Cuenta Cotización'), default="")
 
     def __str__(self):
         return self.name
@@ -163,6 +165,8 @@ class Employee(models.Model):
     dni = models.CharField(max_length=20, verbose_name = _('DNI'), default="")
     name = models.CharField(max_length=200, verbose_name = _('Razón Social'), default="")
     phone = models.CharField(max_length=20, verbose_name = _('Teléfono de contacto'), null=True, default = '0000000000')
+    weekly_hours = models.DecimalField(max_digits=5, decimal_places=2, verbose_name=_('Horas por semana'), default=40.00)
+    affiliation_number = models.CharField(max_length=20, verbose_name=_('Número de afiliación'), default="")
     email = models.EmailField(verbose_name = _('Email de contacto'), default="", null=True)
     user = models.OneToOneField(User, verbose_name='Usuario', on_delete=models.CASCADE, null=True, blank=True, related_name='employee')
     comp = models.ForeignKey(Company, verbose_name=_("Empresa"), on_delete=models.SET_NULL, blank=True, null=True)
@@ -221,8 +225,8 @@ class Employee(models.Model):
 '''
 class Workday(models.Model):
     finish = models.BooleanField(default=False, verbose_name=_('Terminada'));
-    ini_date = models.DateTimeField(default=datetime.datetime.now(), null=True, verbose_name=_('Inicio'))
-    end_date = models.DateTimeField(default=datetime.datetime.now(), null=True, verbose_name=_('Fin'))
+    ini_date = models.DateTimeField(default=timezone.now, null=True, verbose_name=_('Inicio'))
+    end_date = models.DateTimeField(default=timezone.now, null=True, verbose_name=_('Fin'))
     employee = models.ForeignKey(Employee, verbose_name=_('Empleado'), on_delete=models.CASCADE, null=True, related_name="workdays")
 
     @property

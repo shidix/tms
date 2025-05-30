@@ -42,6 +42,7 @@ def gantt_plotly_view(items):
     # Expandimos en filas de un DataFrame
     try:
         import plotly.colors as pc
+        items = sorted(items, key=lambda x: x.ini_date)
         tasks = {}
         for item in items:
             if item.employee not in tasks:
@@ -123,6 +124,7 @@ def gantt_plotly_view(items):
                 dtick = 0.5
             else:
                 dtick = 0.25
+
 
             fig.update_yaxes(autorange="reversed")  # Estilo Gantt
             fig.update_layout(title="", height=400, xaxis_dtick=dtick*3600000)
@@ -713,9 +715,9 @@ def admins_save(request):
         if request.method == "POST":
             obj = get_or_none(Company, request.POST["id"]) if "id" in request.POST else None
             if obj == None:
-                obj = Company.objects.create()
-                
+                obj = Company.objects.create()                
             form = CompanyForm(request.POST, request.FILES, instance=obj)
+
             if form.is_valid():
                 obj = form.save(commit=False)
                 if (len(obj.uuid) < 20):
@@ -724,9 +726,10 @@ def admins_save(request):
                         temp_uuid = uuid.uuid4()
                     obj.uuid = str(temp_uuid)
                 obj.save()
-                return redirect("admins")
+                return render(request, "admins/admins-row.html", {"item": obj})
             else:
-                return render(request, "admins/admins-form.html", {'form': form, 'obj': obj, 'new': False})
+                print(3)
+                return render(request, "admins/admins-form.html", {'form': form, 'obj': obj, 'new': False}, status=500)
         else:
             return redirect("admins")
     except Exception as e:

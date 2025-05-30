@@ -16,43 +16,64 @@
     <div class="col-6">
         <div class="greybox-sm p-1">
             {% trans "Nombre" %}
-            <input type="text" class="form-control autosave" id="name" name="name" value="{{obj.name|default:""}}" 
-                title="{{obj.name}}" data-model-name="gestion.employee" data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" 
+            <input type="text" class="form-control autosave" id="name" name="name" value="{{obj.name|default:''}}" 
+                title="{{obj.name}}" data-model-name="gestion.employee" data-obj-id="{{obj.id}}" data-url="{%url 'autosave_field'%}" 
                 data-target="div-notification" placeholder="Nombre..." /> <span id="name__msg"></span>
         </div>
     </div>
-    <div class="col-3">
+    <div class="col-2">
         <div class="greybox-sm p-1">
             {% trans "PIN" %}
-            <input type="text" class="form-control ark_change" id="pin" name="pin" value="{{obj.pin|default:""}}" 
-                title="{{obj.pin}}" data-model-name="gestion.employee" data-obj-id="{{obj.id}}" data-old-value="{{obj.pin}}" data-url="{%url "employees-save-pin"%}" data-obj_id="{{obj.id}}"
+            <input type="text" class="form-control ark_change" id="pin" name="pin" value="{{obj.pin|default:''}}" 
+                title="{{obj.pin}}" data-model-name="gestion.employee" data-obj-id="{{obj.id}}" data-old-value="{{obj.pin}}" data-url="{%url 'employees-save-pin'%}" data-obj_id="{{obj.id}}"
                 data-target="div-notification" placeholder="PIN..." /> <span id="pin__msg"></span>
             <button class="btn btn-xs" onclick="$('#pin').val($('#dni').val());$('#pin').change()" 
-                title="{%trans "Cargar DNI"%}"><i class="fas fa-sync"></i> <small>{%trans "Copiar DNI"%}</small></button>
+                title="{%trans 'Cargar DNI'%}"><i class="fas fa-sync"></i> <small>{%trans "Copiar DNI"%}</small></button>
         </div>
     </div>
-    <div class="col-3">
+    <div class="col-2">
         <div class="greybox-sm p-1">
             {% trans "DNI" %}
-            <input type="text" class="form-control autosave" id="dni" name="dni" value="{{obj.dni|default:""}}" 
-                title="{{obj.dni}}" data-model-name="gestion.employee" data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" 
+            <input type="text" class="form-control autosave" id="dni" name="dni" value="{{obj.dni|default:''}}" 
+                title="{{obj.dni}}" data-model-name="gestion.employee" data-obj-id="{{obj.id}}" data-url="{%url 'autosave_field'%}" 
                 data-target="div-notification" placeholder="DNI..." /> <span id="dni__msg"></span>
         </div>
     </div>
+    <div class="col-2">
+        <div class="greybox-sm p-1">
+            {% trans 'Afiliación' %}
+            <input type="text" class="form-control autosave" id="affiliation_number" name="affiliation_number" value="{{obj.affiliation_number|default:''}}" 
+                title="{{obj.affiliation_number}}" data-model-name="gestion.employee" data-obj-id="{{obj.id}}" data-url="{%url 'autosave_field'%}" 
+                data-target="div-notification" placeholder="Nº de afiliación..." /> <span id="affiliation_number__msg"></span>
+        </div>
+    </div>
+   <div class="col-6">
+        <div class="greybox-sm p-1">
+            {% trans "Correo electrónico" %}
+            <input type="text" class="form-control ark_change" id="email" name="email" value="{{obj.email|default:''}}" 
+                title="{{obj.email}}" data-url="{%url 'employees-save-email'%}" data-target="div-notification" data-obj_id="{{obj.id}}"
+                placeholder="Correo electrónico..." required/> <span id="email__msg"></span>
+            {%comment%}
+            <input type="text" class="form-control autosave" id="email" name="email" value="{{obj.email|default:''}}" 
+                title="{{obj.email}}" data-model-name="gestion.employee" data-obj-id="{{obj.id}}" data-url="{%url 'autosave_field'%}" 
+                data-target="div-notification" placeholder="Correo electrónico..." required/> <span id="email__msg"></span>
+            {%endcomment%}
+        </div>
+    </div>
 
-    <div class="col-6 col-lg-3">
+    <div class="col-6 col-lg-2">
         <div class="greybox-sm p-1">
             {% trans "Teléfono" %}
-            <input type="text" class="form-control autosave" id="phone" name="phone" value="{{obj.phone|default:""}}" 
-                title="{{obj.phone}}" data-model-name="gestion.employee" data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" 
+            <input type="text" class="form-control autosave" id="phone" name="phone" value="{{obj.phone|default:''}}" 
+                title="{{obj.phone}}" data-model-name="gestion.employee" data-obj-id="{{obj.id}}" data-url="{%url 'autosave_field'%}" 
                 data-target="div-notification" placeholder="Teléfono..." /> <span id="phone__msg"></span>
         </div>
     </div>
-        <div class="col-6 col-lg-3">
+        <div class="col-6 col-lg-2">
         <div class="greybox-sm p-1">
             {% trans "Empresa" %}
             <select class="form-control autosave" id="comp" name="comp" data-model-name="gestion.employee" 
-                data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" data-target="div-notification">
+                data-obj-id="{{obj.id}}" data-url="{%url 'autosave_field'%}" data-target="div-notification">
                 {% if request.user.is_superuser %}
                 <option value="">--{% trans 'Seleccione una empresa' %}--</option>
                 {% endif %}
@@ -62,26 +83,22 @@
             </select>
         </div>
     </div>
-    <div class="col-6">
+    <div class="col-6 col-lg-2">
         <div class="greybox-sm p-1">
-            {% trans "Correo electrónico" %}
-            <input type="text" class="form-control ark_change" id="email" name="email" value="{{obj.email|default:""}}" 
-                title="{{obj.email}}" data-url="{%url "employees-save-email"%}" data-target="div-notification" data-obj_id="{{obj.id}}"
-                placeholder="Correo electrónico..." required/> <span id="email__msg"></span>
-            {%comment%}
-            <input type="text" class="form-control autosave" id="email" name="email" value="{{obj.email|default:""}}" 
-                title="{{obj.email}}" data-model-name="gestion.employee" data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" 
-                data-target="div-notification" placeholder="Correo electrónico..." required/> <span id="email__msg"></span>
-            {%endcomment%}
+            {% trans 'Horas semanales' %}
+            <input type="number" class="form-control autosave" id="weekly_hours" name="weekly_hours" value="{{obj.weekly_hours|default:''}}" 
+                title="{{obj.weekly_hours}}" data-model-name="gestion.employee" data-obj-id="{{obj.id}}" data-url="{%url 'autosave_field'%}" 
+                data-target="div-notification" placeholder="Horas semanales..." /> <span id="weekly_hours__msg"></span>
         </div>
     </div>
+ 
 </div>
 
 <div class="d-flex justify-content-end p-2">
-    <button type="button" class="btn btn-primary ark" data-bs-dismiss="modal" data-url="{% url "employees-list" %}"
+    <button type="button" class="btn btn-primary ark" data-bs-dismiss="modal" data-url="{% url 'employees-list' %}"
         data-target="emp-list">{% trans "Guardar" %}</button>
     {%comment%}
-    <button type="button" class="btn btn-sm ark cancel" data-bs-dismiss="modal" data-url="{% url "guest-remove" %}" data-target="guest-list"
+    <button type="button" class="btn btn-sm ark cancel" data-bs-dismiss="modal" data-url="{% url 'guest-remove' %}" data-target="guest-list"
         data-obj_id="{{obj.id}}" data-confirm="{% trans "Are you sure to remove this element?" %}">{% trans "Remove" %}</button>
     {%endcomment%}
 </div>

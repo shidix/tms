@@ -50,7 +50,6 @@ def get_or_none_str(app_name, model_name, value, field="pk"):
 
 def set_obj_field(obj, field, value):
     obj_field = obj._meta.get_field(field)
-    print("obj_field: ", obj_field, field, obj_field.get_internal_type())
     if obj_field.get_internal_type() == "ManyToManyField":
         getattr(obj, field).clear()
         for item in value:

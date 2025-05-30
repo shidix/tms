@@ -10,7 +10,7 @@
 
 <div id="div-notification"></div>
 
-<form id="form-company" class="form m-0" method="POST" enctype="multipart/form-data" action="{% url 'admins-save' %}">
+<form id="form-company" class="form m-0 post-form" method="POST" enctype="multipart/form-data" action="{% url 'admins-save' %}" data-target="row_{{obj.id}}" data-error-target="common-modal-body">
 
     {% csrf_token %}
     <input type="hidden" id="id" name="id" value="{{obj.id}}" />
@@ -21,8 +21,9 @@
             <div class="input-group">
                 <span class="input-group-text"><i class="fas fa-user-tie"></i></span>
                 <input type="text" class="form-control" id="name" name="name" value="{{obj.name|default:''}}" 
-                    title="{{obj.name}}" data-model-name="gestion.company" placeholder="Nombre..." /> <span id="name__msg"></span>
+                    title="{{obj.name}}" data-model-name="gestion.company" placeholder="Nombre..." /> 
             </div>
+            <span id="id_name__msg"></span>
         </div>
     </div>
     <div class="col-3">
@@ -32,53 +33,86 @@
                 <span class="input-group-text"><i class="fas fa-id-card"></i></span>
                 <input type="text" class="form-control" id="nif" name="nif" value="{{obj.nif|default:''}}" 
                     title="{{obj.nif}}"
-                    placeholder="NIF..." /> <span id="nif__msg"></span>
+                    placeholder="NIF..." /> 
             </div>
+            <span id="id_nif__msg"></span>
         </div>
     </div>
     <div class="col-3">
         <div class="greybox-sm p-1">
         {% trans "Logo" %}
             <input type="file" class="form-control" id="logo" name="logo" value="{{obj.logo|default:""}}" 
-                title="{{obj.logo}}"placeholder="Logo..." /> <span id="logo__msg"></span>
+                title="{{obj.logo}}"placeholder="Logo..." /> <span id="id_logo__msg"></span>
         </div>
     </div>
-    <div class="col-2">
+    <div class="col-3">
+        <div class="greybox-sm p-1">
+        {% trans 'Código cuenta cotización' %}
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-fingerprint"></i></span>
+                <input type="text" class="form-control" id="ccc" name="ccc" 
+                    value="{{obj.ccc|default:''}}" title="{{obj.ccc}}"
+                    placeholder="Código cuenta..." /> 
+            </div>
+            <span id="id_ccc__msg"></span>
+        </div>
+    </div>
+    <div class="col-3">
         <div class="greybox-sm p-1">
         {% trans "Último importe" %}
             <div class="input-group">
                 <span class="input-group-text">&euro;</span>
                 <input type="number" class="form-control" id="last_payment_amount" name="last_payment_amount" 
                     value="{{obj.last_payment_amount|default:"0.00"}}" step="0.01"
-                    title="{{obj.last_payment_amount}}" placeholder="0.00" /> <span id="last_payment_amount__msg"></span>
+                    title="{{obj.last_payment_amount}}" placeholder="0.00" /> 
             </div>
+            <span id="id_last_payment_amount__msg"></span>
         </div>
     </div>
-    <div class="col-5">
+    <div class="col-3">
         <div class="greybox-sm p-1">
         {% trans 'Fecha de último pago' %}
             <div class="input-group">
                 <span class="input-group-text"><i class="fas fa-calendar"></i></span>
                 <input type="date" class="form-control" id="last_payment" name="last_payment" 
                     value="{{obj.last_payment|date:'Y-m-d'|default:""}}" 
-                    title="{{obj.last_payment}}" placeholder="Fecha..." /> <span id="last_payment__msg"></span>
+                    title="{{obj.last_payment}}" placeholder="Fecha..." /> 
             </div>
+            <span id="id_last_payment__msg"></span>
         </div>
     </div>
-    <div class="col-5">
+    <div class="col-3">
         <div class="greybox-sm p-1">
         {% trans 'Fecha de caducidad' %}
             <div class="input-group">
                 <span class="input-group-text"><i class="fas fa-calendar"></i></span>
                 <input type="date" class="form-control" id="expiration_date" name="expiration_date" 
                     value="{{obj.expiration_date|date:'Y-m-d'|default:""}}" 
-                    title="{{obj.expiration_date}}" placeholder="Fecha..." /> <span id="expiration_date__msg"></span>
+                    title="{{obj.expiration_date}}" placeholder="Fecha..." /> 
             </div>
+            <span id="id_expiration_date__msg"></span>
         </div>
     </div>
 </div>
 
 <div class="d-flex justify-content-end p-2">
-    <input type="submit" class="btn btn-sm btn-success" value="{% trans 'Guardar' %}">
+    <input type="submit" class="btn btn-sm btn-success" value="{% trans 'Guardar' %}" data-bs-dismiss="modal">
 </div>
 </form>
+
+<script>
+    $('#common-modal').modal('show');
+    $('#name').focus();
+    {% if form %}
+        {% for field in form %}
+            $('#{{ field.id_for_label }}__msg').html('{{ field.errors.as_text|escapejs }}');
+        {% endfor %}
+    {% endif %}
+
+    // text danger in *__msg spans
+    $('#form-company span[id^="id_"]').each(function() {
+        if ($(this).text().trim() !== '') {
+            $(this).addClass('text-danger');
+        }
+    });
+</script>
