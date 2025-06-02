@@ -19,3 +19,12 @@
         <i class="fas fa-trash"></i></a>
         
 </div>
+
+<script>
+    var item = $('#row_{{item.id}}')
+    item.removeClass('active-True').removeClass('active-False').addClass('active-{{item.is_active}}');
+    item.removeClass('text-danger');
+    if (item.hasClass('active-False')) {
+        item.addClass('text-danger');
+    }
+</script>
