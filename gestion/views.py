@@ -125,6 +125,7 @@ def gantt_plotly_view(items):
 
             fig.update_yaxes(autorange="reversed")  # Estilo Gantt
             fig.update_layout(title="", height=400, xaxis_dtick=dtick*3600000)
+            
 
             for i, milestone in enumerate(milestones):
                 marker = dict(
@@ -162,7 +163,7 @@ def gantt_plotly_view(items):
                 marker=dict(symbol='x', size=10, color='black')
             ))
 
-            chart_div = plot(fig, output_type='div')
+            chart_div = plot(fig, output_type='div', )
             return (chart_div)
         else:
             return None
@@ -262,7 +263,8 @@ def index(request):
         items = get_workdays(request)
         gantt = gantt_plotly_view(items)
         list_dates = [ datetime.now().date() + timedelta(days=i) for i in range(-6, 1) ]
-        return render(request, "index.html", {"item_list": items, "gantt": gantt, "list_dates": list_dates}) 
+        listmode = False
+        return render(request, "index.html", {"item_list": items, "gantt": gantt, "list_dates": list_dates, 'listmode': listmode}) 
     except Exception as e:
         print(show_exc(e))
         return render(request, "workdays-client-error.html", {})
@@ -271,7 +273,8 @@ def index(request):
 def workdays_list(request):
     try:
         list_dates = [ datetime.now().date() + timedelta(days=i) for i in range(-6, 1) ]
-        return render(request, "workdays-list.html", {"item_list": get_workdays(request), "list_dates": list_dates})
+        listmode = get_param(request.POST, "listmode", "true").lower() == "true"
+        return render(request, "workdays-list.html", {"item_list": get_workdays(request), "list_dates": list_dates, 'listmode': listmode})
     except Exception as e:
         print(show_exc(e))
         return render(request, "workdays-client-error.html", {})
@@ -285,7 +288,8 @@ def workdays_search(request):
         items = get_workdays(request)
         chart_div = gantt_plotly_view(items)
         list_dates = [ datetime.now().date() + timedelta(days=i) for i in range(-6, 1) ]
-        return render(request, "workdays-list.html", {"item_list": items, "gantt": chart_div, "list_dates": list_dates})
+        listmode = get_param(request.GET, "listmode", "true").lower() == "true"
+        return render(request, "workdays-list.html", {"item_list": items, "gantt": chart_div, "list_dates": list_dates, 'listmode': listmode})
     except Exception as e:
         print(show_exc(e))
         return render(request, "workdays-client-error.html", {})
@@ -300,8 +304,9 @@ def workdays_search_in_date(request):
         # last 7 days in list_dates
         list_dates = [ (datetime.now().date() + timedelta(days=i)) for i in range(-6, 1) ]
         current_date = datetime.strptime(get_session(request, "s_idate"), "%Y-%m-%d").date()
+        listmode = get_param(request.POST, "listmode", "true").lower() == "true"
         
-        return render(request, "workdays-list.html", {"item_list": items, "gantt": chart_div, "list_dates": list_dates, 'current_date': current_date})
+        return render(request, "workdays-list.html", {"item_list": items, "gantt": chart_div, "list_dates": list_dates, 'current_date': current_date, 'listmode': listmode})
     except Exception as e:
         print(show_exc(e))
         return render(request, "workdays-client-error.html", {})

@@ -1,58 +1,5 @@
 {% load i18n gestion_tags %}
-{% comment %}
-<div class="row">
-    <div class="col-12">
-        <ul class="nav nav-tabs" id="myTab" role="tablist">
-            <li class="nav-item">
-                <a class="nav-link active" id="list-tab" data-toggle="tab" href="#list" role="tab" aria-controls="list"
-                   aria-selected="true" >
-                    <i class="fas fa-list">&nbsp;</i> {% trans 'Listado de fichajes' %} 
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link {% if gantt %}active{% endif %}" id="gantt-tab" data-toggle="tab" href="#gantt"
-                   role="tab" aria-controls="gantt" aria-selected="{% if gantt %}true{% else %}false{% endif %}">
-                    <i class="fas fa-chart">&nbsp;</i> {% trans 'Modo gráfico' %}
-                </a>
-            </li>
-        </ul>
-        <div class="tab-content" id="myTabContent">
-            <div class="tab-pane fade" id="list" role="tabpanel" aria-labelledby="list-tab">
 
-                <div class="toolbar-content p-3 row">
-
-
-                {% for item in item_list %}
-                    <div class="col-12 col-lg-12 list-item pt-2 pb-2 m-0" id="row_{{item.id}}">
-                        {% include "workdays-item.html" %}
-                    </div>
-                {% endfor %}
-                </div>
-            </div>
-            <div class="tab-pane fade {% if gantt %}show active{% endif %}" id="gantt" role="tabpanel" aria-labelledby="gantt-tab">
-                {% if gantt %}
-                  <div class="toolbar-content p-3 row">
-                      <div class="col-12" id="gantt-div">               
-                        {% include "gantt.html" %}
-                      </div>
-                      <script>
-                        ganttDiv = document.querySelector("#gantt-div").querySelector(".plotly-graph-div");
-
-                        ganttDiv.on('plotly_click', function(data) {
-                            
-                            const point = data.points[0];
-                            const uuid = point.customdata[0];
-                            button = $("#button-" + uuid);
-                            button.click();
-                        });
-                      </script>
-                  </div>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-</div>
-{% endcomment %}
 <div class="row">
     <div class="col-12">
         <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -111,21 +58,36 @@
 <script>
     $(document).ready(function() 
         {
+            $('#gantt-tab').on('click', function() {
+                // Change all data-listmode attributes to false
+                $('[data-listmode]').each(function() {
+                    $(this).attr('data-listmode', 'false');
+                });
+                $('input[name="listmode"]').val('false');
+            });
+
+            $('#list-tab').on('click', function() {
+                // Change all data-listmode attributes to true
+                $('[data-listmode]').each(function() {
+                    $(this).attr('data-listmode', 'true');
+                });
+                $('input[name="listmode"]').val('true');
+            });
             {% if current_date %}
             $('#s_idate').val("{{current_date|date:'Y-m-d'}}");
             $('#s_edate').val("{{current_date|date:'Y-m-d'}}");
             $('.day-search').removeClass('btn-warning').addClass('btn-success');
             $('.day-{{current_date|date:'D'}}').addClass('btn-warning').removeClass('btn-success');
- 
             {% else %}
             $('#s_idate').val("{{request.session.s_idate}}");
             $('#s_edate').val("{{request.session.s_edate}}");
             $('.day-search').removeClass('btn-warning').addClass('btn-success');
-            // last .day-search mark as btn-warning
-
             $('.day-search').last().addClass('btn-warning').removeClass('btn-success');
-
-
+            {% endif %}
+            {% if listmode %}
+            $('#list-tab').tab('show');
+            {% else %}
+            $('#gantt-tab').tab('show');
             {% endif %}
         }
     );

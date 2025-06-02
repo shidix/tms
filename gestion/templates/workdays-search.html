@@ -3,30 +3,30 @@
 <form class="form m-0" method="GET" action="{% url "workdays-search" %}" id="form-search">
     {%csrf_token%}
     <div class="row">
-        <div class="col-lg-5 col-6">
+        <div class="col-lg-8 col-6">
             <div class="row mb-1">
                 {% for i in list_dates %}
-                <div class="col p-1"><a class="btn btn-{% if forloop.last %}warning{% else %}success{%endif%} btn-sm ark-post w-100 day-search day-{{i|date:'D'}}" 
+                <div class="col-lg-1 p-0"><a style="border-radius: 15px;" class="btn btn-{% if forloop.last %}warning{% else %}success{%endif%} btn-sm ark-post w-75 day-search day-{{i|date:'D'}}" 
                      data-url="{% url 'workdays-search-in-date' %}" data-csrf-token="{{ csrf_token }}"
+                        data-listmode="{{listmode}}"
                         data-day="{{i|date:'Y-m-d'}}" title="{{i|date:'D'}}" data-target="item-list">{{i|date:'D'}}</a></div>
                 {% endfor %}
-            </div>
                     
-            <div class="row"> 
-                <div class="col-lg-4 col-4 py-2 text-end d-none d-lg-block"> <span>{% trans "Buscar otra fecha:" %}</span> </div>
-                <div class="col-lg-4 col-6 p-0">
+                <div class="col-lg-1 col-4 py-2 text-end d-none d-lg-block"> <span>{% trans "Entre:" %}</span> </div>
+                <div class="col-lg-2 col-6 p-0">
+                    <input type="hidden" name="listmode" value="{{listmode}}">
                     <input type="date" class="autosearch form-control form-control-dark w-100 py-2" name="s_idate" id="s_idate" 
                         value="{{request.session.s_idate}}"/>
                 </div>
-                <div class="col-lg-4 col-6 p-0">
+                <div class="col-lg-2 col-6 p-0">
                     <input type="date" class="autosearch form-control form-control-dark w-100 py-2" name="s_edate" id="s_edate" 
                         value="{{request.session.s_edate}}"/>
                 </div>
             </div>
         </div>
-        <div class="col-lg-6 col-5 b-search">
+        <div class="col-lg-3 col-5 b-search">
             <div class="row">
-                <div class="col-lg-5 col-5 py-2 text-end d-none d-lg-block"> <span>{% trans "Buscar trabajador/a:" %}</span> </div>
+                <div class="col-lg-5 col-5 py-2 text-end d-none d-lg-block"> <span>{% trans "Trabajador/a:" %}</span> </div>
                 <div class="col-lg-7 col-12">
                     <input type="text" class="form-control form-control-dark w-100 py-2" name="s_name" id="s_name" 
                         placeholder="Nombre trabajador/a"/>

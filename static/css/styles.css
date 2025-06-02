@@ -93,7 +93,7 @@ h1 {
 	box-shadow: 0 1px 5px rgba(0,0,0,0.2);
 }
 .list-item-cl:hover {
-	background-color: #f1f1f1;
+	border: 1px solid #16488b;
 }
 
 th.row.main-th {
@@ -387,9 +387,13 @@ span.sub-h2 {
 }
 
 .badge {
-	color: #16488b !important;
+	color: #16488b;
 	font-size: 0.9rem !important;
     text-transform: capitalize;
+}
+.badge.bg-info {
+	color: #fff;
+	background: #16488b !important;
 }
 
 h2.pathway a {
@@ -423,7 +427,6 @@ h2.pathway.b-right  {
 
 
 
-/* 
 .form-control {
 	padding: 0rem 0.5em 0.1rem 0.5em;
 	font-size: 0.9em;
@@ -431,7 +434,6 @@ h2.pathway.b-right  {
 	border-color: #ced4da;
 	border-width: 0px 0px 1px 0px !important;
 } 
-*/
 
 .select-file {
     border:1px solid #e55000; border-radius:5px; height: 31px; font-size: 14px;
@@ -544,6 +546,12 @@ button.btn.btn-success {
     background-color: #4caf50;
     border-color: #4caf50;
 }
+input.btn.btn-sm.btn-success {
+    color: #ffffff;
+    background-color: #82bc00;
+    border-color: #82bc00;
+}
+
 .bg-success {
     background: #79b51c !important;
 }
