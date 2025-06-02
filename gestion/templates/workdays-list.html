@@ -89,6 +89,10 @@
             {% else %}
             $('#gantt-tab').tab('show');
             {% endif %}
+
+            if ($('#s_idate').val() !== $('#s_edate').val()) {
+                $('.day-search').removeClass('btn-warning').addClass('btn-success');
+            }
         }
     );
 </script>

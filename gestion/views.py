@@ -288,8 +288,16 @@ def workdays_search(request):
         items = get_workdays(request)
         chart_div = gantt_plotly_view(items)
         list_dates = [ datetime.now().date() + timedelta(days=i) for i in range(-6, 1) ]
+
+
+        start_date = datetime.strptime(get_session(request, "s_idate"), "%Y-%m-%d").date()
+        end_date = datetime.strptime(get_session(request, "s_edate"), "%Y-%m-%d").date()
+        if (start_date == end_date):
+            current_date = start_date
+        else:
+            current_date = None
         listmode = get_param(request.GET, "listmode", "true").lower() == "true"
-        return render(request, "workdays-list.html", {"item_list": items, "gantt": chart_div, "list_dates": list_dates, 'listmode': listmode})
+        return render(request, "workdays-list.html", {"item_list": items, "gantt": chart_div, "list_dates": list_dates, 'listmode': listmode, 'current_date': current_date})
     except Exception as e:
         print(show_exc(e))
         return render(request, "workdays-client-error.html", {})
