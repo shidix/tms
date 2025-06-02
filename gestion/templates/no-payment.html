@@ -1,6 +1,49 @@
 {% extends "base_error.html" %}
+{% load i18n gestion_tags %}
+
 {% block extra_header %}
-Cabecera
+            <div id="notify-panel"></div>
+
+	            <div id="main" class="w-100">
+                    <div class="row header sticky-top bg-white m-0">
+                        <div class="col-lg-1 col-3 text-center p-1">
+                            <a href="{% url 'index' %}" ><img src="{{request.user|comp_logo}}" height="60px" /></a>
+                        </div>	
+                        <div class="col-lg-11 col-9">
+                            <div class="row justify-content-end">
+                                <div class="col-12 col-lg-4 d-flex justify-content-center align-items-center  p-0 ">
+
+                                  {% trans "Hola" %}, {{request.user.username}}
+
+                                </div>
+                                <div class="col-12 col-lg-8 d-flex justify-content-end align-items-center p-0">
+
+                        
+
+                                    <a class="btn btn-xs m-2 ark-post" href="#" data-url="{% url 'auth_logout' %}" data-csrf-token={{ csrf_token }} title="{% trans 'Salir' %}">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                        <span class="d-lg-inline d-none">&nbsp;{% trans 'Salir'%} </span>
+                                    </a>
+
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="d-none d-lg-block" tyle="border:1px solid blue">
+                                {% if request.user.manager %}
+                                <div class="row">
+                                    <div class="col-12">
+                                        <p class="w-100 badge bg-success m-0 p-3 text-white">
+                                            Licencia v&aacute;lida hasta {{request.user.manager.comp.expiration_date|date:"d/m/Y"}} 
+                                        </p>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
 {% endblock extra_header %}
 
 {% block central_content %}
@@ -9,7 +52,7 @@ Cabecera
         <div class="col-12 text-center">
             <h1 class="mt-5">La cuenta a la que intenta acceder está desacivada</h1>
             <p class="lead">Hemos detectado que la cuenta a la que está intentando acceder está desactivada. Por favor, póngase en contacto con el administrador de la plataforma.</p>
-            <a href="{% url 'gestion:home' %}" class="btn btn-primary mt-3">Volver al inicio</a>
+            <a href="{% url 'index' %}" class="btn btn-primary mt-3">Volver al inicio</a>
         </div>
     </div>
 </div>
