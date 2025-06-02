@@ -12,12 +12,9 @@ from django.views.decorators.cache import never_cache
 from django.contrib.auth.views import LoginView
 from django.utils.decorators import method_decorator
 
-
-
-
 import uuid
-
 import os, csv
+from .reports import MonthlyReportPDF
 
 from tms.decorators import group_required
 from tms.commons import get_float, get_int, get_or_none, get_param, get_session, set_session, show_exc, generate_qr, csv_export, MESSAGES
@@ -511,23 +508,47 @@ def employees_show_qr(request):
         print(show_exc(e))
         return render(request, "workdays-client-error.html", {})
 
-#@group_required("Administradores",)
-#def employees_import(request):
-#    f = request.FILES["file"]
-#    lines = f.read().decode('latin-1').splitlines()
-#    i = 0
-#    for line in lines:
-#        if i > 0:
-#            l = line.split(";")
-#            #print(l)
-#            name = "{} {}".format(l[1], l[0])
-#            phone = l[2]
-#            email = l[7]
-#            dni = l[6]
-#            obj, created = Employee.objects.get_or_create(pin=dni, dni=dni, name=name, phone=phone, email=email)
-#            obj.save_user()
-#        i += 1
-#    return redirect("employees")
+def employees_report(employee):
+    try:
+        items = Workday.objects.filter(employee=employee).order_by("ini_date")
+        if len(items) == 0:
+            return None
+        # Sum the worked time by date
+        worked_time = {}
+        for item in items:
+            # Morning: 6:00 - 14:00
+            # Afternoon: 14:00 - 22:00
+            # Night: 22:00 - 6:00
+            date_key = item.ini_date.date()
+            shift =  "Morning" if item.ini_date.hour < 14 else "Afternoon" if item.ini_date.hour < 22 else "Night"
+            if date_key not in worked_time:
+                worked_time[date_key] = {'morning':None, 'afternoon':None, 'night':None, 'extras': timedelta(), 'ordinary': timedelta()}
+            if shift == "Morning":
+                worked_time[date_key]['morning'] = [item.ini_date, item.end_date]
+            elif shift == "Afternoon":
+                worked_time[date_key]['afternoon'] = [item.ini_date, item.end_date]
+            elif shift == "Night":
+                worked_time[date_key]['night'] = [item.ini_date, item.end_date]
+            # Calculate the total worked time
+            worked_time[date_key]['ordinary'] += item.end_date - item.ini_date
+            worked_time[date_key]['extras'] += 0
+
+        pdf_report = MonthlyReportPDF()
+        pdf_report.add_page()
+        datos = [
+            ("Empresa:", employee.comp.name, "Trabajador:", employee.name),
+            ("C.I.F./N.I.F.:", employee.comp.nif, "N.I.F.:", employee.dni),
+            ("Centro de Trabajo:", employee.comp.name, "Nº Afiliación:", employee.afiliation_number),
+            ("C.C.C.:", employee.comp.ccc, "Mes y Año:", datetime.now().strftime("%m/%Y"))
+        ]
+        pdf_report.datos_trabajador(datos)
+
+
+
+
+    except Exception as e:
+        print(show_exc(e))
+        return None
 
 '''
     MANAGERS
