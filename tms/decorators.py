@@ -16,7 +16,7 @@ def group_required(*group_names):
                     if Manager.objects.filter(user=request.user).exists():
                         manager = Manager.objects.get(user=request.user)
                         if not manager.comp.is_active:
-                            return render(request, "error_exception.html", {'exc':"La empresa a la que pertenece este usuario no esta activa, por favor contacte con el administrador del sistema"})
+                            return render(request, "no-payment.html", {'exc':"La empresa a la que pertenece este usuario no esta activa, por favor contacte con el administrador del sistema"})
                 
                         
                     return f(request, *args, **kwargs)

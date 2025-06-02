@@ -1,0 +1,16 @@
+{% extends "base_error.html" %}
+{% block extra_header %}
+Cabecera
+{% endblock extra_header %}
+
+{% block central_content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12 text-center">
+            <h1 class="mt-5">La cuenta a la que intenta acceder está desacivada</h1>
+            <p class="lead">Hemos detectado que la cuenta a la que está intentando acceder está desactivada. Por favor, póngase en contacto con el administrador de la plataforma.</p>
+            <a href="{% url 'gestion:home' %}" class="btn btn-primary mt-3">Volver al inicio</a>
+        </div>
+    </div>
+</div>
+{% endblock central_content %}
