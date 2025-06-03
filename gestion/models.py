@@ -90,9 +90,13 @@ class Company(models.Model):
     
     @property
     def view_logo(self):
-        if self.logo:
-            return format_html('<img src="{}" class="w-75 text-center"/>', self.logo.url)
-        return "-"
+        try:
+            if self.logo:
+                return format_html('<img src="{}" class="w-75 text-center mx-auto"/>', self.logo.url)
+            return format_html('<img src="{}" class="w-25 text-center mx-auto"/>', '/static/images/logo-fichaje.png')
+        except Exception as e:
+            print(show_exc(e))
+            return "-"
 
     @property
     def get_qr_login(self):

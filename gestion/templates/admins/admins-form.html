@@ -115,4 +115,10 @@
             $(this).addClass('text-danger');
         }
     });
+
+    {% if not obj.id %}
+    $('#form-company').data('target', 'row_New');
+    {% endif %}
+
+
 </script>

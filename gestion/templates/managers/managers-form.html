@@ -13,7 +13,6 @@
     <input type="hidden" name="id" id="id" value="{{obj.id}}" />
 
     <div class="row m-0 p-2">
-
         <div class="col-6">
             <div class="greybox-sm p-1">
                 {% trans "Nombre y Apellidos" %}
@@ -85,4 +84,13 @@
             $('#{{ field.id_for_label }}__msg').html('{{ field.errors.as_text|escapejs }}');
         {% endfor %}
     {% endif %}
+
+    // Add the manager card to the grid if it does not exist
+    if ($('#manager-{{ obj.id }}').length === 0) {
+        $('#grid-managers').append(`
+            <div id="manager-{{ obj.id }}" class="col-xl-4 col-lg-6 col-12 mb-1 item-manager">
+            </div>
+        `);
+    }
+
 </script>

@@ -1,4 +1,5 @@
 {% load static i18n gestion_tags %}
+
 <div class="col-1 d-flex align-items-center">
     {{item.view_logo}}
 </div>
@@ -20,11 +21,21 @@
         
 </div>
 
-<script>
-    var item = $('#row_{{item.id}}')
+<script class="toremove">
+    var item = $('#row_{{item.id}}');
+    if (item.length === 0) {
+        $('#row_New').before('<div class="row list-item pt-2 pb-2 m-0 active-False" id="row_{{item.id}}"></div>');
+        item = $('#row_{{item.id}}');
+        item.html($('#row_New').html());
+        $('.toremove').remove();
+        $('#row_New').html('');
+    }
     item.removeClass('active-True').removeClass('active-False').addClass('active-{{item.is_active}}');
     item.removeClass('text-danger');
     if (item.hasClass('active-False')) {
         item.addClass('text-danger');
     }
+
+
 </script>
+
