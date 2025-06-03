@@ -56,15 +56,13 @@ from django.conf.urls import handler404
 from django.http import HttpResponseNotFound
 import logging
 
-logger = logging.getLogger('django')
-
 def custom_404(request, exception):
     ip = request.META.get('HTTP_X_FORWARDED_FOR')
     if ip:
         ip = ip.split(',')[0]  # take the first IP in the list
     else:
         ip = request.META.get('REMOTE_ADDR')
-    logger.warning(f"{ip}: 404 Not Found: {request.path}")
+    print(f"{ip}: 404 Not Found: {request.path}")
     return HttpResponseNotFound("Not found")
 
 handler404 = custom_404
