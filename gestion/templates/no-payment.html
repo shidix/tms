@@ -37,11 +37,11 @@
 
 {% block central_content %}
 <div class="container">
-    <div class="row">
-        <div class="col-12 text-center">
-            <p class="lead mt-5"><i class='fas fa-user-lock'></i><br /> La cuenta a la que intenta acceder está desactivada</p>
-            <p>Hemos detectado que la cuenta a la que está intentando acceder está desactivada. Por favor, póngase en contacto con el administrador de la plataforma.</p>
-            <a href="{% url 'index' %}" class="btn btn-primary mt-3">Volver al inicio</a>
+    <div class="row m-0">
+        <div class="col-lg-10 offset-lg-1 text-center">
+            <p class="lead mt-5 p-5"><i class='fas fa-user-lock'></i><br /><br />La cuenta a la que intenta acceder está desactivada</p>
+            <p class="sub-lead p-2">Hemos detectado que la cuenta a la que está intentando acceder está desactivada. Por favor, póngase en contacto con el administrador de la plataforma.</p>
+            <a href="{% url 'index' %}" class="btn btn-primary mt-3 w-100 py-3"><strong>VOLVER AL INICIO</strong></a>
         </div>
     </div>
 </div>

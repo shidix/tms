@@ -142,6 +142,23 @@ span.status-completed, span.status-in-process, span.status-pending  {
 	UTILITIES		
 ************************/
 
+.lead {
+	border:1px solid #dc3545;
+	border-radius: 0.75rem;
+	background-color: #ffffff;
+	font-weight: 600;
+	font-size: 1.5rem;
+	color: #dc3545;
+}
+.lead i.fas.fa-user-lock {
+	font-size: 3rem;
+	color: #dc3545;
+}
+.sub-lead {
+	font-size: 1.1rem;
+	line-height: 1.8;
+}
+
 .inactive {
 	background-color: #ccc !important;
 }
