@@ -36,19 +36,6 @@
                         {% include "gantt.html" %}
                     </div>
                 </div>
-                <script>
-                    document.addEventListener("DOMContentLoaded", function () {
-                        const ganttDiv = document.querySelector("#gantt-div .plotly-graph-div");
-                        if (ganttDiv && Plotly) {
-                            ganttDiv.on('plotly_click', function (data) {
-                                const point = data.points[0];
-                                const uuid = point.customdata[0];
-                                const button = document.getElementById("button-" + uuid);
-                                if (button) button.click();
-                            });
-                        }
-                    });
-                </script>
                 {% endif %}
             </div>
         </div>
@@ -93,6 +80,16 @@
             if ($('#s_idate').val() !== $('#s_edate').val()) {
                 $('.day-search').removeClass('btn-warning').addClass('btn-success');
             }
-        }
+
+            const ganttDiv = document.querySelector("#gantt-div .plotly-graph-div");
+            if (ganttDiv && Plotly) {
+                ganttDiv.on('plotly_click', function (data) {
+                    const point = data.points[0];
+                    const uuid = point.customdata[0];
+                    const button = document.getElementById("button-" + uuid);
+                    if (button) button.click();
+                });
+            }
+}
     );
 </script>
