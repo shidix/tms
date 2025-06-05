@@ -177,3 +177,5 @@ migrations
 viewlog.sh
 media
 **.swp
+
+collect_static
