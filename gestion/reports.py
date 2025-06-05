@@ -182,7 +182,12 @@ class MonthlyReportPDF(FPDF):
         super().output(name)
 
     def output_to_memory(self):
-        return super().output(dest='S').encode('latin1')
+        try:
+            return super().output(dest='S').encode('latin1')
+        except Exception as e:
+            return super().output(dest='S')
+        
+
 
 # if __name__ == "__main__":
 #     pdf = MonthlyReportPDF()
