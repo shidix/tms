@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n static %}
+{% load i18n static gestion_tags%}
 
 {% block central_content %}
     <div class="row toolbar-search p-2 m-0">{% include "employees/employees-search.html" %} </div>
@@ -10,8 +10,14 @@
             <div class="row toolbar-content py-3 m-0">
                 <div class="col-lg-2"><h2 class="pathway b-right">
                     {%trans 'Empleados'%} <span id="items-counter" class="badge badge-secondary">{{items|length}}</span></h2></div>
-                <div class="col-lg-2 offset-lg-4"> <a class="btn btn-xs exp w-100" href="{% url "employees-export" %}" 
-                    title="{% trans 'Exportar a CSV' %}" target="_blank"><i class="fas fa-file-csv"></i> {% trans "Exportar" %}</a>
+                <div class="col-lg-4 offset-lg-2 d-flex justify-content-end"> 
+                    <a class="btn btn-xs exp mx-1" href="{% url "employees-export" %}" title="{% trans 'Exportar a CSV' %}" target="_blank"><i class="fas fa-file-csv"></i> {% trans "Exportar CSV" %}</a>
+                    {% if request.user|in_group:'managers' %}
+                        <a class="btn btn-xs exp ark-pdf mx-1" id="btn-full-pdf-pc" data-url="{% url 'managers-report-full-pdf' request.session.s_emp_idate request.session.s_emp_edate %}" 
+                            data-filename="employee_report_{{request.user.manager.comp.nif}}.pdf" title="{% trans 'Registro PDF completo' %}">
+                            <i class="fas fa-file-pdf"></i>&nbsp;{% trans 'Registro PDF completo' %}
+                        </a>
+                    {% endif %}
                 </div>
                 {%comment%}
                 <div class="col-lg-2"> <button type="button" class="btn btn-sm new w-100" onclick="$('#div-import').toggle()">
@@ -30,6 +36,12 @@
                     <span id="items-counter" class="badge badge-secondary">{{items|length}}</span></h2>
                 <a class="btn btn-xs exp" href="{% url "employees-export" %}" title="{% trans 'Exportar a CSV' %}" target="_blank"> 
                     <i class="fas fa-file-csv"></i> {% trans "Exportar" %}</a>
+                {% if request.user|in_group:'managers' %}
+                <a class="btn btn-xs ark-pdf" data-url="{% url 'managers-report-full-pdf' request.session.s_emp_idate request.session.s_emp_edate %}" 
+                    data-filename="employee_report_{{request.user.manager.comp.nif}}.pdf" title="{% trans 'Reporte PDF completo' %}">
+                    <i class="fas fa-file-pdf"></i>
+                </a>
+                {% endif %}
                 {%comment%}
                 <button type="button" class="btn btn-sm new" onclick="$('#div-import').toggle()"> 
                     <i class="fas fa-file-import"></i> {% trans 'Importar' %}</button> 

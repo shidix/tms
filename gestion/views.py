@@ -405,8 +405,15 @@ def get_employees(request):
             full_query &= Q(comp=Employee.objects.get(user=request.user).comp)
         else:
             raise Exception("No se ha podido obtener la empresa del usuario")
-    
-    return Employee.objects.filter(full_query).order_by("comp__name", "name")
+    items = Employee.objects.filter(full_query).order_by("comp__name", "name")
+    for item in items:
+        if len(item.uuid) < 20:
+            temp_uuid = str(uuid.uuid4())
+            while Employee.objects.filter(uuid=temp_uuid).exists():
+                temp_uuid = str(uuid.uuid4())
+            item.uuid = temp_uuid
+            item.save()
+    return items
 
 @group_required("admins", "managers")
 def employees(request):
@@ -521,48 +528,6 @@ def employees_show_qr(request):
         print(show_exc(e))
         return render(request, "workdays-client-error.html", {})
 
-def employees_report(employee):
-    try:
-        items = Workday.objects.filter(employee=employee).order_by("ini_date")
-        if len(items) == 0:
-            return None
-        # Sum the worked time by date
-        worked_time = {}
-        for item in items:
-            # Morning: 6:00 - 14:00
-            # Afternoon: 14:00 - 22:00
-            # Night: 22:00 - 6:00
-            date_key = item.ini_date.date()
-            shift =  "Morning" if item.ini_date.hour < 14 else "Afternoon" if item.ini_date.hour < 22 else "Night"
-            if date_key not in worked_time:
-                worked_time[date_key] = {'morning':None, 'afternoon':None, 'night':None, 'extras': timedelta(), 'ordinary': timedelta()}
-            if shift == "Morning":
-                worked_time[date_key]['morning'] = [item.ini_date, item.end_date]
-            elif shift == "Afternoon":
-                worked_time[date_key]['afternoon'] = [item.ini_date, item.end_date]
-            elif shift == "Night":
-                worked_time[date_key]['night'] = [item.ini_date, item.end_date]
-            # Calculate the total worked time
-            worked_time[date_key]['ordinary'] += item.end_date - item.ini_date
-            worked_time[date_key]['extras'] += 0
-
-        pdf_report = MonthlyReportPDF()
-        pdf_report.add_page()
-        datos = [
-            ("Empresa:", employee.comp.name, "Trabajador:", employee.name),
-            ("C.I.F./N.I.F.:", employee.comp.nif, "N.I.F.:", employee.dni),
-            ("Centro de Trabajo:", employee.comp.name, "Nº Afiliación:", employee.afiliation_number),
-            ("C.C.C.:", employee.comp.ccc, "Mes y Año:", datetime.now().strftime("%m/%Y"))
-        ]
-        pdf_report.datos_trabajador(datos)
-
-
-
-
-    except Exception as e:
-        print(show_exc(e))
-        return None
-
 '''
     MANAGERS
 '''
@@ -574,6 +539,68 @@ def get_managers(request):
         for myfilter in filters_to_search:
             full_query |= Q(**{myfilter: search_value})
     return Manager.objects.filter(full_query).order_by("-id")[:50]
+
+
+@group_required("admins", "managers")
+def managers_report_pdf(request, worker_uuid, start_date=None, end_date=None):
+    try:
+
+        if start_date is None:
+            start_date = datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        if end_date is None:
+            end_date = datetime.now().replace(hour=23, minute=59, second=59, microsecond=999999)
+
+        if isinstance(start_date, str):
+            start_date = datetime.strptime(start_date, "%Y-%m-%d")
+        if isinstance(end_date, str):
+            end_date = datetime.strptime(end_date, "%Y-%m-%d")
+        range_date = [ start_date, end_date ]
+        if settings.DEBUG:
+            print (f"Generating report for worker {worker_uuid} from {start_date} to {end_date}")
+
+        employee = Employee.objects.filter(uuid=worker_uuid).first()
+ 
+        pdf_report = MonthlyReportPDF(employee, start_date, end_date)
+        output = pdf_report.output_to_memory()
+
+        response = HttpResponse(output, content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="reporte_trabajador.pdf"'
+        return response
+
+    except Exception as e:
+        print(show_exc(e))
+        return HttpResponse("<strong>Ha ocurrido un error inesperado. Consulte con el administrador de la plataforma.</strong>", status=503)
+    
+@group_required("managers")
+def managers_report_full_pdf(request, start_date=None, end_date=None):
+    try:
+        if start_date is None:
+            start_date = datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        if end_date is None:
+            end_date = datetime.now().replace(hour=23, minute=59, second=59, microsecond=999999)
+
+        if isinstance(start_date, str):
+            start_date = datetime.strptime(start_date, "%Y-%m-%d")
+        if isinstance(end_date, str):
+            end_date = datetime.strptime(end_date, "%Y-%m-%d")
+        range_date = [ start_date, end_date ]
+        if settings.DEBUG:
+            print (f"Generating report for company {request.user.manager.comp.name} from {start_date} to {end_date}")
+
+        employees = Employee.objects.filter(comp = request.user.manager.comp)
+
+        pdf_report = MonthlyReportPDF(employees, start_date, end_date)
+        output = pdf_report.output_to_memory()
+
+        response = HttpResponse(output, content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="reporte_trabajador.pdf"'
+        return response
+
+    except Exception as e:
+        print(show_exc(e))
+        return HttpResponse("<strong>Ha ocurrido un error inesperado. Consulte con el administrador de la plataforma.</strong>", status=503)
+
+
 
 @group_required("admins",)
 def managers(request):
