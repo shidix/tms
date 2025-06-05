@@ -35,6 +35,21 @@ class MonthlyReportPDF(FPDF):
         except Exception as e:
             print(show_exc(e))
             raise e
+
+    @staticmethod
+    def local_time(mydate, tz =None ):
+        try:
+            from datetime import datetime
+            from zoneinfo import ZoneInfo
+            if mydate != "":
+                utc_now = mydate.replace(tzinfo=ZoneInfo("UTC"))
+                canary_time = utc_now.astimezone(ZoneInfo("Atlantic/Canary"))
+                canary_time = canary_time.replace(tzinfo=ZoneInfo("UTC"))
+                return canary_time
+            return mydate
+        except Exception as e:
+            print(show_exc(e))
+            return mydate
         
 
     def write_cell(self, text, cell, numcells, border=1, padding=5, align='L', fill=False, bg_color=(255, 255, 255), rowspan=1):
@@ -126,15 +141,15 @@ class MonthlyReportPDF(FPDF):
             for workday in workdays:
                 self.write_cell(workday.ini_date.strftime("%d"), 1, 20, 1, align='C')
                 if workday.in_morning:
-                    self.write_cell(workday.ini_date.strftime("%H:%M"), [2, 3], 20, 1, align='C')
-                    self.write_cell(workday.end_date.strftime("%H:%M"), [4, 5], 20, 1, align='C')
+                    self.write_cell(MonthlyReportPDF.local_time(workday.ini_date).strftime("%H:%M"), [2, 3], 20, 1, align='C')
+                    self.write_cell(MonthlyReportPDF.local_time(workday.end_date).strftime("%H:%M"), [4, 5], 20, 1, align='C')
                     self.write_cell("", [6, 7], 20, 1, align='C')
                     self.write_cell("", [8, 9], 20, 1, align='C')
                 elif workday.in_afternoon:
                     self.write_cell("", [2, 3], 20, 1, align='C')
                     self.write_cell("", [4, 5], 20, 1, align='C')
-                    self.write_cell(workday.ini_date.strftime("%H:%M"), [6, 7], 20, 1, align='C')
-                    self.write_cell(workday.end_date.strftime("%H:%M"), [8, 9], 20, 1, align='C')
+                    self.write_cell(MonthlyReportPDF.local_time(workday.ini_date).strftime("%H:%M"), [6, 7], 20, 1, align='C')
+                    self.write_cell(MonthlyReportPDF.local_time(workday.end_date).strftime("%H:%M"), [8, 9], 20, 1, align='C')
                 diff_seconds = (workday.end_date - workday.ini_date).total_seconds()
                 diff_hours = diff_seconds // 3600
                 diff_minutes = (diff_seconds % 3600) // 60
