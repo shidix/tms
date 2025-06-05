@@ -976,6 +976,75 @@ $(document).ready(()=>{
     }
     );
 
+    $('body').on('click', '.ark-pdf', function(e){
+        var obj = $(this);
+        if (((obj.data("confirm")) && confirm(obj.data("confirm"))) || !(obj.data("confirm")))
+        {
+            setWait();
+            url = obj.data("url");
+            var target = "";
+            var filename = "document.pdf"; // Default filename if not specified
+            if (obj.data("target"))
+                target = obj.data("target");
+            if (obj.data("filename"))
+            {
+                filename = obj.data("filename");
+                // Check if the filename ends with .pdf, if not, append it
+                if (!filename.endsWith('.pdf')) {
+                    filename += '.pdf';
+                }
+            }  
+
+
+
+
+            // Launch an AJAX request to get a PDF file
+            // If target is not empty, it will be loaded into the target element
+            // If target is empty, it will be downloaded as a PDF file
+            $.ajax({
+                url: url,
+                type: 'GET',
+                cache: false,
+                dataType: 'binary',
+                xhrFields: {
+                    responseType: 'blob' // Set the response type to blob for binary data
+                },
+                success: function(data) {
+                    if (target != "") {
+                        // If target is specified, load the PDF into the target element
+                        var blob = new Blob([data], { type: 'application/pdf' });
+                        var url = URL.createObjectURL(blob);
+                        $('#'+target).html('<iframe src="' + url + '" width="100%" height="600px"></iframe>');
+                    } else {
+                        // If target is empty, download the PDF file
+                        var link = document.createElement('a');
+                        link.href = URL.createObjectURL(data);
+                        link.download = filename; // Set the desired file name
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    }
+                },
+                error: function(e) {
+                    // show error with sweetalert
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        confirmButtonText: 'Aceptar',
+                        background: '#f2f2f2',
+                        color: '#333',
+                        html: e.responseText,
+                    });
+                },
+                complete : function(){unsetWait();}
+            });
+
+            e.preventDefault();
+        }
+    }
+    );
+
+
 });
 
 

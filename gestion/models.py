@@ -207,6 +207,26 @@ class Employee(models.Model):
             hours += minutes // 60
             minutes = minutes % 60
         return hours, minutes
+    
+    def worked_time_shifts(self, ini_date, end_date):
+        idate = "{} 00:00".format(ini_date)
+        edate = "{} 23:59".format(end_date)
+        item_list = self.workdays.filter(ini_date__gte=idate, end_date__lte=edate)
+        hours_mornig = 0
+        minutes_morning = 0
+        hours_afternoon = 0
+        minutes_afternoon = 0
+        for item in item_list:
+            if item.finish:
+                diff_seconds = (item.end_date - item.ini_date).total_seconds()
+                if item.ini_date.hour < 14 and item.ini_date.hour >= 6:
+                    hours_morning += diff_seconds // 3600
+                    minutes_morning += ((diff_seconds % 3600) / 60)
+                else:
+                    hours_afternoon += diff_seconds // 3600
+                    minutes_afternoon += ((diff_seconds % 3600) / 60)
+
+        return hours_mornig, minutes_morning, hours_afternoon, minutes_afternoon
 
 
     def get_qr_uuid(self):
@@ -242,12 +262,6 @@ class Workday(models.Model):
         diff = edate - idate
         days, seconds = diff.days, diff.seconds
         return (diff.total_seconds())
-        #hours += seconds // 3600
-        #minutes += (seconds % 3600) // 60
-        #if minutes > 59:
-        #    hours += minutes // 60
-        #    minutes = minutes % 60
-        #return hours, minutes
 
     @property
     def extraday(self):
@@ -255,6 +269,18 @@ class Workday(models.Model):
             diff_days = self.end_date.date().day - self.ini_date.date().day
             return f"(+{diff_days}d)"
         return ""
+    
+    @property
+    def in_morning(self):
+        if self.ini_date.hour < 14 and self.ini_date.hour >= 6:
+            return True
+        return False
+    
+    @property
+    def in_afternoon(self):
+        if self.ini_date.hour >= 14 or self.ini_date.hour < 6:
+            return True
+        return False
  
     class Meta:
         verbose_name = _('Asistencia')

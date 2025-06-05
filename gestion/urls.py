@@ -32,6 +32,11 @@ urlpatterns = [
     path('managers/login-by-uuid/<slug:uuid>/<slug:comp_uuid>', views.managers_login_by_uuid, name='managers-login-by-uuid'),
     path('managers/send-login-url', views.managers_send_login_url, name='managers-send-login-url'),
     path('managers/view-portal-login-url', views.managers_view_portal_login_url, name='managers-view-portal-login-url'),
+    path('managers/report-pdf/<slug:worker_uuid>/<str:start_date>/<str:end_date>', views.managers_report_pdf, name='managers-report-pdf'),
+    path('managers/report-pdf/<slug:worker_uuid>', views.managers_report_pdf, name='managers-report-pdf'),
+    path('managers/report-full-pdf/<str:start_date>/<str:end_date>', views.managers_report_full_pdf, name='managers-report-full-pdf'),
+
+
 
     #---------------------- EMPLOYEES -----------------------
     path('employees', views.employees, name='employees'),

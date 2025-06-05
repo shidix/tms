@@ -28,9 +28,8 @@
             </div>
             <div class="col-1">{{ item.pin|default:"" }}</div>
             <div class="col-1">{{ item.dni|default:"" }}</div>
-            {#<div class="col-2"> {{request.session.s_emp_idate}} {{request.session.s_emp_edate}}</div>#}
             <div class="col-2">{% get_worked_time item request.session.s_emp_idate request.session.s_emp_edate %}</div>
-            <div class="col-2 text-right">
+            <div class="col-2 d-flex justify-content-end">
                 <a class="btn btn-xs ark" data-url="{% url 'employees-show-qr' %}" alt="qr" width="100%" data-target-modal="common-modal-md" data-uuid="{{item.uuid}}">
                     <i class="fa fa-qrcode"></i></a>
                 <a class="btn btn-xs ark" data-url="{%url "employees-form"%}" data-target-modal="common-modal" 
@@ -38,6 +37,8 @@
                 <a class="btn btn-xs ark" data-url="{% url "employees-remove" %}" data-target="emp-list" data-obj_id="{{item.id}}" 
                     title="{% trans 'Borrar' %}" data-confirm="{% trans "Are you sure to remove this element?" %}">
                     <i class="fas fa-trash"></i></a> 
+                <a class="btn btn-xs ark-pdf" data-url="{% url 'managers-report-pdf' item.uuid request.session.s_emp_idate request.session.s_emp_edate%}" data-filename="employee_report_{{item.dni}}.pdf">
+                    <i class="fas fa-file-pdf"></i></a>
             </div>
         </div>
     {% endfor %}
@@ -61,45 +62,9 @@
     </div>
     {% endfor %}
 
-    {%comment%}
-        <div class="row list-item pt-2 pb-2 m-0" id="row_{{item.id}}">
-            <div class="col-3">{{ item.name|default:"---" }}</div>
-            <div class="col-2">{{ item.phone|default:"" }}</div>
-            <div class="col-3">{{ item.email|default:"" }}</div>
-            <div class="col-2">{{ item.pin|default:"" }}</div>
-            <div class="col-2 text-right">
-                <a class="btn btn-xs ark" data-url="{% url "employees-form" %}" data-target-modal="common-modal" data-obj_id="{{item.id}}" 
-                    title="{% trans 'Editar' %}"><i class="fas fa-edit"></i></a> 
-                <a class="btn btn-xs ark" data-url="{% url "employees-remove" %}" data-target="emp-list" data-obj_id="{{item.id}}" 
-                    title="{% trans 'Borrar' %}" data-confirm="{% trans "Are you sure to remove this element?" %}"><i class="fas fa-trash"></i></a> 
-            </div>
-        </div>
-
-
-    <div class="row main-th py-3 m-0">
-        <div class="col-3"> {% trans 'Nombre' %} </div>
-        <div class="col-2"> {% trans 'Teléfono' %} </div>
-        <div class="col-3"> {% trans 'Email' %} </div>
-        <div class="col-2"> {% trans 'PIN' %} </div>
-        <div class="col-2"></div>
-    </div>
-
-    {% for item in items %}
-        <div class="row list-item pt-2 pb-2 m-0" id="row_{{item.id}}">
-            <div class="col-3">{{ item.name|default:"---" }}</div>
-            <div class="col-2">{{ item.phone|default:"" }}</div>
-            <div class="col-3">{{ item.email|default:"" }}</div>
-            <div class="col-2">{{ item.pin|default:"" }}</div>
-            <div class="col-2 text-right">
-                <a class="btn btn-xs ark" data-url="{% url "employees-form" %}" data-target-modal="common-modal" data-obj_id="{{item.id}}" 
-                    title="{% trans 'Editar' %}"><i class="fas fa-edit"></i></a> 
-                <a class="btn btn-xs ark" data-url="{% url "employees-remove" %}" data-target="emp-list" data-obj_id="{{item.id}}" 
-                    title="{% trans 'Borrar' %}" data-confirm="{% trans "Are you sure to remove this element?" %}"><i class="fas fa-trash"></i></a> 
-            </div>
-        </div>
-    {% endfor %}
-    {%endcomment%}
-
 </div>
+<script>
+    $('#btn-full-pdf-pc').attr('data-url', "{% url 'managers-report-full-pdf' request.session.s_emp_idate request.session.s_emp_edate %}");
+</script>
 
 
