@@ -16,7 +16,8 @@ class MonthlyReportPDF(FPDF):
 
     def __init__(self, worker, start_date, end_date):
         try:
-            print("Initializing MonthlyReportPDF with worker:", worker, "start_date:", start_date, "end_date:", end_date)
+            if settings.DEBUG:
+                print("Initializing MonthlyReportPDF with worker:", worker, "start_date:", start_date, "end_date:", end_date)
             super().__init__()
             if not isinstance(worker, QuerySet):
                 self.worker_list = Employee.objects.filter(uuid=worker.uuid)
