@@ -570,7 +570,7 @@ def managers_report_pdf(request, worker_uuid, start_date=None, end_date=None):
 
     except Exception as e:
         print(show_exc(e))
-        return HttpResponse("<strong>Ha ocurrido un error inesperado. Consulte con el administrador de la plataforma.</strong>", status=503)
+        return HttpResponse(f"<strong>Ha ocurrido un error inesperado. Consulte con el administrador de la plataforma.</strong><br>{show_exc(e)}", status=503)
     
 @group_required("managers")
 def managers_report_full_pdf(request, start_date=None, end_date=None):
