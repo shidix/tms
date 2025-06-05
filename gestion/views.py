@@ -543,6 +543,7 @@ def get_managers(request):
 
 @group_required("admins", "managers")
 def managers_report_pdf(request, worker_uuid, start_date=None, end_date=None):
+    print(1)
     try:
 
         if start_date is None:
