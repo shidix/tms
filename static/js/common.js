@@ -783,37 +783,75 @@ $(document).ready(()=>{
         } catch (err) { answer.html('Unsupported Browser!'); }
     });
 
-    $("body").on("submit", ".post-form", function(e){
-        var obj = $(this);
-        if (((obj.data("confirm")) && confirm(obj.data("confirm"))) || !(obj.data("confirm")))
-        {
+    // $("body").on("submit", ".post-form", function(e){
+    //     var obj = $(this);
+    //     if (((obj.data("confirm")) && confirm(obj.data("confirm"))) || !(obj.data("confirm")))
+    //     {
 
-            frm = $(this);
-            target = $(this).data("target");
-            error_target = $(this).data("error-target");
-            // Send the form data using AJAX (post)
-            $.post(frm.attr('action'), frm.serialize(), function(data) {
-                $('#'+target).html(data);
-                //To blink the 
-                // To enphasize the target
-                for (var i = 0; i < 3; i++) {
-                    $('#'+target).fadeTo(100, 0.5).fadeTo(100, 1);
-                }
+    //         frm = $(this);
+    //         target = $(this).data("target");
+    //         error_target = $(this).data("error-target");
+    //         // Send the form data using AJAX (post)
+    //         $.post(frm.attr('action'), frm.serialize(), function(data) {
+    //             $('#'+target).html(data);
+    //             //To blink the 
+    //             // To enphasize the target
+    //             for (var i = 0; i < 3; i++) {
+    //                 $('#'+target).fadeTo(100, 0.5).fadeTo(100, 1);
+    //             }
                 
-            }
-            ).fail(function(data) {
-                if (error_target != "")
-                    $('#'+error_target).html(data.responseText);
-                else {
-                    $('#'+target).html(data.responseText);
+    //         }
+    //         ).fail(function(data) {
+    //             if (error_target != "")
+    //                 $('#'+error_target).html(data.responseText);
+    //             else {
+    //                 $('#'+target).html(data.responseText);
+    //             }
+
+    //         });
+    //         // submitForm(frm, target);
+    //         e.preventDefault();
+    //     }
+
+    // });
+
+    $("body").on("submit", ".post-form", function(e){
+        e.preventDefault(); // Previene el submit estándar
+
+        var obj = $(this);
+        if (((obj.data("confirm")) && confirm(obj.data("confirm"))) || !(obj.data("confirm"))) {
+            
+            var frm = this; // DOM form
+            var $frm = $(frm);
+            var target = $frm.data("target");
+            var error_target = $frm.data("error-target");
+
+            var formData = new FormData(frm); // Incluye todo, incluso archivos
+
+            $.ajax({
+                url: $frm.attr('action'),
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(data) {
+                    $('#' + target).html(data);
+                    // Para enfatizar el target
+                    for (var i = 0; i < 3; i++) {
+                        $('#' + target).fadeTo(100, 0.5).fadeTo(100, 1);
+                    }
+                },
+                error: function(data) {
+                    if (error_target != "") {
+                        $('#' + error_target).html(data.responseText);
+                    } else {
+                        $('#' + target).html(data.responseText);
+                    }
                 }
-
             });
-            // submitForm(frm, target);
-            e.preventDefault();
         }
-
     });
+
 
     $("body").on("click", ".ark-alert", function(e){
         var obj = $(this);
@@ -908,6 +946,8 @@ $(document).ready(()=>{
                 target: target,
                 style: 'display: none;'
             });
+
+
 
 
             form.append($('<input>', {
