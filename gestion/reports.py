@@ -139,7 +139,26 @@ class MonthlyReportPDF(FPDF):
 
             self.set_font("Helvetica", "", 9)
             total_seconds = 0
+            total_seconds_extra = 0
+            total_by_day = {}
             for workday in workdays:
+                key_day = workday.ini_date.strftime("%Y%m%d")
+                if key_day not in total_by_day:
+                    total_by_day[key_day] = 0
+
+                diff_seconds = (workday.end_date - workday.ini_date).total_seconds()
+                diff_seconds_extra = 0
+                if total_by_day[key_day] + diff_seconds > 8 * 3600:
+                    diff_seconds = 8 * 3600 - total_by_day[key_day]
+                    diff_seconds_extra = (workday.end_date - workday.ini_date).total_seconds() - diff_seconds
+                    total_by_day[key_day] = 8 * 360
+                else:
+                    total_by_day[key_day] += diff_seconds
+
+
+
+
+
                 self.write_cell(workday.ini_date.strftime("%d"), 1, 20, 1, align='C')
                 if workday.in_morning:
                     self.write_cell(MonthlyReportPDF.local_time(workday.ini_date).strftime("%H:%M"), [2, 3], 20, 1, align='C')
@@ -151,21 +170,33 @@ class MonthlyReportPDF(FPDF):
                     self.write_cell("", [4, 5], 20, 1, align='C')
                     self.write_cell(MonthlyReportPDF.local_time(workday.ini_date).strftime("%H:%M"), [6, 7], 20, 1, align='C')
                     self.write_cell(MonthlyReportPDF.local_time(workday.end_date).strftime("%H:%M"), [8, 9], 20, 1, align='C')
-                diff_seconds = (workday.end_date - workday.ini_date).total_seconds()
+                # diff_seconds = (workday.end_date - workday.ini_date).total_seconds()
                 diff_hours = diff_seconds // 3600
                 diff_minutes = (diff_seconds % 3600) // 60
+                if (diff_seconds_extra > 0) and (diff_seconds < 8 * 3600):
+                    diff_minutes += 1
                 total_seconds += (diff_hours * 3600 + diff_minutes * 60)
                 self.write_cell(f"{int(diff_hours):02}:{int(diff_minutes):02}", [10, 11, 12, 13], 20, 1, align='C')
-                self.write_cell("", [14, 15, 16, 17], 20, 1, align='C')
+
+                diff_hours_extra = diff_seconds_extra // 3600
+                diff_minutes_extra = (diff_seconds_extra % 3600) // 60
+                total_seconds_extra += (diff_hours_extra * 3600 + diff_minutes_extra * 60)
+                if (diff_seconds_extra > 0):
+                    self.write_cell(f"{int(diff_hours_extra):02}:{int(diff_minutes_extra):02}", [14, 15, 16, 17], 20, 1, align='C')
+                else:
+                    self.write_cell("", [14, 15, 16, 17], 20, 1, align='C')
+
                 self.write_cell("", [18, 19, 20], 20, 1, align='C')
                 self.ln()
             
             total_hours = total_seconds // 3600
             total_minutes = (total_seconds % 3600) // 60
+            total_hours_extra = total_seconds_extra // 3600
+            total_minutes_extra = (total_seconds_extra % 3600) // 60
             self.set_font("Helvetica", "B", 9)
             self.write_cell("TOTAL HORAS", [1,2,3,4,5,6,7,8,9], 20, 1, align='C', bg_color=(200, 200, 200), fill=True)
             self.write_cell(f"{int(total_hours):02}:{int(total_minutes):02}", [10, 11, 12, 13], 20, 1, align='C', bg_color=(200, 200, 200), fill=True)
-            self.write_cell("", [14, 15, 16, 17], 20, 1, align='C', bg_color=(200, 200, 200), fill=True)
+            self.write_cell(f"{int(total_hours_extra):02}:{int(total_minutes_extra):02}", [14, 15, 16, 17], 20, 1, align='C', bg_color=(200, 200, 200), fill=True)
             self.write_cell("", [18, 19, 20], 20, 1, align='C', bg_color=(200, 200, 200), fill=True)
         except Exception as e:
             print(show_exc(e))

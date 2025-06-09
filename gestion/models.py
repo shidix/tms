@@ -1,3 +1,4 @@
+from zoneinfo import ZoneInfo
 from django.conf import settings
 from django.contrib.auth.models import User, Group
 from django.db import models
@@ -59,6 +60,11 @@ def generate_qr_image(url, bg_image=None):
     img_str = base64.b64encode(buffer.getvalue()).decode()
     img_data = "data:image/png;base64,{}".format(img_str)
     return img_data
+
+def localtime(dt, tz=None):
+    if tz is None:
+        tz = ZoneInfo("Atlantic/Canary")
+    return dt.astimezone(tz)
 
 class Company(models.Model):
     name = models.CharField(max_length=200, verbose_name = _('Nombre'))
@@ -272,13 +278,14 @@ class Workday(models.Model):
     
     @property
     def in_morning(self):
-        if self.ini_date.hour < 14 and self.ini_date.hour >= 6:
+        local_time = localtime(self.ini_date)
+        if local_time.hour < 14 and local_time.hour >= 6:
             return True
         return False
     
     @property
     def in_afternoon(self):
-        if self.ini_date.hour >= 14 or self.ini_date.hour < 6:
+        if localtime(self.ini_date).hour >= 14 or localtime(self.ini_date).hour < 6:
             return True
         return False
  
