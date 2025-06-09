@@ -258,13 +258,17 @@ def change_password(request):
 @group_required("admins", "managers")
 def index(request):
     try:
-        init_session_date(request, "s_idate")
-        init_session_date(request, "s_edate")
-        items = get_workdays(request)
-        gantt = gantt_plotly_view(items)
-        list_dates = [ datetime.now().date() + timedelta(days=i) for i in range(-6, 1) ]
-        listmode = False
-        return render(request, "index.html", {"item_list": items, "gantt": gantt, "list_dates": list_dates, 'listmode': listmode}) 
+        # Check if user is in admins group
+        if request.user.groups.filter(name__in="admins").exists() or request.user.is_superuser:
+            return redirect(reverse("admins"))
+        else:
+            init_session_date(request, "s_idate")
+            init_session_date(request, "s_edate")
+            items = get_workdays(request)
+            gantt = gantt_plotly_view(items)
+            list_dates = [ datetime.now().date() + timedelta(days=i) for i in range(-6, 1) ]
+            listmode = False
+            return render(request, "index.html", {"item_list": items, "gantt": gantt, "list_dates": list_dates, 'listmode': listmode}) 
     except Exception as e:
         print(show_exc(e))
         return render(request, "workdays-client-error.html", {})
