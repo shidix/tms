@@ -141,6 +141,7 @@ class MonthlyReportPDF(FPDF):
             total_seconds = 0
             total_seconds_extra = 0
             total_by_day = {}
+            daily_limit = self.worker.weekly_hours * 3600
             for workday in workdays:
                 key_day = workday.ini_date.strftime("%Y%m%d")
                 if key_day not in total_by_day:
@@ -148,10 +149,10 @@ class MonthlyReportPDF(FPDF):
 
                 diff_seconds = (workday.end_date - workday.ini_date).total_seconds()
                 diff_seconds_extra = 0
-                if total_by_day[key_day] + diff_seconds > 8 * 3600:
-                    diff_seconds = 8 * 3600 - total_by_day[key_day]
+                if total_by_day[key_day] + diff_seconds > daily_limit:
+                    diff_seconds = daily_limit - total_by_day[key_day]
                     diff_seconds_extra = (workday.end_date - workday.ini_date).total_seconds() - diff_seconds
-                    total_by_day[key_day] = 8 * 360
+                    total_by_day[key_day] = daily_limit
                 else:
                     total_by_day[key_day] += diff_seconds
 
@@ -173,7 +174,7 @@ class MonthlyReportPDF(FPDF):
                 # diff_seconds = (workday.end_date - workday.ini_date).total_seconds()
                 diff_hours = diff_seconds // 3600
                 diff_minutes = (diff_seconds % 3600) // 60
-                if (diff_seconds_extra > 0) and (diff_seconds < 8 * 3600):
+                if (diff_seconds_extra > 0) and (diff_seconds < daily_limit):
                     diff_minutes += 1
                 total_seconds += (diff_hours * 3600 + diff_minutes * 60)
                 self.write_cell(f"{int(diff_hours):02}:{int(diff_minutes):02}", [10, 11, 12, 13], 20, 1, align='C')
