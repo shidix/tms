@@ -249,7 +249,7 @@ def change_password(request):
             # Logout the user after changing the password
             logout(request)
             login(request, user)
-            return render(request, "simple-error-alert.html", {"exc": MESSAGES["PASSWORD_CHANGED"],"icon":"success" }, status=200)
+            return render(request, "change-password-ok.html", {"exc": MESSAGES["PASSWORD_CHANGED"],"icon":"success" }, status=200)
         return render(request, "change-password.html", {})
     except Exception as e:
         print(show_exc(e))
