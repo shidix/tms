@@ -3,7 +3,7 @@ from django.conf import settings
 from django.http import HttpResponse
 from PIL import Image
 
-import sys, datetime, json, string, random, unicodedata, qrcode, io, csv
+import sys, datetime, json, string, random, unicodedata, qrcode, io, csv, requests
 
 
 MESSAGES = {
@@ -17,6 +17,16 @@ MESSAGES = {
     "PASSWORD_ERROR": "Error al cambiar la contraseña",}
 
 
+def get_city_from_ip(ip_address):
+    try:
+        response = requests.get(f"http://ip-api.com/json/{ip_address}")
+        data = response.json()
+        if data['status'] == 'success':
+            return data['city']
+    except Exception as e:
+        print (show_exc(e))
+        return ip_address
+    return ip_address
 '''
     Exceptions
 '''

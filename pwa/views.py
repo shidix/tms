@@ -131,6 +131,7 @@ def employee_qr_finish(request):
         obj = Workday.objects.filter(employee=request.user.employee, finish=False).order_by("-ini_date").first()
         obj.end_date = datetime.now() 
         obj.finish = True
+        obj.setIpAddress(request)
         obj.save()
         return redirect("pwa-home")
     except Exception as e:
@@ -154,9 +155,14 @@ def employee_check_clock(request, uuid = None):
         if obj != None:
             obj.end_date = datetime.now()
             obj.finish = True
+            obj.setIpAddress(request)
             obj.save()
         else:
             obj = Workday.objects.create(employee=emp, ini_date=datetime.now())
+            obj.setIpAddress(request)
+            obj.save()
+        # Register ipaddress
+
         return render(request, "pwa/employees/company-sign-in.html", {'comp': emp.comp, 'obj': obj})
     except Exception as e:
         print(show_exc(e))
@@ -188,9 +194,12 @@ def pwa_company_login(request, uuid=None):
                                     obj = Workday.objects.filter(employee=request.user.employee, finish=False).order_by("-ini_date").first()
                                     obj.end_date = datetime.now()
                                     obj.finish = True
+                                    obj.setIpAddress(request)
                                     obj.save()
                                 else:
                                     obj = Workday.objects.create(employee=request.user.employee, ini_date=datetime.now())
+                                    obj.setIpAddress(request)
+                                    obj.save()
                                 return render(request, "pwa/employees/company-sign-in.html", {'comp': comp, 'obj': obj})
 
                         else:
@@ -201,9 +210,12 @@ def pwa_company_login(request, uuid=None):
                                     if obj != None:
                                         obj.end_date = datetime.now()
                                         obj.finish = True
+                                        obj.setIpAddress(request)
                                         obj.save()
                                     else:
                                         obj = Workday.objects.create(employee=emp, ini_date=datetime.now())
+                                        obj.setIpAddress(request)
+                                        obj.save()
                                 return render(request, "pwa/employees/company-sign-in.html", {'comp': comp, 'obj': obj})
 
                     else:
@@ -214,9 +226,12 @@ def pwa_company_login(request, uuid=None):
                                     obj = Workday.objects.filter(employee=emp, finish=False).order_by("-ini_date").first()
                                     obj.end_date = datetime.now()
                                     obj.finish = True
+                                    obj.setIpAddress(request)
                                     obj.save()
                                 else:
                                     obj = Workday.objects.create(employee=emp, ini_date=datetime.now())
+                                    obj.setIpAddress(request)
+                                    obj.save()
                                 return render(request, "pwa/employees/company-sign-in.html", {'comp': comp, 'obj': obj})
                             else:
                                 login(request, emp.user)

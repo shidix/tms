@@ -260,6 +260,7 @@ class Workday(models.Model):
     end_date = models.DateTimeField(default=timezone.now, null=True, verbose_name=_('Fin'))
     employee = models.ForeignKey(Employee, verbose_name=_('Empleado'), on_delete=models.CASCADE, null=True, related_name="workdays")
     ipaddress = models.GenericIPAddressField(verbose_name=_('IP Address'), null=True, blank=True)
+    ipaddress_out = models.GenericIPAddressField(verbose_name=_('IP Address Out'), null=True, blank=True)
 
     @property
     def duration(self):
@@ -289,6 +290,17 @@ class Workday(models.Model):
         if localtime(self.ini_date).hour >= 14 or localtime(self.ini_date).hour < 6:
             return True
         return False
+    
+    def setIpAddress(self, request):
+        ipaddress = "127.0.0.1"
+        if 'HTTP_X_FORWARDED_FOR' in request.META:
+            ipaddress = request.META['HTTP_X_FORWARDED_FOR'].split(',')[0]
+        else:
+            ipaddress = request.META.get('REMOTE_ADDR', None)
+        if self.finish:
+            self.ipaddress_out = ipaddress
+        else:
+            self.ipaddress = ipaddress
  
     class Meta:
         verbose_name = _('Asistencia')

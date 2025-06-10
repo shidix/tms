@@ -17,7 +17,7 @@ import os, csv
 from .reports import MonthlyReportPDF
 
 from tms.decorators import group_required
-from tms.commons import get_float, get_int, get_or_none, get_param, get_session, set_session, show_exc, generate_qr, csv_export, MESSAGES
+from tms.commons import get_float, get_int, get_or_none, get_param, get_session, set_session, show_exc, generate_qr, csv_export, MESSAGES, get_city_from_ip
 from .models import Company, Employee, Manager, Workday
 from .forms import CompanyForm, ManagerForm
 
@@ -26,18 +26,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.offline import plot
 from zoneinfo import ZoneInfo
-import requests
 
-def get_city_from_ip(ip_address):
-    try:
-        response = requests.get(f"http://ip-api.com/json/{ip_address}")
-        data = response.json()
-        if data['status'] == 'success':
-            return data['city']
-    except Exception as e:
-        print (show_exc(e))
-        return ip_address
-    return ip_address
 
 def localtime(dt, tz=None):
     if tz is None:
@@ -67,15 +56,22 @@ def gantt_plotly_view(items):
                 if item.ipaddress is not None and item.ipaddress != "":
                     if item.ipaddress not in cities.keys():
                         cities[item.ipaddress] = get_city_from_ip(item.ipaddress)
-
                     city = cities[item.ipaddress]
                 else:
                     city = item.ipaddress
+
+                if item.ipaddress_out is not None and item.ipaddress_out != "":
+                    if item.ipaddress_out not in cities.keys():
+                        cities[item.ipaddress_out] = get_city_from_ip(item.ipaddress_out)
+                    city_out = cities[item.ipaddress_out]
+                else:
+                    city_out = item.ipaddress_out
+
                 if item.finish == True:
-                    periods.append((item.ini_date.isoformat(), item.end_date.isoformat(), item.pk, city))
+                    periods.append((item.ini_date.isoformat(), item.end_date.isoformat(), item.pk, city, city_out))
                 else:
                     try:
-                        periods.append((item.ini_date.isoformat(), item.ini_date.isoformat(), item.pk, city))
+                        periods.append((item.ini_date.isoformat(), item.ini_date.isoformat(), item.pk, city, city_out))
                     except Exception as e:
                         print(show_exc(e))
                         pass
@@ -91,7 +87,7 @@ def gantt_plotly_view(items):
             rows = []
             milestones  = []
             for task in list_tasks:  
-                for i, (start, end, uuid, ipaddress) in enumerate(task["periods"]):
+                for i, (start, end, uuid, ipaddress, ipaddress_out) in enumerate(task["periods"]):
                     if ipaddress == None:
                         ipaddress = "Desconocida"
                     diff = pd.to_datetime(end) - pd.to_datetime(start)
@@ -104,7 +100,8 @@ def gantt_plotly_view(items):
                             "ID": f'{task["label"]}-{i+1}',
                             "UUID": uuid,
                             "Color": colores[task["color"]],
-                            "IPAddress": ipaddress,
+                            "Entrada(Loc)": ipaddress,
+                            "Salida(Loc)": ipaddress_out,
                         })
                     else:
                         if (diff.total_seconds() > 0):
@@ -121,12 +118,13 @@ def gantt_plotly_view(items):
                             "UUID": uuid,
                             "Color": mycolor,
                             "Symbol": symbol,
-                            "IPAddress": ipaddress,
+                            "Entrada(Loc)": ipaddress,
+                            "Salida(Loc)": ipaddress_out,
                         })
             if (len(rows) >0):
                 df = pd.DataFrame(rows)
                 fig = px.timeline(df, x_start="Entrada", x_end="Salida", y="Empleado", color="Empleado", hover_name="Empleado", custom_data=["UUID"],  
-                                  hover_data= {"Entrada": "|%H:%M", "Salida": "|%H:%M", "IPAddress": True, "Empleado": False, "ID": False},)
+                                  hover_data= {"Entrada": "|%H:%M", "Salida": "|%H:%M", "Entrada(Loc)": True, "Salida(Loc)": True, "Empleado": False, "ID": False},)
             else:
                 fig = go.Figure()
 
@@ -169,7 +167,7 @@ def gantt_plotly_view(items):
                     text=milestone["Entrada"].strftime("%H:%M"),
                     showlegend=False,
                     name=milestone["Empleado"],
-                    hovertemplate=f"<b>{milestone['Empleado']}</b><br>Entrada: {milestone['Entrada'].strftime('%H:%M')}<br>Salida: {milestone['Salida'].strftime('%H:%M')}<br>IP:{milestone['IPAddress']}",
+                    hovertemplate=f"<b>{milestone['Empleado']}</b><br>Entrada: {milestone['Entrada'].strftime('%H:%M')}<br>Salida: {milestone['Salida'].strftime('%H:%M')}<br>Entrada(Loc):{milestone['Entrada(Loc)']}<br>Salida(Loc):{milestone['Salida(Loc)']}<extra></extra>",
                 ))
 
             fig.add_trace(go.Scatter(
@@ -381,15 +379,11 @@ def workdays_form_save(request):
     edate = edate.astimezone(ZoneInfo("UTC"))
     
 
-    # Register ipaddress
-    if "HTTP_X_FORWARDED_FOR" in request.META:
-        ip_address = request.META["HTTP_X_FORWARDED_FOR"].split(",")[0].strip()
-    else:
-        ip_address = request.META.get("REMOTE_ADDR", "127.0.0.1")
-    obj.ipaddress = ip_address
+
     obj.ini_date = idate
     obj.end_date = edate
     obj.finish = True if finish != "" else False
+    obj.setIpAddress(request)
     obj.save()
     items = get_workdays(request)
     
