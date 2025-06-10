@@ -26,6 +26,18 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.offline import plot
 from zoneinfo import ZoneInfo
+import requests
+
+def get_city_from_ip(ip_address):
+    try:
+        response = requests.get(f"http://ip-api.com/json/{ip_address}")
+        data = response.json()
+        if data['status'] == 'success':
+            return data['city']
+    except Exception as e:
+        print (show_exc(e))
+        return ip_address
+    return ip_address
 
 def localtime(dt, tz=None):
     if tz is None:
@@ -41,6 +53,7 @@ def gantt_plotly_view(items):
         import plotly.colors as pc
         items = sorted(items, key=lambda x: x.ini_date)
         tasks = {}
+        cities = {}
         for item in items:
             if item.employee not in tasks:
                 tasks[item.employee] = []
@@ -51,11 +64,18 @@ def gantt_plotly_view(items):
         for key, value in tasks.items():
             periods = []
             for item in value:
+                if item.ipaddress is not None and item.ipaddress != "":
+                    if item.ipaddress not in cities.keys():
+                        cities[item.ipaddress] = get_city_from_ip(item.ipaddress)
+
+                    city = cities[item.ipaddress]
+                else:
+                    city = item.ipaddress
                 if item.finish == True:
-                    periods.append((item.ini_date.isoformat(), item.end_date.isoformat(), item.pk))
+                    periods.append((item.ini_date.isoformat(), item.end_date.isoformat(), item.pk, city))
                 else:
                     try:
-                        periods.append((item.ini_date.isoformat(), item.ini_date.isoformat(), item.pk))
+                        periods.append((item.ini_date.isoformat(), item.ini_date.isoformat(), item.pk, city))
                     except Exception as e:
                         print(show_exc(e))
                         pass
@@ -71,10 +91,12 @@ def gantt_plotly_view(items):
             rows = []
             milestones  = []
             for task in list_tasks:  
-                for i, (start, end, uuid) in enumerate(task["periods"]):
+                for i, (start, end, uuid, ipaddress) in enumerate(task["periods"]):
+                    if ipaddress == None:
+                        ipaddress = "Desconocida"
                     diff = pd.to_datetime(end) - pd.to_datetime(start)
                     index = task
-                    if (diff.total_seconds() > 60):
+                    if (diff.total_seconds() > 120):
                         rows.append({
                             "Empleado": task["label"],
                             "Entrada": localtime(pd.to_datetime(start)),
@@ -82,6 +104,7 @@ def gantt_plotly_view(items):
                             "ID": f'{task["label"]}-{i+1}',
                             "UUID": uuid,
                             "Color": colores[task["color"]],
+                            "IPAddress": ipaddress,
                         })
                     else:
                         if (diff.total_seconds() > 0):
@@ -98,10 +121,12 @@ def gantt_plotly_view(items):
                             "UUID": uuid,
                             "Color": mycolor,
                             "Symbol": symbol,
+                            "IPAddress": ipaddress,
                         })
             if (len(rows) >0):
                 df = pd.DataFrame(rows)
-                fig = px.timeline(df, x_start="Entrada", x_end="Salida", y="Empleado", color="Empleado", hover_name="Empleado", custom_data=["UUID"],  )
+                fig = px.timeline(df, x_start="Entrada", x_end="Salida", y="Empleado", color="Empleado", hover_name="Empleado", custom_data=["UUID"],  
+                                  hover_data= {"Entrada": "|%H:%M", "Salida": "|%H:%M", "IPAddress": True, "Empleado": False, "ID": False},)
             else:
                 fig = go.Figure()
 
@@ -144,7 +169,7 @@ def gantt_plotly_view(items):
                     text=milestone["Entrada"].strftime("%H:%M"),
                     showlegend=False,
                     name=milestone["Empleado"],
-                    hovertemplate=f"<b>{milestone['Empleado']}</b><br>Entrada: {milestone['Entrada'].strftime('%H:%M')}<br>Salida: {milestone['Salida'].strftime('%H:%M')}<extra></extra>",
+                    hovertemplate=f"<b>{milestone['Empleado']}</b><br>Entrada: {milestone['Entrada'].strftime('%H:%M')}<br>Salida: {milestone['Salida'].strftime('%H:%M')}<br>IP:{milestone['IPAddress']}",
                 ))
 
             fig.add_trace(go.Scatter(
@@ -354,7 +379,14 @@ def workdays_form_save(request):
     edate = edate.replace(tzinfo=ZoneInfo("Atlantic/Canary"))
     idate = idate.astimezone(ZoneInfo("UTC"))
     edate = edate.astimezone(ZoneInfo("UTC"))
+    
 
+    # Register ipaddress
+    if "HTTP_X_FORWARDED_FOR" in request.META:
+        ip_address = request.META["HTTP_X_FORWARDED_FOR"].split(",")[0].strip()
+    else:
+        ip_address = request.META.get("REMOTE_ADDR", "127.0.0.1")
+    obj.ipaddress = ip_address
     obj.ini_date = idate
     obj.end_date = edate
     obj.finish = True if finish != "" else False

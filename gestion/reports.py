@@ -175,8 +175,8 @@ class MonthlyReportPDF(FPDF):
                 # diff_seconds = (workday.end_date - workday.ini_date).total_seconds()
                 diff_hours = diff_seconds // 3600
                 diff_minutes = (diff_seconds % 3600) // 60
-                if (diff_seconds_extra > 0) and (diff_seconds < daily_limit):
-                    diff_minutes += 1
+                # if (diff_seconds_extra > 0) and (diff_seconds < daily_limit):
+                #     diff_minutes += 1
                 total_seconds += (diff_hours * 3600 + diff_minutes * 60)
                 self.write_cell(f"{int(diff_hours):02}:{int(diff_minutes):02}", [10, 11, 12, 13], 20, 1, align='C')
 

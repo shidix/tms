@@ -259,6 +259,7 @@ class Workday(models.Model):
     ini_date = models.DateTimeField(default=timezone.now, null=True, verbose_name=_('Inicio'))
     end_date = models.DateTimeField(default=timezone.now, null=True, verbose_name=_('Fin'))
     employee = models.ForeignKey(Employee, verbose_name=_('Empleado'), on_delete=models.CASCADE, null=True, related_name="workdays")
+    ipaddress = models.GenericIPAddressField(verbose_name=_('IP Address'), null=True, blank=True)
 
     @property
     def duration(self):
