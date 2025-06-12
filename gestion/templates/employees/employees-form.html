@@ -47,7 +47,7 @@
                 data-target="div-notification" placeholder="Nº de afiliación..." /> <span id="affiliation_number__msg"></span>
         </div>
     </div>
-   <div class="col-6">
+   <div class="col-6 col-lg-4">
         <div class="greybox-sm p-1">
             {% trans "Correo electrónico" %}
             <input type="text" class="form-control ark_change" id="email" name="email" value="{{obj.email|default:''}}" 
@@ -89,6 +89,14 @@
             <input type="number" class="form-control autosave" id="weekly_hours" name="weekly_hours" value="{{obj.weekly_hours|default:''}}" 
                 title="{{obj.weekly_hours}}" data-model-name="gestion.employee" data-obj-id="{{obj.id}}" data-url="{%url 'autosave_field'%}" 
                 data-target="div-notification" placeholder="Horas semanales..." /> <span id="weekly_hours__msg"></span>
+        </div>
+    </div>
+    <div class="col-6 col-lg-2">
+        <div class="greybox-sm p-1">
+            {% trans 'Días semanales' %}
+            <input type="number" class="form-control autosave" id="weekly_days" name="weekly_days" value="{{obj.weekly_days|default:'5'}}" 
+                title="{{obj.weekly_days}}" data-model-name="gestion.employee" data-obj-id="{{obj.id}}" data-url="{%url 'autosave_field'%}" 
+                data-target="div-notification" placeholder="Días semanales..." /> <span id="weekly_days__msg"></span>
         </div>
     </div>
  
