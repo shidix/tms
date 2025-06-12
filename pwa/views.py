@@ -162,8 +162,27 @@ def employee_check_clock(request, uuid = None):
             obj.setIpAddress(request)
             obj.save()
         # Register ipaddress
+        return redirect(reverse('pwa-view-clock', kwargs={'id': obj.pk, 'uuid': emp.uuid}))
 
         return render(request, "pwa/employees/company-sign-in.html", {'comp': emp.comp, 'obj': obj})
+    except Exception as e:
+        print(show_exc(e))
+        return render(request, "pwa/employees/qr-error.html", {})
+
+def employee_view_clock(request, id=None, uuid=None):
+    try:
+        if uuid == None:
+            if request.user.is_authenticated:
+                if hasattr(request.user, 'employee'):
+                    emp = request.user.employee
+                    uuid = emp.uuid
+                else:
+                    return render(request, "pwa/employees/qr-error.html", {})
+            return render(request, "pwa/employees/qr-error.html", {})
+        else:
+            obj = Workday.objects.filter(pk=id, employee__uuid=uuid).first()
+            emp = obj.employee if obj else None
+            return render(request, "pwa/employees/company-sign-in.html", {'comp': emp.comp, 'obj': obj})
     except Exception as e:
         print(show_exc(e))
         return render(request, "pwa/employees/qr-error.html", {})
