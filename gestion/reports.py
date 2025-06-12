@@ -142,7 +142,7 @@ class MonthlyReportPDF(FPDF):
             total_seconds = 0
             total_seconds_extra = 0
             total_by_day = {}
-            daily_limit = float(self.worker.weekly_hours) / 5. * 3600
+            daily_limit = float(self.worker.weekly_hours) / float(self.worker.weekly_hours) * 3600
             for workday in workdays:
                 key_day = workday.ini_date.strftime("%Y%m%d")
                 if key_day not in total_by_day:

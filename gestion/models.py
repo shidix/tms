@@ -177,6 +177,7 @@ class Employee(models.Model):
     name = models.CharField(max_length=200, verbose_name = _('Razón Social'), default="")
     phone = models.CharField(max_length=20, verbose_name = _('Teléfono de contacto'), null=True, default = '0000000000')
     weekly_hours = models.DecimalField(max_digits=5, decimal_places=2, verbose_name=_('Horas por semana'), default=40.00)
+    weekly_days = models.IntegerField(verbose_name=_('Días por semana'), default=5, help_text=_('Número de días a la semana que trabaja el empleado'))
     affiliation_number = models.CharField(max_length=20, verbose_name=_('Número de afiliación'), default="")
     email = models.EmailField(verbose_name = _('Email de contacto'), default="", null=True)
     user = models.OneToOneField(User, verbose_name='Usuario', on_delete=models.CASCADE, null=True, blank=True, related_name='employee')
