@@ -154,7 +154,7 @@ class MonthlyReportPDF(FPDF):
             ]
             # daily_limit = float(self.worker.weekly_hours) / float(self.worker.weekly_days) * 3600
             for workday in workdays:
-                daily_limit = daily_limit_list[workday.ini_date.weekday()]
+                daily_limit = float(daily_limit_list[workday.ini_date.weekday()])
                 key_day = workday.ini_date.strftime("%Y%m%d")
                 if key_day not in total_by_day:
                     total_by_day[key_day] = 0
