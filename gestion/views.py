@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.core.files.base import ContentFile
 from django.db.models import Q
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from datetime import datetime, timedelta
@@ -835,4 +835,28 @@ def admins_remove(request):
         obj.delete()
     return render(request, "admins/admins-list.html", {"items": get_admins(request)})
 
+
+'''
+    TWILIO
+'''
+def send_welcome_sms(request):
+    """
+    This function is commented out because it requires Twilio configuration.
+    Uncomment and configure the Twilio service to use this functionality.
+    """
+    return JsonResponse({"error": "This function is not implemented. Please configure Twilio to use SMS functionality."}, status=501)
+
+# Uncomment the following lines if you want to use Twilio for sending SMS
+# from .services.twilio_service import send_sms
+
+# def send_welcome_sms(request):
+#     phone_number = request.POST.get('phone_number')  # '+51987654321'
+#     message = "¡Bienvenido a nuestra plataforma! Gracias por registrarte."
+
+#     result = send_sms(phone_number, message)
+
+#     if result["status"] == "success":
+#         return JsonResponse({"message": "SMS enviado correctamente", "sid": result["sid"]})
+#     else:
+#         return JsonResponse({"error": result["error"]}, status=400)
 
