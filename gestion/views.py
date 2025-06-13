@@ -751,10 +751,6 @@ def managers_login_by_uuid(request, uuid, comp_uuid):
         return redirect(reverse("index"))
 
 
-
-
-
-
 '''
     ADMINS
 '''
@@ -819,7 +815,6 @@ def admins_save(request):
                 obj.save()
                 return render(request, "admins/admins-row.html", {"item": obj})
             else:
-                print(3)
                 return render(request, "admins/admins-form.html", {'form': form, 'obj': obj, 'new': False}, status=500)
         else:
             return redirect("admins")

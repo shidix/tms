@@ -183,6 +183,13 @@ class Employee(models.Model):
     user = models.OneToOneField(User, verbose_name='Usuario', on_delete=models.CASCADE, null=True, blank=True, related_name='employee')
     comp = models.ForeignKey(Company, verbose_name=_("Empresa"), on_delete=models.SET_NULL, blank=True, null=True)
     uuid = models.CharField(max_length=200, verbose_name = _('UUID'), default="")
+    mon_hours = models.DecimalField(max_digits=5, decimal_places=2, verbose_name=_('Horas Lunes'), default=7.5)
+    tue_hours = models.DecimalField(max_digits=5, decimal_places=2, verbose_name=_('Horas Martes'), default=7.5)
+    wed_hours = models.DecimalField(max_digits=5, decimal_places=2, verbose_name=_('Horas Miércoles'), default=7.5)
+    thu_hours = models.DecimalField(max_digits=5, decimal_places=2, verbose_name=_('Horas Jueves'), default=7.5)
+    fri_hours = models.DecimalField(max_digits=5, decimal_places=2, verbose_name=_('Horas Viernes'), default=7.5)
+    sat_hours = models.DecimalField(max_digits=5, decimal_places=2, verbose_name=_('Horas Sábado'), default=0.0)
+    sun_hours = models.DecimalField(max_digits=5, decimal_places=2, verbose_name=_('Horas Domingo'), default=0.0)
 
     def __str__(self):
         return self.name

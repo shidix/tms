@@ -99,6 +99,54 @@
                 data-target="div-notification" placeholder="Días semanales..." /> <span id="weekly_days__msg"></span>
         </div>
     </div>
+    <div clas="col-12">
+        <div class="greybox-sm p-1">
+            <labbel> Horas semanales por día </labbel>
+        </div>
+    </div>
+    <div class="col-6 col-lg-2">
+        <div class="greybox-sm p-1">
+            {% trans 'Lunes' %}
+            <input type="number" class="form-control autosave" id="mon_hours" step="0.1" name="mon_hours" value="{{obj.mon_hours|default:'7.5'}}" title="{% trans 'Horas Lunes' %}" data-model-name="gestion.employee" data-obj-id="{{obj.id}}" data-url="{%url 'autosave_field'%}" data-target="div-notification" placeholder="7.5" /> <span id="mon__msg"></span>
+        </div>
+    </div>
+    <div class="col-6 col-lg-2">
+        <div class="greybox-sm p-1">
+            {% trans 'Martes' %}
+            <input type="number" class="form-control autosave" id="tue_hours" step="0.1" name="tue_hours" value="{{obj.tue_hours|default:'7.5'}}" title="{% trans 'Horas Martes' %}" data-model-name="gestion.employee" data-obj-id="{{obj.id}}" data-url="{%url 'autosave_field'%}" data-target="div-notification" placeholder="7.5" /> <span id="tue__msg"></span>
+        </div>
+    </div>
+    <div class="col-6 col-lg-2">
+        <div class="greybox-sm p-1">
+            {% trans 'Miércoles' %}
+            <input type="number" class="form-control autosave" id="wed_hours" step="0.1" name="wed_hours" value="{{obj.wed_hours|default:'7.5'}}" title="{% trans 'Horas Miércoles' %}" data-model-name="gestion.employee" data-obj-id="{{obj.id}}" data-url="{%url 'autosave_field'%}" data-target="div-notification" placeholder="7.5" /> <span id="wed__msg"></span>
+        </div>
+    </div>
+    <div class="col-6 col-lg-2">
+        <div class="greybox-sm p-1">
+            {% trans 'Jueves' %}
+            <input type="number" class="form-control autosave" id="thu_hours" step="0.1" name="thu_hours" value="{{obj.thu_hours|default:'7.5'}}" title="{% trans 'Horas Jueves' %}" data-model-name="gestion.employee" data-obj-id="{{obj.id}}" data-url="{%url 'autosave_field'%}" data-target="div-notification" placeholder="7.5" /> <span id="thu__msg"></span>
+        </div>
+    </div>
+    <div class="col-6 col-lg-2">
+        <div class="greybox-sm p-1">
+            {% trans 'Viernes' %}
+            <input type="number" class="form-control autosave" id="fri_hours" step="0.1" name="fri_hours" value="{{obj.fri_hours|default:'7.5'}}" title="{% trans 'Horas Viernes' %}" data-model-name="gestion.employee" data-obj-id="{{obj.id}}" data-url="{%url 'autosave_field'%}" data-target="div-notification" placeholder="7.5" /> <span id="fri__msg"></span>
+        </div>
+    </div>
+    <div class="col-6 col-lg-1">
+        <div class="greybox-sm p-1">
+            {% trans 'Sáb' %}
+            <input type="number" class="form-control autosave" id="sat_hours" step="0.1" name="sat_hours" value="{{obj.sat_hours|default:'0'}}" title="{% trans 'Horas Sábado' %}" data-model-name="gestion.employee" data-obj-id="{{obj.id}}" data-url="{%url 'autosave_field'%}" data-target="div-notification" placeholder="0" /> <span id="sat__msg"></span>
+        </div>
+    </div>
+    <div class="col-6 col-lg-1">
+        <div class="greybox-sm p-1">
+            {% trans 'Dom' %}
+            <input type="number" class="form-control autosave" id="sun_hours" step="0.1" name="sun_hours" value="{{obj.sun_hours|default:'0'}}" title="{% trans 'Horas Domingo' %}" data-model-name="gestion.employee" data-obj-id="{{obj.id}}" data-url="{%url 'autosave_field'%}" data-target="div-notification" placeholder="0" /> <span id="sun__msg"></span>
+        </div>
+    </div>
+
  
 </div>
 
