@@ -1,34 +1,81 @@
 {% load i18n gestion_tags %}
 
-<form class="form m-0" method="GET" action="{% url "employees-search" %}" id="form-search">
-    {%csrf_token%}
-    <div class="row">
-        <div class="col-6">
-            <div class="row"> 
-                <div class="col-lg-4 col-4 py-2 text-end d-none d-lg-block"> <span>{% trans "Buscar por fecha:" %}</span> </div>
-                <div class="col-lg-4 col-6 p-0">
-                    <input type="date" class="autosearch form-control form-control-dark w-100 py-2"
-                        name="s_emp_idate" id="s_emp_idate" value="{{request.session.s_emp_idate}}"/>
-                </div>
-                <div class="col-lg-4 col-6 p-0">
-                    <input type="date" class="autosearch form-control form-control-dark w-100 py-2" 
-                        name="s_emp_edate" id="s_emp_edate" value="{{request.session.s_emp_edate}}"/>
-                </div>
-            </div>
-        </div>
-        <div class="col-5 b-search">
-            <div class="row">
-                <div class="col-lg-5 col-5 py-2 text-end d-none d-lg-block"> <span>{% trans "Buscar trabajador/a:" %}</span> </div>
-                <div class="col-lg-7 col-12">
-                    <input type="text" class="form-control form-control-dark w-100 py-2" 
-                        name="s_emp_name" id="s_emp_name" placeholder="Nombre trabajador/a" value="{{request.session.s_emp_name}}"/>
-                </div>
-            </div>
-        </div>
-        <div class="col-1 p-0">
-            <button class="btn btn-default saveform w-100" data-form="form-search" data-target="emp-list">
-                <i class="fas fa-search"></i> </button>
-        </div>
+<div class="row toolbar-search p-2 m-0 mb-1">
+    <div class="col-lg-3 p-0"><a  class="btn btn-dark btn-sm ark-post w-75 show-looking" 
+                    data-url="{% url 'employees-search-month' %}" data-csrf-token="{{ csrf_token }}"
+                    data-months_ago="1" data-s_emp_name="{{request.session.s_emp_name}}"
+                    title="{% trans 'Mes pasado' %}" data-target="emp-list">{% trans 'Mes pasado' %}</a>
     </div>
-</form>
-     
+    <div class="col-lg-3 p-0"><a  class="btn btn-dark btn-sm ark-post w-75 show-looking" 
+                    data-url="{% url 'employees-search-month' %}" data-csrf-token="{{ csrf_token }}"
+                    data-months_ago="0" data-s_emp_name="{{request.session.s_emp_name}}"
+                    title="{% trans 'Mes en curso' %}" data-target="emp-list">{% trans 'Mes en curso' %}</a>
+    </div>
+    <div class="col-lg-3 p-0"><a  class="btn btn-dark btn-sm ark-post w-75 show-looking" 
+                    data-url="{% url 'employees-search-month' %}" data-csrf-token="{{ csrf_token }}"
+                    data-months_ago="-2" data-s_emp_name="{{request.session.s_emp_name}}"
+                    title="{% trans 'Semana pasada' %}" data-target="emp-list">{% trans 'Semana pasada' %}</a>
+    </div>
+    <div class="col-lg-3 p-0"><a  class="btn btn-dark btn-sm ark-post w-75 show-looking" 
+                    data-url="{% url 'employees-search-month' %}" data-csrf-token="{{ csrf_token }}"
+                    data-months_ago="-1" data-s_emp_name="{{request.session.s_emp_name}}"
+                    title="{% trans 'Semana actual' %}" data-target="emp-list">{% trans 'Semana actual' %}</a>
+    </div>
+</div>
+<div class="row toolbar-search p-2 m-0">
+    <form class="form m-0" method="GET" action="{% url "employees-search" %}" id="form-search">
+        {%csrf_token%}
+
+        <div class="row">
+            <div class="col-6">
+                <div class="row"> 
+                    <div class="col-lg-4 col-4 py-2 text-end d-none d-lg-block"> <span>{% trans "Buscar por fecha:" %}</span> </div>
+                    <div class="col-lg-4 col-6 p-0">
+                        <input type="date" class="autosearch form-control form-control-dark w-100 py-2"
+                            name="s_emp_idate" id="s_emp_idate" value="{{request.session.s_emp_idate}}"/>
+                    </div>
+                    <div class="col-lg-4 col-6 p-0">
+                        <input type="date" class="autosearch form-control form-control-dark w-100 py-2" 
+                            name="s_emp_edate" id="s_emp_edate" value="{{request.session.s_emp_edate}}"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-5 b-search">
+                <div class="row">
+                    <div class="col-lg-5 col-5 py-2 text-end d-none d-lg-block"> <span>{% trans "Buscar trabajador/a:" %}</span> </div>
+                    <div class="col-lg-7 col-12">
+                        <input type="text" class="form-control form-control-dark w-100 py-2" 
+                            name="s_emp_name" id="s_emp_name" placeholder="Nombre trabajador/a" value="{{request.session.s_emp_name}}"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-1 p-0">
+                <button class="btn btn-default saveform w-100" data-form="form-search" data-target="emp-list">
+                    <i class="fas fa-search"></i> </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Show "looking for" (sweetalert) message if click on .show-looking button 
+    $(document).on('click', '.show-looking', function (e) {
+
+            Swal.fire({
+                title: 'Buscando jornadas registradas...',
+                text: 'Por favor, espere un momento.',
+                icon: 'info',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                    setTimeout(() => {
+                        Swal.hideLoading();
+                        Swal.close();
+                    }, 2000); // Adjust the timeout as needed
+                }
+            });
+
+    });    
+</script>
+
+

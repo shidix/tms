@@ -65,6 +65,10 @@
 </div>
 <script>
     $('#btn-full-pdf-pc').attr('data-url', "{% url 'managers-report-full-pdf' request.session.s_emp_idate request.session.s_emp_edate %}");
+    //Update s_emp_idate, s_emp_edate and s_emp_name in session
+    $('#s_emp_idate').val("{{request.session.s_emp_idate}}");
+    $('#s_emp_edate').val("{{request.session.s_emp_edate}}");
+    $('#s_emp_name').val("{{request.session.s_emp_name}}");
 </script>
 
 

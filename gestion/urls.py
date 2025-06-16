@@ -48,6 +48,7 @@ urlpatterns = [
     path('employees/save-pin', views.employees_save_pin, name='employees-save-pin'),
     path('employees/export', views.employees_export, name='employees-export'),
     path('employees/show-qr', views.employees_show_qr, name='employees-show-qr'),
+    path('employees/search-month', views.employees_search_month, name='employees-search-month'),
     #path('employees/import', views.employees_import, name='employees-import'),
     
 

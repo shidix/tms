@@ -26,6 +26,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.offline import plot
 from zoneinfo import ZoneInfo
+from dateutil import relativedelta
 
 
 def localtime(dt, tz=None):
@@ -473,6 +474,33 @@ def employees_search(request):
     except Exception as e:
         print(show_exc(e))
         return render(request, "workdays-client-error.html", {})
+
+def employees_search_month(request):
+    try:
+        if request.method == "POST":
+            months_ago = int(get_param(request.POST, "months_ago"))
+            if (months_ago >= 0):
+                start_date = datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0) + relativedelta.relativedelta(months=-months_ago)
+                end_date = start_date + relativedelta.relativedelta(months=1) - timedelta(seconds=1)
+            else: # Week search
+                #Get monday from this week
+                weeks_ago = abs(months_ago)-1
+                start_date = datetime.now() - timedelta(days=datetime.now().weekday())
+                start_date = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
+                start_date = start_date - relativedelta.relativedelta(weeks=weeks_ago)
+                end_date = start_date + timedelta(days=6, hours=23, minutes=59, seconds=59)
+
+            set_session(request, "s_emp_name", get_param(request.POST, "s_emp_name"))
+            set_session(request, "s_emp_idate", start_date.strftime("%Y-%m-%d"))
+            set_session(request, "s_emp_edate", end_date.strftime("%Y-%m-%d"))
+            items = get_employees(request)
+            return render(request, "employees/employees-list.html", {"items": items})
+        else:
+            return render(request, "workdays-client-error.html", {})
+    except Exception as e:
+        print(show_exc(e))
+        return render(request, "workdays-client-error.html", {})
+
 
 @group_required("admins", "managers")
 def employees_form(request):
