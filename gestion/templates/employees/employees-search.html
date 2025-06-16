@@ -69,6 +69,8 @@
                 didOpen: () => {
                     Swal.showLoading();
                     setTimeout(() => {
+                        // Blink the emp-list div to indicate loading
+                        $('.employee').fadeOut(250).fadeIn(250).fadeOut(250).fadeIn(250);
                         Swal.hideLoading();
                         Swal.close();
                     }, 2000); // Adjust the timeout as needed
