@@ -93,6 +93,18 @@
             <span id="id_expiration_date__msg"></span>
         </div>
     </div>
+    <div class="col-12">
+        <div class="greybox-sm p-1">
+        {% trans 'Dirección del centro de trabajo' %}
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                <input type="text" class="form-control" id="address" name="address" 
+                    value="{{obj.address|default:''}}" title="{{obj.address}}"
+                    placeholder="Dirección..." /> 
+            </div>
+            <span id="id_address__msg"></span>
+        </div>
+    </div>
 </div>
 
 <div class="d-flex justify-content-end p-2">

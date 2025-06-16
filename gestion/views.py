@@ -843,6 +843,7 @@ def admins_save(request):
                 obj.save()
                 return render(request, "admins/admins-row.html", {"item": obj})
             else:
+                print (form.errors)
                 return render(request, "admins/admins-form.html", {'form': form, 'obj': obj, 'new': False}, status=500)
         else:
             return redirect("admins")

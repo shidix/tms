@@ -7,7 +7,7 @@ import re
 class CompanyForm(forms.ModelForm):
     class Meta:
         model = Company
-        fields = ['name', 'logo', 'nif', 'last_payment_amount', 'last_payment', 'expiration_date', 'ccc']
+        fields = ['name', 'logo', 'nif', 'last_payment_amount', 'last_payment', 'expiration_date', 'ccc', 'address']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'logo': forms.ClearableFileInput(attrs={'class': 'form-control'}),
@@ -27,6 +27,7 @@ class CompanyForm(forms.ModelForm):
             'last_payment': _('Fecha del último pago'),
             'expiration_date': _('Fecha de expiración'),
             'ccc': _('Código Cuenta Cotización'),
+            'address': _('Dirección del centro de trabajo'),
         }
         error_messages = {
             'name': {
@@ -54,6 +55,10 @@ class CompanyForm(forms.ModelForm):
             'ccc': {
                 'required': _('Este campo es obligatorio.'),
                 'invalid': _('El código de cuenta de cotización no es válido.'),
+            },
+            'address': {
+                'required': _('Este campo es obligatorio.'),
+                'invalid': _('La dirección no es válida.'),
             },
         }
     # Add custom validation for the logo field

@@ -76,6 +76,7 @@ class Company(models.Model):
     last_payment_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Último pago'), default=0.00)
     expiration_date = models.DateField(verbose_name=_('Fecha de expiración'), default=datetime.date(2001, 1, 1))
     ccc = models.CharField(max_length=40, verbose_name=_('Código Cuenta Cotización'), default="")
+    address = models.CharField(max_length=255, verbose_name=_('Dirección'), default="")
 
     def __str__(self):
         return self.name
