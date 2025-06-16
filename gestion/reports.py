@@ -17,8 +17,6 @@ class MonthlyReportPDF(FPDF):
 
     def __init__(self, worker, start_date, end_date):
         try:
-            if settings.DEBUG:
-                print("Initializing MonthlyReportPDF with worker:", worker, "start_date:", start_date, "end_date:", end_date)
             super().__init__()
             if not isinstance(worker, QuerySet):
                 self.worker_list = Employee.objects.filter(uuid=worker.uuid)
@@ -100,7 +98,7 @@ class MonthlyReportPDF(FPDF):
             self.write_cell(f'N.I.F.: {worker.dni}', 2, 2, 1)
             self.ln()
 
-            self.write_cell(f'Centro de trabajo: {worker.comp.name}', 1, 2, 1)
+            self.write_cell(f'Centro de trabajo: {worker.comp.address}', 1, 2, 1)
             self.write_cell(f'N° Afiliación: {worker.affiliation_number}', 2, 2, 1)
             self.ln()
 
