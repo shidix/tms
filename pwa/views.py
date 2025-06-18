@@ -93,6 +93,8 @@ def employee_update_year(request):
     year = get_param(request.GET, "value")
     month = get_param(request.GET, "month")
     workday_list = get_workday_list(year, month)
+    workday_list = workday_list.filter(employee = request.user.employee).order_by("-ini_date")
+
     return render(request, "pwa/employees/workdays-list.html", {'item_list': workday_list,})
 
 @group_required_pwa("employees")
@@ -100,6 +102,7 @@ def employee_update_month(request):
     month = get_param(request.GET, "value")
     year = get_param(request.GET, "year")
     workday_list = get_workday_list(year, month)
+    workday_list = workday_list.filter(employee = request.user.employee).order_by("-ini_date")
     return render(request, "pwa/employees/workdays-list.html", {'item_list': workday_list,})
 
 def employee_qr_scan(request):
