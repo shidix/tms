@@ -9,6 +9,7 @@ urlpatterns = [
     path('logoff/', views.pin_logout, name="pwa-logout"),
 
     path('company-login/<slug:uuid>', views.pwa_company_login, name="pwa-company-login"),
+    path('company-login/<str:uuid>', views.pwa_company_login, name="pwa-company-login"),
     path('company-portal-login/<slug:uuid>', views.pwa_portal_company_login, name="pwa-portal-company-login"),
     path('company-private-zone/<slug:uuid>', views.pwa_company_private_zone, name="pwa-company-private-zone"),
 
