@@ -173,7 +173,7 @@ class MonthlyReportPDF(FPDF):
 
 
 
-                self.write_cell(workday.ini_date.strftime("%d"), grid[0], 20, 1, align='C')
+                self.write_cell(workday.ini_date.strftime("%d"), grid[0], cols, 1, align='C')
                 if workday.in_morning:
                     self.write_cell(MonthlyReportPDF.local_time(workday.ini_date).strftime("%H:%M"), [2, 3], cols, 1, align='C')
                     self.write_cell(MonthlyReportPDF.local_time(workday.end_date).strftime("%H:%M"), [4, 5], cols, 1, align='C')
