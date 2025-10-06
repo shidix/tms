@@ -325,6 +325,7 @@ def workdays_search(request):
         else:
             current_date = None
         listmode = get_param(request.GET, "listmode", "true").lower() == "true"
+        items = sorted(items, key=lambda x: x.ini_date, reverse=True)
         return render(request, "workdays-list.html", {"item_list": items, "gantt": chart_div, "list_dates": list_dates, 'listmode': listmode, 'current_date': current_date})
     except Exception as e:
         print(show_exc(e))
@@ -341,6 +342,8 @@ def workdays_search_in_date(request):
         list_dates = [ (datetime.now().date() + timedelta(days=i)) for i in range(-6, 1) ]
         current_date = datetime.strptime(get_session(request, "s_idate"), "%Y-%m-%d").date()
         listmode = get_param(request.POST, "listmode", "true").lower() == "true"
+        items = sorted(items, key=lambda x: x.ini_date, reverse=True)
+
         
         return render(request, "workdays-list.html", {"item_list": items, "gantt": chart_div, "list_dates": list_dates, 'current_date': current_date, 'listmode': listmode})
     except Exception as e:
