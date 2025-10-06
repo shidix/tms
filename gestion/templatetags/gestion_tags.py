@@ -76,11 +76,14 @@ def local_time(mydate):
 @register.filter
 def toDuration(seconds):
     try:
+        days, seconds = divmod(seconds, 86400)
         seconds = int(seconds)
         hours = seconds // 3600
         seconds %= 3600
         minutes = seconds // 60
         seconds %= 60
+        if days > 0:
+            return f"{int(days):02d}d {int(hours):02d}:{int(minutes):02d}:{int(seconds):02d}"
         return f"{int(hours):02d}:{int(minutes):02d}:{int(seconds):02d}"
     except Exception as e:
         print (show_exc(e))
