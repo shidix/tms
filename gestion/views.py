@@ -803,6 +803,13 @@ def get_admins(request):
 def admins_dashboard(request):
     try:
         companies = Company.objects.all().order_by("-expiration_date", "-last_payment")
+        reload = False
+        for company in companies:
+            if (company.uuid == '') or (company.uuid is None):
+                company.delete()
+                reload = True
+        if reload:
+            companies = Company.objects.all().order_by("-expiration_date", "-last_payment")
         return render(request, "admins/admins.html", {"items": companies})
     except Exception as e:
         print(show_exc(e))
