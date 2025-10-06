@@ -98,12 +98,12 @@ class MonthlyReportPDF(FPDF):
             self.write_cell(f'N.I.F.: {worker.dni}', 2, 2, 1)
             self.ln()
 
-            self.write_cell(f'Centro de trabajo: {worker.comp.address}', 1, 2, 1)
-            self.write_cell(f'N° Afiliación: {worker.affiliation_number}', 2, 2, 1)
+            self.write_cell(f'Centro de trabajo: {worker.comp.address}', 1, 1, 1)
             self.ln()
 
-            self.write_cell(f'C.C.C.: {worker.comp.ccc}', 1, 2, 1)
-            self.write_cell(f'Mes y año: {self.start_date.strftime("%m/%Y")}', 2, 2, 1)
+            self.write_cell(f'C.C.C.: {worker.comp.ccc}', [1,2,3], 10, 1)
+            self.write_cell(f'N° Afiliación: {worker.affiliation_number}', [4,5,6,7,8], 10, 1)
+            self.write_cell(f'Mes y año: {self.start_date.strftime("%m/%Y")}', [9,10], 10, 1)
             self.ln(8)
         except Exception as e:
             print(show_exc(e))
@@ -114,24 +114,27 @@ class MonthlyReportPDF(FPDF):
     def tabla_jornada(self):
         try:
 
-            grid = [1,[2,3,4,5],[6,7,8,9],[10,11,12,13],[14,15,16,17],[18,19,20]]
+            #grid = [[1],[2,3,4,5],[6,7,8,9],[10,11,12,13],[14,15,16,17],[18,19,20]]
+            grid = [[1],[2,3,4,5],[6,7,8,9],[10,11,12,13],[14,15,16,17]]
+
+            cols = 17
 
             self.set_font("Helvetica", "B", 9)
-            self.write_cell("DÍA", grid[0], 20, 1, align='C', rowspan=2, bg_color=(200, 200, 200), fill=True)
-            self.write_cell("MAÑANAS", grid[1], 20, 1, align='C', rowspan=1, bg_color=(200, 200, 200), fill=True)
-            self.write_cell("TARDES", grid[2], 20, 1, align='C', rowspan=1, bg_color=(200, 200, 200), fill=True)
-            self.write_cell("HORAS ORDINARIAS", grid[3], 20, 1, align='C', rowspan=2, bg_color=(200, 200, 200), fill=True)
-            self.write_cell("HORAS EXTRA", grid[4], 20, "LTR", align='C', rowspan=1, bg_color=(200, 200, 200), fill=True)
-            self.write_cell("FIRMA DE", grid[5], 20, "LTR", align='C', rowspan=1, bg_color=(200, 200, 200), fill=True)
+            self.write_cell("DÍA", grid[0], cols, 1, align='C', rowspan=2, bg_color=(200, 200, 200), fill=True)
+            self.write_cell("MAÑANAS", grid[1], cols, 1, align='C', rowspan=1, bg_color=(200, 200, 200), fill=True)
+            self.write_cell("TARDES", grid[2], cols, 1, align='C', rowspan=1, bg_color=(200, 200, 200), fill=True)
+            self.write_cell("HORAS ORDINARIAS", grid[3], cols, 1, align='C', rowspan=2, bg_color=(200, 200, 200), fill=True)
+            self.write_cell("HORAS EXTRA", grid[4], cols, "LTR", align='C', rowspan=1, bg_color=(200, 200, 200), fill=True)
+            # self.write_cell("FIRMA DE", grid[5], cols, "LTR", align='C', rowspan=1, bg_color=(200, 200, 200), fill=True)
             self.ln()
             # self.set_y(self.get_y() - self.row_height)
-            self.write_cell("ENTRADA", [2, 3], 20, 1, align='C', bg_color=(200, 200, 200), fill=True)
-            self.write_cell("SALIDA", [4, 5], 20, 1, align='C', bg_color=(200, 200, 200), fill=True)
-            self.write_cell("ENTRADA", [6, 7], 20, 1, align='C', bg_color=(200, 200, 200), fill=True)
-            self.write_cell("SALIDA", [8, 9], 20, 1, align='C', bg_color=(200, 200, 200), fill=True)
+            self.write_cell("ENTRADA", [2, 3], cols, 1, align='C', bg_color=(200, 200, 200), fill=True)
+            self.write_cell("SALIDA", [4, 5], cols, 1, align='C', bg_color=(200, 200, 200), fill=True)
+            self.write_cell("ENTRADA", [6, 7], cols, 1, align='C', bg_color=(200, 200, 200), fill=True)
+            self.write_cell("SALIDA", [8, 9], cols, 1, align='C', bg_color=(200, 200, 200), fill=True)
 
-            self.write_cell("COMPLEMENTARIAS", grid[4], 20, "LBR", align='C', rowspan=1, bg_color=(200, 200, 200), fill=True)
-            self.write_cell("TRABAJADOR/A", grid[5], 20, "LBR", align='C', rowspan=1, bg_color=(200, 200, 200), fill=True)
+            self.write_cell("COMPLEMENTARIAS", grid[4], cols, "LBR", align='C', rowspan=1, bg_color=(200, 200, 200), fill=True)
+            # self.write_cell("TRABAJADOR/A", grid[5], cols, "LBR", align='C', rowspan=1, bg_color=(200, 200, 200), fill=True)
             self.ln()
 
             workdays = self.worker.workdays.filter(ini_date__range = [self.start_date, self.end_date], finish=True).order_by('ini_date')
@@ -170,34 +173,34 @@ class MonthlyReportPDF(FPDF):
 
 
 
-                self.write_cell(workday.ini_date.strftime("%d"), 1, 20, 1, align='C')
+                self.write_cell(workday.ini_date.strftime("%d"), grid[0], 20, 1, align='C')
                 if workday.in_morning:
-                    self.write_cell(MonthlyReportPDF.local_time(workday.ini_date).strftime("%H:%M"), [2, 3], 20, 1, align='C')
-                    self.write_cell(MonthlyReportPDF.local_time(workday.end_date).strftime("%H:%M"), [4, 5], 20, 1, align='C')
-                    self.write_cell("", [6, 7], 20, 1, align='C')
-                    self.write_cell("", [8, 9], 20, 1, align='C')
+                    self.write_cell(MonthlyReportPDF.local_time(workday.ini_date).strftime("%H:%M"), [2, 3], cols, 1, align='C')
+                    self.write_cell(MonthlyReportPDF.local_time(workday.end_date).strftime("%H:%M"), [4, 5], cols, 1, align='C')
+                    self.write_cell("", [6, 7], cols, 1, align='C')
+                    self.write_cell("", [8, 9], cols, 1, align='C')
                 elif workday.in_afternoon:
-                    self.write_cell("", [2, 3], 20, 1, align='C')
-                    self.write_cell("", [4, 5], 20, 1, align='C')
-                    self.write_cell(MonthlyReportPDF.local_time(workday.ini_date).strftime("%H:%M"), [6, 7], 20, 1, align='C')
-                    self.write_cell(MonthlyReportPDF.local_time(workday.end_date).strftime("%H:%M"), [8, 9], 20, 1, align='C')
+                    self.write_cell("", [2, 3], cols, 1, align='C')
+                    self.write_cell("", [4, 5], cols, 1, align='C')
+                    self.write_cell(MonthlyReportPDF.local_time(workday.ini_date).strftime("%H:%M"), [6, 7], cols, 1, align='C')
+                    self.write_cell(MonthlyReportPDF.local_time(workday.end_date).strftime("%H:%M"), [8, 9], cols, 1, align='C')
                 # diff_seconds = (workday.end_date - workday.ini_date).total_seconds()
                 diff_hours = diff_seconds // 3600
                 diff_minutes = (diff_seconds % 3600) // 60
                 # if (diff_seconds_extra > 0) and (diff_seconds < daily_limit):
                 #     diff_minutes += 1
                 total_seconds += (diff_hours * 3600 + diff_minutes * 60)
-                self.write_cell(f"{int(diff_hours):02}:{int(diff_minutes):02}", [10, 11, 12, 13], 20, 1, align='C')
+                self.write_cell(f"{int(diff_hours):02}:{int(diff_minutes):02}", [10, 11, 12, 13], cols, 1, align='C')
 
                 diff_hours_extra = diff_seconds_extra // 3600
                 diff_minutes_extra = (diff_seconds_extra % 3600) // 60
                 total_seconds_extra += (diff_hours_extra * 3600 + diff_minutes_extra * 60)
                 if (diff_seconds_extra > 0):
-                    self.write_cell(f"{int(diff_hours_extra):02}:{int(diff_minutes_extra):02}", [14, 15, 16, 17], 20, 1, align='C')
+                    self.write_cell(f"{int(diff_hours_extra):02}:{int(diff_minutes_extra):02}", [14, 15, 16, 17], cols, 1, align='C')
                 else:
-                    self.write_cell("", [14, 15, 16, 17], 20, 1, align='C')
+                    self.write_cell("", [14, 15, 16, 17], cols, 1, align='C')
 
-                self.write_cell("", [18, 19, 20], 20, 1, align='C')
+                # self.write_cell("", [18, 19, 20], cols, 1, align='C')
                 self.ln()
             
             total_hours = total_seconds // 3600
@@ -205,10 +208,10 @@ class MonthlyReportPDF(FPDF):
             total_hours_extra = total_seconds_extra // 3600
             total_minutes_extra = (total_seconds_extra % 3600) // 60
             self.set_font("Helvetica", "B", 9)
-            self.write_cell("TOTAL HORAS", [1,2,3,4,5,6,7,8,9], 20, 1, align='C', bg_color=(200, 200, 200), fill=True)
-            self.write_cell(f"{int(total_hours):02}:{int(total_minutes):02}", [10, 11, 12, 13], 20, 1, align='C', bg_color=(200, 200, 200), fill=True)
-            self.write_cell(f"{int(total_hours_extra):02}:{int(total_minutes_extra):02}", [14, 15, 16, 17], 20, 1, align='C', bg_color=(200, 200, 200), fill=True)
-            self.write_cell("", [18, 19, 20], 20, 1, align='C', bg_color=(200, 200, 200), fill=True)
+            self.write_cell("TOTAL HORAS", [1,2,3,4,5,6,7,8,9], cols, 1, align='C', bg_color=(200, 200, 200), fill=True)
+            self.write_cell(f"{int(total_hours):02}:{int(total_minutes):02}", [10, 11, 12, 13], cols, 1, align='C', bg_color=(200, 200, 200), fill=True)
+            self.write_cell(f"{int(total_hours_extra):02}:{int(total_minutes_extra):02}", [14, 15, 16, 17], cols, 1, align='C', bg_color=(200, 200, 200), fill=True)
+            # self.write_cell("", [18, 19, 20], cols, 1, align='C', bg_color=(200, 200, 200), fill=True)
         except Exception as e:
             print(show_exc(e))
             raise e
