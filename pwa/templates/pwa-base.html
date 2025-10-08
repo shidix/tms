@@ -35,15 +35,17 @@
                         <img class="logo" src="{{request.user|comp_logo}}"> 
                         {% endif %}
                     </div>
-                    <div class="col-4 offset-2 status-bar text-center">
+                    <div class="col-5 offset-2 status-bar text-center">
                         <small id="conn-status">...</small> <i class='fas fa-wifi'></i><br />
                         <span class="employee-name">{{user.employee.name}} </span> 
                     </div> 
+		    {% comment %}
                     <div class="col-1 offset-1 pt-3">
                         {% if request.user.is_authenticated %}
                         <strong><a class="btn btn-light btn-sm powericon" href="{% url 'pwa-logout' %}"><i class="fas fa-power-off"></i></a></strong>
                         {% endif %}
                     </div>
+		    {% endcomment %}
                 </div>
             </div>
             <div class="row content align-middle m-0" id="div-content">
