@@ -181,3 +181,4 @@ media
 collect_static
 fichamaster.logs
 *.gz
+*.sql

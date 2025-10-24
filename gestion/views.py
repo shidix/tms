@@ -187,7 +187,7 @@ def gantt_plotly_view(items):
                 marker=dict(symbol='x', size=10, color='black')
             ))
 
-            chart_div = plot(fig, output_type='div', )
+            chart_div = plot(fig, output_type='div', image_width=1200)
             return (chart_div)
         else:
             return None

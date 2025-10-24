@@ -45,8 +45,12 @@
 <script>
     $(document).ready(function() 
         {
+            $('.main-svg').css('width', '100%');
+            $('.main-svg').hide().show();
             $('#gantt-tab').on('click', function() {
                 // Change all data-listmode attributes to false
+                $('.main-svg').attr('width', '100%');
+                $('.main-svg').css('width', '100%');
                 $('[data-listmode]').each(function() {
                     $(this).attr('data-listmode', 'false');
                 });
@@ -74,6 +78,7 @@
             {% if listmode %}
             $('#list-tab').tab('show');
             {% else %}
+            $('.main-svg').css('width', '100%');
             $('#gantt-tab').tab('show');
             {% endif %}
 
