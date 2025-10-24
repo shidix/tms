@@ -74,6 +74,34 @@ def local_time(mydate):
     return mydate
 
 @register.filter
+def day_of_week(mydate, lang='es'):
+    days = {}
+    try:
+        days['es'] = {
+            0: 'Lunes',
+            1: 'Martes',
+            2: 'Miércoles',
+            3: 'Jueves',
+            4: 'Viernes',
+            5: 'Sábado',
+            6: 'Domingo',
+        },
+        days['en'] = {
+            0: 'Monday',
+            1: 'Tuesday',
+            2: 'Wednesday',
+            3: 'Thursday',
+            4: 'Friday',
+            5: 'Saturday',
+            6: 'Sunday',
+        }
+
+        return days[lang][mydate.weekday()]
+    except Exception as e:
+        print (show_exc(e))
+        return ""
+
+@register.filter
 def toDuration(seconds):
     try:
         days, seconds = divmod(seconds, 86400)

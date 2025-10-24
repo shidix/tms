@@ -3,10 +3,10 @@
     <div class="col-12 col-lg-3 "> <small><i class="fas fa-user orange"></i></small> 
         <strong>{{item.employee.name}}</strong></div>
     <div class="col-6 mt-2 col-lg-3"><span class="d-block d-lg-none"> <small>{% trans 'Hora entrada' %}</small> <br /></span>
-        <span class="badge bg-success-outline datetime w-100" >{{item.ini_date|local_time|date:"d-m-Y H:i"}}</span> </div>
+        <span class="badge bg-success-outline datetime w-100" >{{item.ini_date|local_time|date:"D d-m-Y H:i"}}</span> </div>
     <div class="col-6 mt-2 col-lg-3"> <span class="d-block d-lg-none"><small>{% trans 'Hora salida' %}</small> <br /></span>
         {% if item.finish %}
-        <span class="badge bg-danger-outline datetime w-100" >{{item.end_date|local_time|date:"d-m-Y H:i"}}</span>
+        <span class="badge bg-danger-outline datetime w-100" >{{item.end_date|local_time|date:"D d-m-Y H:i"}}</span>
         {% endif %}
     </div>
     <div class="col-6 mt-2 col-lg-1"> 
