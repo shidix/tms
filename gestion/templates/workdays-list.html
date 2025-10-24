@@ -6,14 +6,14 @@
 
 
             <li class="nav-item">
-                <a class="nav-link {% if not gantt %}active{% endif %}" id="list-tab" data-bs-toggle="tab" href="#list"
-                   role="tab" aria-controls="list" aria-selected="{% if not gantt %}true{% else %}false{% endif %}">
+                <a class="nav-link {% if listmode %}active{% endif %}" id="list-tab" data-bs-toggle="tab" href="#list"
+                   role="tab" aria-controls="list" aria-selected="{% if listmode %}true{% else %}false{% endif %}">
                     <i class="fas fa-list">&nbsp;</i> {% trans 'Listado de fichajes' %}
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {% if gantt %}active{% endif %}" id="gantt-tab" data-bs-toggle="tab" href="#gantt"
-                   role="tab" aria-controls="gantt" aria-selected="{% if gantt %}true{% else %}false{% endif %}">
+                <a class="nav-link {% if not listmode %}active{% endif %}" id="gantt-tab" data-bs-toggle="tab" href="#gantt"
+                   role="tab" aria-controls="gantt" aria-selected="{% if not listmode %}true{% else %}false{% endif %}">
                     <i class="fas fa-chart-pie">&nbsp;</i> {% trans 'Modo gráfico' %}
                 </a>
             </li>
@@ -29,7 +29,7 @@
                     {% endfor %}
                 </div>
             </div>
-            <div class="tab-pane fade {% if listmode %}show active{% endif %}" id="gantt" role="tabpanel" aria-labelledby="gantt-tab">
+            <div class="tab-pane fade {% if not listmode %}show active{% endif %}" id="gantt" role="tabpanel" aria-labelledby="gantt-tab">
                 {% if gantt %}
                 <div class="toolbar-content row">
                     <div class="col-12" id="gantt-div">
