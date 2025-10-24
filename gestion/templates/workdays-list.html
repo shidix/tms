@@ -20,18 +20,7 @@
         </ul>
 
         <div class="tab-content pt-3" id="myTabContent">
-
-
-            <div class="tab-pane fade {% if gantt %}show active{% endif %}" id="gantt" role="tabpanel" aria-labelledby="gantt-tab">
-                {% if gantt %}
-                <div class="toolbar-content row">
-                    <div class="col-12" id="gantt-div">
-                        {% include "gantt.html" %}
-                    </div>
-                </div>
-                {% endif %}
-            </div>
-            <div class="tab-pane fade {% if not gantt %}show active{% endif %}" id="list" role="tabpanel" aria-labelledby="list-tab">
+            <div class="tab-pane fade {% if listmode %}show active{% endif %}" id="list" role="tabpanel" aria-labelledby="list-tab">
                 <div class="toolbar-content row">
                     {% for item in item_list %}
                         <div class="col-12 list-item pt-2 pb-2" id="row_{{ item.id }}">
@@ -39,6 +28,15 @@
                         </div>
                     {% endfor %}
                 </div>
+            </div>
+            <div class="tab-pane fade {% if listmode %}show active{% endif %}" id="gantt" role="tabpanel" aria-labelledby="gantt-tab">
+                {% if gantt %}
+                <div class="toolbar-content row">
+                    <div class="col-12" id="gantt-div">
+                        {% include "gantt.html" %}
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
