@@ -148,7 +148,7 @@ def gantt_plotly_view(items):
 
 
             fig.update_yaxes(autorange="reversed")  # Estilo Gantt
-            fig.update_layout(title="", height=400, xaxis_dtick=dtick*3600000)
+            fig.update_layout(title="", height=400, xaxis_dtick=dtick*3600000, width=1200)
             
 
             for i, milestone in enumerate(milestones):
