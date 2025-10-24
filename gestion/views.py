@@ -291,7 +291,7 @@ def index(request):
             items = get_workdays(request)
             gantt = gantt_plotly_view(items)
             list_dates = [ datetime.now().date() + timedelta(days=i) for i in range(-6, 1) ]
-            listmode = False
+            listmode = get_param(request.POST, "listmode", "true").lower() == "true"
             return render(request, "index.html", {"item_list": items, "gantt": gantt, "list_dates": list_dates, 'listmode': listmode}) 
     except Exception as e:
         print(show_exc(e))
