@@ -25,5 +25,22 @@
 <script>
     $(document).ready(function() {
         $('.active-False').addClass('text-danger');
+
+        $('.btn-sweet-alert').on('click', function() {
+            // Open SweetAlert2 modal with company private zone url
+            var url = $(this).data('url');
+            // Add domain to url if needed
+            if (!url.startsWith('http')) {
+                url = window.location.origin + url;
+            }
+            
+            Swal.fire({
+                title: $(this).data('title'),
+                html: url,
+                icon: 'warning',
+                showCancelButton: false,
+                confirmButtonText: '{% trans "Cerrar" %}',
+            });
+        });
     });
 </script>

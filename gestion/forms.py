@@ -7,11 +7,12 @@ import re
 class CompanyForm(forms.ModelForm):
     class Meta:
         model = Company
-        fields = ['name', 'logo', 'nif', 'last_payment_amount', 'last_payment', 'expiration_date', 'ccc', 'address']
+        fields = ['name', 'logo', 'nif', 'last_payment_amount', 'last_payment', 'expiration_date', 'ccc', 'address', 'clock_pwa_enabled']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'logo': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'nif': forms.TextInput(attrs={'class': 'form-control'}),
+            
             
         }
         labels = {

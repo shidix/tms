@@ -334,13 +334,40 @@ def workdays_search(request):
 @group_required("admins","managers")
 def workdays_search_in_date(request):
     try:
-        set_session(request, "s_idate", get_param(request.POST, "day"))
-        set_session(request, "s_edate", get_param(request.POST, "day"))
+        predefined = get_param(request.POST, "predefined", "")
+        if predefined == "current_week":
+            today = datetime.now().date()
+            start_date = today - timedelta(days=today.weekday())
+            end_date = start_date + timedelta(days=6)
+        elif predefined == "current_month":
+            today = datetime.now().date()
+            start_date = today.replace(day=1)
+            end_date = (start_date + relativedelta.relativedelta(months=1)) - timedelta(days=1)
+        elif predefined == "last_week":
+            today = datetime.now().date()
+            start_date = today - timedelta(days=today.weekday() + 7)
+            end_date = start_date + timedelta(days=6)
+        elif predefined == "last_month":
+            today = datetime.now().date()
+            start_date = (today.replace(day=1) - relativedelta.relativedelta(months=1))
+            end_date = today.replace(day=1) - timedelta(days=1)
+        else:
+            start_date = datetime.strptime(get_param(request.POST, "day"), "%Y-%m-%d").date()
+            end_date = start_date
+
+
+        # set_session(request, "s_idate", get_param(request.POST, "day"))
+        # set_session(request, "s_edate", get_param(request.POST, "day"))
+        set_session(request, "s_idate", start_date.strftime("%Y-%m-%d"))
+        set_session(request, "s_edate", end_date.strftime("%Y-%m-%d"))
+
+        print(start_date, end_date)
         items = get_workdays(request)
         chart_div = gantt_plotly_view(items)
         # last 7 days in list_dates
         list_dates = [ (datetime.now().date() + timedelta(days=i)) for i in range(-6, 1) ]
-        current_date = datetime.strptime(get_session(request, "s_idate"), "%Y-%m-%d").date()
+        # current_date = datetime.strptime(get_session(request, "s_idate"), "%Y-%m-%d").date()
+        current_date = start_date
         listmode = get_param(request.POST, "listmode", "true").lower() == "true"
         items = sorted(items, key=lambda x: x.ini_date, reverse=True)
 

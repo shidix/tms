@@ -41,7 +41,7 @@
     <div class="col-3">
         <div class="greybox-sm p-1">
         {% trans "Logo" %}
-            <input type="file" class="form-control" id="logo" name="logo" value="{{obj.logo|default:""}}" 
+            <input type="file" class="form-control" id="logo" name="logo" value="{{obj.logo|default:''}}" 
                 title="{{obj.logo}}"placeholder="Logo..." /> <span id="id_logo__msg"></span>
         </div>
     </div>
@@ -93,7 +93,7 @@
             <span id="id_expiration_date__msg"></span>
         </div>
     </div>
-    <div class="col-12">
+    <div class="col-9">
         <div class="greybox-sm p-1">
         {% trans 'Dirección del centro de trabajo' %}
             <div class="input-group">
@@ -103,6 +103,15 @@
                     placeholder="Dirección..." /> 
             </div>
             <span id="id_address__msg"></span>
+        </div>
+    </div>
+    <div class="col-3">
+        <!-- Checkbox field for comp.clock_pwa_enabled -->
+        <div class="form-check greybox-sm p-1 mt-4">
+            <input class="form-check-input" type="checkbox" id="clock_pwa_enabled" name="clock_pwa_enabled" {% if obj.clock_pwa_enabled %}checked{% endif %}>
+            <label class="form-check-label" for="clock_pwa_enabled">
+                {% trans 'Fichaje desde PWA' %}
+            </label>
         </div>
     </div>
 </div>

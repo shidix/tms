@@ -12,11 +12,13 @@
 <div class="col-2 d-flex align-items-center">{{item.expiration_date}}</div>
 
 <div class="col-1 text-right d-flex align-items-center p-0">
-    <a class="btn btn-xs" href="{% url 'pwa-company-login' item.uuid|default:'no-uuid-available' %}" target="_blank">
+    <a class="btn btn-xs btn-sweet-alert" data-title="Fichaje general" data-url="{% url 'pwa-company-login' item.uuid|default:'no-uuid-available' %}">
         <i class="fas fa-sign-in-alt"></i></a>
-    <a class="btn btn-xs ark" data-url="{% url "admins-form" %}" data-target-modal="common-modal" data-obj_id="{{item.id}}" >
+    <a class="btn btn-xs btn-sweet-alert" data-title="Acceso a la zona privada" data-url="{% url 'pwa-company-private-zone' item.uuid|default:'no-uuid-available' %}" >
+        <i class="fas fa-shield-alt"></i></a>
+    <a class="btn btn-xs ark" data-url="{% url 'admins-form' %}" data-target-modal="common-modal" data-obj_id="{{item.id}}" >
         <i class="fas fa-edit"></i></a>
-    <a class="btn btn-xs ark" data-url="{% url "admins-remove" %}" data-target="adm-list" data-obj_id="{{item.id}}"  data-confirm="{% trans "Are you sure to remove this element?" %}" >
+    <a class="btn btn-xs ark" data-url="{% url 'admins-remove' %}" data-target="adm-list" data-obj_id="{{item.id}}"  data-confirm="{% trans "Are you sure to remove this element?" %}" >
         <i class="fas fa-trash"></i></a>
 </div>
 

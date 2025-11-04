@@ -77,6 +77,7 @@ class Company(models.Model):
     expiration_date = models.DateField(verbose_name=_('Fecha de expiración'), default=datetime.date(2001, 1, 1))
     ccc = models.CharField(max_length=40, verbose_name=_('Código Cuenta Cotización'), default="")
     address = models.CharField(max_length=255, verbose_name=_('Dirección'), default="")
+    clock_pwa_enabled = models.BooleanField(default=True, verbose_name=_('Fichaje desde PWA Habilitado'));
 
     def __str__(self):
         return self.name

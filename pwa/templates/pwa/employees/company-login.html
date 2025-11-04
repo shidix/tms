@@ -4,6 +4,7 @@
 {% block content%}
 <div style="max-width: 800px; overflow-y: auto;" class="mx-auto">
     <div class="row p-3">
+        {% if comp.clock_pwa_enabled %}
         <div class="col-12 m-1">
             <div class="card">
                 <div class="card-body text-center">
@@ -15,6 +16,20 @@
                 </div>
             </div>
         </div>
+        {% else %}
+        <div class="col-12 m-1">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title"><strong>{{comp.name}}</strong></h5>
+                    <p class="card-text">
+                        <div class="w-50 mx-auto">
+                        {{ comp.view_logo }}
+                        </div>
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
         <div class="col-12 m-1">
             <form method="POST" action="{% url 'pwa-company-login' %}">
                 {% csrf_token %}
@@ -23,6 +38,11 @@
                 <div class="card">
                     <div class="card-body text-center">
                         <h5 class="card-title"><strong>PIN</strong></h5>
+                        <p class="card-text">
+                            Introduce tu PIN para registrar tu entrada/salida.
+                            <br>
+                            Si no lo recuerdas, pregunta al responsable de tu centro de trabajo.
+                        </p>
                         <p class="card-text ">
                             <div class="row d-flex justify-content-center align-items-center m-0">
                                 <div class="form-group col-lg-6 col-10">

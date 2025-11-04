@@ -1,5 +1,26 @@
 {% load i18n gestion_tags %}
-
+<div class="row mb-3 p-2">
+    <div class="col">
+        <a class="btn btn-dark btn-sm ark-post w-75" id="btn-search-current-week" data-url="{% url 'workdays-search-in-date' %}" data-csrf-token="{{ csrf_token }}" data-listmode="{{listmode}}" data-predefined="current_week" data-target="item-list">
+            {% trans "Semana actual" %}
+        </a>
+    </div>
+    <div class="col">
+        <a class="btn btn-dark btn-sm ark-post w-75" id="btn-search-last-week" data-url="{% url 'workdays-search-in-date' %}" data-csrf-token="{{ csrf_token }}" data-listmode="{{listmode}}" data-predefined="last_week" data-target="item-list">
+            {% trans "Semana pasada" %}
+        </a>
+    </div>
+    <div class="col">
+        <a class="btn btn-dark btn-sm ark-post w-75" id="btn-search-current-month" data-url="{% url 'workdays-search-in-date' %}" data-csrf-token="{{ csrf_token }}" data-listmode="{{listmode}}" data-predefined="current_month" data-target="item-list">
+            {% trans "Mes actual" %}
+        </a>
+    </div>
+    <div class="col">
+        <a class="btn btn-dark btn-sm ark-post w-75" id="btn-search-last-month" data-url="{% url 'workdays-search-in-date' %}" data-csrf-token="{{ csrf_token }}" data-listmode="{{listmode}}" data-predefined="last_month" data-target="item-list">
+            {% trans "Mes pasado" %}
+        </a>
+    </div>
+</div>
 <form class="form m-0" method="GET" action="{% url "workdays-search" %}" id="form-search">
     {%csrf_token%}
     <div class="row">
@@ -34,7 +55,7 @@
             </div>
         </div>
         <div class="col-lg-1 col-1 p-0">
-            <button class="btn btn-default saveform w-100" data-form="form-search" data-target="item-list">
+            <button id="btn-search-form" class="btn btn-default saveform w-100" data-form="form-search" data-target="item-list">
                 <i class="fas fa-search"></i> </button>
         </div>
     </div>
@@ -60,6 +81,8 @@
                 }
             });
         });
+
+
 
     });
 </script>
