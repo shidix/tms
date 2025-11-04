@@ -24,6 +24,16 @@
                         <i class="fa fa-clock-o"></i> {%trans "Inicio: "%} {{obj.ini_date|local_time|date:"d-m-Y H:i"}}</span></p>
                 {% endif %}
 		    </div>
+            {% else %}
+                {% if obj != None %}
+                <div class="row">
+                    <p class="info text-center p-2 col-12">{%trans "Ha iniciado su jornada laboral en: "%}</p>
+                    <p class="name text-center p-2 col-12">{{obj.employee.comp.name}}</p>
+                    <p  class="date text-center col-12">
+                            <i class="fa fa-clock-o"></i> {%trans "Inicio: "%} {{obj.ini_date|local_time|date:"d-m-Y H:i"}}</span></p>
+                </div>
+                {% endif %}
+
             {% endif %}
 
             <div class="m-1 mt-3">
