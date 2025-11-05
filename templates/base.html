@@ -53,11 +53,15 @@
                                 <div class="col-12 col-lg-8 d-flex justify-content-between align-items-center p-0">
 
                                     {% if request.user.manager %}
-                                        <a class="btn btn-xs m-2" href="{% url 'pwa-portal-company-login' request.user.manager.comp.uuid %}" target="_blank">
+                                        {% url 'pwa-portal-company-login' request.user.manager.comp.uuid as portal_url %}
+                                        <a class="btn btn-xs m-2" href="{{ portal_url|to_main_url }}" target="_blank">
                                             <i class="fas fa-user-clock"></i>&nbsp;<span class="d-none d-lg-inline">{% trans 'Portal de fichaje' %}</span> </a>
 
-                                        <a class="btn btn-xs ark-alert m-2" href="#" data-url="{% url 'managers-view-portal-login-url' %}" data-uuid="{{request.user.manager.comp.uuid}}" title="{% trans 'Url del portal' %}"><i class="fas fa-paper-plane"></i>&nbsp;<span class="d-none d-lg-inline">URL Portal</span></a>
-                                        <a class="btn btn-xs m-2" href="{% url 'pwa-company-private-zone' request.user.manager.comp.uuid %}" target="_blank">
+                                        {% url 'managers-view-portal-login-url' as view_portal_url %}
+                                        <a class="btn btn-xs ark-alert m-2" href="#" data-url="{{ view_portal_url|to_admin_url }}" data-uuid="{{request.user.manager.comp.uuid}}" title="{% trans 'Url del portal' %}"><i class="fas fa-paper-plane"></i>&nbsp;<span class="d-none d-lg-inline">URL Portal</span></a>
+
+                                        {% url 'pwa-company-private-zone' request.user.manager.comp.uuid as private_zone_url %}
+                                        <a class="btn btn-xs m-2" href="{{ private_zone_url|to_main_url }}" target="_blank">
                                             <i class="fas fa-user-shield"></i>&nbsp;<span class="d-none d-lg-inline">{% trans 'Zona privada' %}</span></a>
 
                                     {% endif %}
@@ -66,7 +70,7 @@
                                         <span class="d-lg-inline d-none">&nbsp; {% trans 'Cambiar contraseña' %}</span>
                                     </a>
 
-                                    <a class="btn btn-xs m-2 ark-post" href="#" data-url="{% url 'auth_logout' %}" data-csrf-token={{ csrf_token }} title="{% trans 'Salir' %}">
+                                    <a class="btn btn-xs m-2 ark-post" href="#" data-url="{% url 'auth_logout' %}" data-csrf-token="{{ csrf_token }}" title="{% trans 'Salir' %}">
                                         <i class="fas fa-sign-out-alt"></i>
                                         <span class="d-lg-inline d-none">&nbsp;{% trans 'Salir'%} </span>
                                     </a>

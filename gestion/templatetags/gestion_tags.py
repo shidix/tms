@@ -124,3 +124,31 @@ def extraday(seconds):
     else:
         return ""
 
+@register.filter
+def to_admin_url(path):
+    from django.conf import settings
+    try:
+
+        # Check if absolute URL
+        if path.startswith('http'):
+            return path.replace(settings.MAIN_URL, settings.ADMIN_URL)
+        else:
+            return "{}{}".format(settings.ADMIN_URL, path)
+    except Exception as e:
+        print (show_exc(e))
+        return path
+
+    
+@register.filter
+def to_main_url(path):
+    from django.conf import settings
+    try:
+
+        # Check if absolute URL
+        if path.startswith('http'):
+            return path.replace(settings.ADMIN_URL, settings.MAIN_URL)
+        else:
+            return "{}{}".format(settings.MAIN_URL, path)
+    except Exception as e:
+        print (show_exc(e))
+        return path
