@@ -5,13 +5,13 @@
 </div>
 <div class="col-2 d-flex align-items-center">{{item.name}}</div>
 <div class="col-2 d-flex align-items-center">{{item.nif}}</div>
-<div class="col-2 d-flex align-items-center justify-content-center">
+<div class="col-1 d-flex align-items-center justify-content-center">
     <span class="badge bg-info">{{item.employees.count}}</span>
 </div>
-<div class="col-2 d-flex align-items-center">{{item.last_payment}} ({{item.last_payment_amount}} &euro;)</div>
-<div class="col-2 d-flex align-items-center">{{item.expiration_date}}</div>
+<div class="col-2 d-flex align-items-center">{{item.last_payment|date:"SHORT_DATE_FORMAT"}} ({{item.last_payment_amount}} &euro;)</div>
+<div class="col-2 d-flex align-items-center">{{item.expiration_date|date:"SHORT_DATE_FORMAT"}}</div>
 
-<div class="col-1 text-right d-flex align-items-center p-0">
+<div class="col-2 text-right d-flex align-items-center p-0">
     <a class="btn btn-xs btn-sweet-alert" data-title="Fichaje general" data-url="{% url 'pwa-company-login' item.uuid|default:'no-uuid-available' %}" title="{% trans 'Acceso fichaje general' %}">
         <i class="fas fa-sign-in-alt"></i></a>
     <a class="btn btn-xs btn-sweet-alert" data-title="Acceso a la zona privada" data-url="{% url 'pwa-company-private-zone' item.uuid|default:'no-uuid-available' %}" title="{% trans 'Acceso a la zona privada' %}">
