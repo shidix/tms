@@ -780,6 +780,8 @@ def managers_view_portal_login_url(request):
         company = Company.objects.filter(uuid=uuid).first()
         if company != None:
             abs_url = request.build_absolute_uri(reverse('pwa-portal-company-login', kwargs={'uuid': company.uuid}))
+            if ("http://" in abs_url):
+                abs_url = abs_url.replace("http://", "https://")
             abs_url = abs_url.replace(settings.ADMIN_URL, settings.MAIN_URL)
             return HttpResponse(abs_url, status=200)
         else:
