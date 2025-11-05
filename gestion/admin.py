@@ -36,7 +36,7 @@ class CompanyAdmin(admin.ModelAdmin):
         if obj.qr:
             obj.qr.delete(save=True)
 
-        url = "{}/gestion/workdays/journey/{}".format(settings.MAIN_URL, obj.id)
+        url = "{}/gestion/workdays/journey/{}".format(settings.ADMIN_URL, obj.id)
         path = "{}{}".format(settings.BASE_DIR, obj.logo.url) if obj.logo else ""
         img_data = ContentFile(gen_qr(url, path))
         obj.qr.save('qr_{}.png'.format(obj.id), img_data, save=True)
