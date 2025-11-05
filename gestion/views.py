@@ -780,6 +780,7 @@ def managers_view_portal_login_url(request):
         company = Company.objects.filter(uuid=uuid).first()
         if company != None:
             abs_url = request.build_absolute_uri(reverse('pwa-portal-company-login', kwargs={'uuid': company.uuid}))
+            abs_url = abs_url.replace(settings.ADMIN_URL, settings.MAIN_URL)
             return HttpResponse(abs_url, status=200)
         else:
             return HttpResponse("<small><strong>Ha ocurrido un error inesperado. Consulte con el administrador de la plataforma.</strong></small>", status=503)
