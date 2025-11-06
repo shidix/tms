@@ -192,6 +192,8 @@ def employee_view_clock(request, id=None, uuid=None):
 
 def pwa_company_login(request, uuid=None):
     try:
+        if request.user.is_authenticated:
+            logout(request)
         if request.method == "POST":
             uuid = request.POST.get('uuid', None)
             if uuid == None:
