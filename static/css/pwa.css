@@ -164,6 +164,31 @@ img.logo {
     background: #e1bee7; 
 }
 
+#div-header .row {
+	align-items: center;
+	color: #333;
+}
+
+#div-mobil .row {
+	align-items: center;
+}
+
+#div-access  .small{
+	font-size: 0.1rem !important;
+}
+#div-footer,
+#div-footer a {
+	color: #333 !important;
+	font-size: 0.75rem;
+	text-decoration: none;
+}
+
+#div-footer span.app-name  {
+	color: #333 !important;
+	font-weight: 600;
+	font-size: 0.85rem;
+}
+
 /*********** END HEADER *************/
 
 
@@ -228,6 +253,11 @@ a.asm {
     border-radius: 0.25rem;
 }
 
+.card.fm {
+	border-radius: 0.5rem;
+}
+
+
 /*********** QR *************/
 
 .reader { 
@@ -283,6 +313,13 @@ p.date {
 
 /*********** END QR *************/
 
+.head-fichamaster-logo {
+	align-items: center;
+	color: #333;
+	font-weight:600;
+	font-size: 1.1rem;
+}
+
 
 /*********** END CONTENT *************/
 
@@ -296,4 +333,6 @@ p.date {
     font-size:0.7em;
     align-items: center;
 }
+
+
 /*********** END FOOTER *************/

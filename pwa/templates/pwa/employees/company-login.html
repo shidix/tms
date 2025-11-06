@@ -2,14 +2,88 @@
 {% load static i18n pwa_tags %}
 
 {% block content%}
+    <div class="row m-0"><div class="col-lg-6 offset-lg-3">
+        {# --------------------------------- HEADER ------------------------#}
+        <div id="div-header" class="row m-0 mb-3">
+            <div class="card fm">
+                <div class="card-body text-center">
+                    <div class="row">
+                        <div class="col-4 text-start"><div class="w-50 "> {{ comp.view_logo }} </div></div>
+                        <div class="col-8 text-end"><h5 class="card-title"><strong>{{comp.name}}</strong></h5></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {# --------------------------------- MOVIL/ZONA PRIVADA ------------------------#}
+        {% if comp.clock_pwa_enabled %}
+            <div id="div-mobil" class="row m-0 mb-3">
+                <div class="card fm py-4" style="background: #599191; color:white;">
+                    <div class="row card-body">
+			    {# ------- Version PC -------#}
+			    <div class="col-lg-6 col-8 card-text d-none d-lg-block" style="font-size: 1.2rem;">Si eres <strong>empleado</strong> y quieres acceder a <strong>tus registros desde el móvil</strong>, escanea el siguiente QR: </div>
+			    {# ------- Version Movil -------#}
+			    <div class="col-lg-6 col-8 card-text d-lg-none">Si eres <strong>empleado</strong> y quieres acceder a <strong>tus registros desde el móvil</strong>, escanea el siguiente QR: </div>
+                        <div class="col-lg-6 col-4 card-text w-25 mx-auto">
+                            <img src="{{comp.get_qr_private_zone}}" alt="QR Code" class="img-fluid">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        {# --------------------------------- FICHAJE DIRECTO ------------------------#}
+        <div id="div-access" class="row m-0">
+            <form method="POST" action="{% url 'pwa-company-login' %}" class="p-0">
+                {% csrf_token %}
+                <input type="hidden" name="uuid" value="{{comp.uuid}}">
+                <div class="card fm py-4" style="background: #e2d7c5; color: #3b2f1d;">
+                    <div class="card-body text-center">
+			<p class="card-text"> Introduce tu <strong>PIN</strong> para registrar tu <strong>entrada/salida</strong>.  </p>
+                        <p class="card-text ">
+                            <div class="row d-flex justify-content-center align-items-center">
+                                <div class="form-group col-lg-6 col-10">
+                                    <input style="border:1px solid #3b2f1d;" type="text" class="form-control input text-center p-4" id="pin" 
+                                        placeholder="Introduce el PIN para fichar" name="pin" required/>
+                                    <div class="invalid-feedback"> Introduce un PIN válido.  </div>
+                                </div>
+				<div class="mt-2"><small>Si no lo recuerdas, pregunta al responsable de tu centro de trabajo.</small></div>
+                                <div class="form-group col-lg-12 col-10 mt-3">
+                                    <input type="submit" class="btn btn-primary p-3 lg-font w-50" style="background: #3b2f1d; border:1px solid #3b2f1d; " value="Fichar">
+                                </div>
+                            </div>
+                        </p>
+                    </div>
+                </div>
+            </form>
+        </div>
+        {# --------------------------------- FOOTER ------------------------#}
+        <div id="div-footer" class="row m-0 mt-1">
+            <div class="card fm">
+                <div class="card-body text-center">
+                    <div class="row">
+                        <div class="col-lg-2 col-3 text-start"><img src="/static/images/logo-fichaje.png" class="w-50"></div>
+			<div class="col-lg-10 col-9 text-end"><span class="app-name">Fichamaster</span> <br/> <a href="mailto:info@fichamaster.com">info@fichamaster.com<a/></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> 
+ </div>
+
+    {%comment%}
 <div style="max-width: 800px; overflow-y: auto;" class="mx-auto">
-    <div class="row p-3">
+	<div class="row p-1 mt-3 head-fichamaster-logo">
+        	<div class="col-12 m-1 text-center">
+					<img src="/static/images/logo-fichaje.png" width="60"> Fichamaster
+		</div> 
+	</div> 
+
+    <div class="row p-1">
         {% if comp.clock_pwa_enabled %}
         <div class="col-12 m-1">
-            <div class="card">
+            <div class="card fm" style="background: #599191;color:white;">
                 <div class="card-body text-center">
                     <h5 class="card-title"><strong>{{comp.name}}</strong></h5>
-                    <p class="card-text">Escanea el QR para acceder a la zona privada.</p>
+                    <p class="card-text">Si eres empleado, escanea el siguiente QR para acceder a tu zona privada:</p>
                     <p class="card-text w-50 mx-auto">
                         <img src="{{comp.get_qr_private_zone}}" alt="QR Code" class="img-fluid">
                     </p>
@@ -18,7 +92,7 @@
         </div>
         {% else %}
         <div class="col-12 m-1">
-            <div class="card">
+            <div class="card fm">
                 <div class="card-body text-center">
                     <h5 class="card-title"><strong>{{comp.name}}</strong></h5>
                     <p class="card-text">
@@ -35,13 +109,10 @@
                 {% csrf_token %}
                 <input type="hidden" name="uuid" value="{{comp.uuid}}">
 
-                <div class="card">
+                <div class="card fm">
                     <div class="card-body text-center">
-                        <h5 class="card-title"><strong>PIN</strong></h5>
                         <p class="card-text">
                             Introduce tu PIN para registrar tu entrada/salida.
-                            <br>
-                            Si no lo recuerdas, pregunta al responsable de tu centro de trabajo.
                         </p>
                         <p class="card-text ">
                             <div class="row d-flex justify-content-center align-items-center m-0">
@@ -51,20 +122,28 @@
                                         Introduce un PIN válido.
                                     </div>
                                 </div>
+                            Si no lo recuerdas, pregunta al responsable de tu centro de trabajo.
                                 <div class="form-group col-lg-12 col-10 mt-3">
                                     <input type="submit" class="btn btn-primary p-5 lg-font" value="Fichar">
+                                </div>
+                                <div class="col-lg-12 col-10 mt-3">
                                 </div>
                             </div>
 
                         </div>
                         </p>
                     </div>
+	
                 </div>
-            
             </form>
         </div>
+	<div class="col-12 m-1 text-center">
+					<img src="/static/images/logo-fichaje.png" width="60"> Fichamaster
+		</div> 
+
     </div>
 </div>
+    {%endcomment%}
 
 <script>
     const pinInput = document.getElementById('pin');
