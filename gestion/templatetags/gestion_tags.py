@@ -152,3 +152,11 @@ def to_main_url(path):
     except Exception as e:
         print (show_exc(e))
         return path
+    
+@register.filter
+def float_for_js(value):
+    try:
+        return str(value).replace(',', '.')
+    except Exception as e:
+        print (show_exc(e))
+        return value

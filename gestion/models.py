@@ -196,6 +196,27 @@ class Employee(models.Model):
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        self.weekly_hours = float(self.mon_hours) + float(self.tue_hours) + float(self.wed_hours) + float(self.thu_hours) + float(self.fri_hours) + float(self.sat_hours) + float(self.sun_hours)
+        total_days = 0
+        if float(self.mon_hours) > 0:
+            total_days += 1
+        if float(self.tue_hours) > 0:
+            total_days += 1
+        if float(self.wed_hours) > 0:
+            total_days += 1
+        if float(self.thu_hours) > 0:
+            total_days += 1
+        if float(self.fri_hours) > 0:   
+            total_days += 1
+        if float(self.sat_hours) > 0:
+            total_days += 1
+        if float(self.sun_hours) > 0:
+            total_days += 1
+        self.weekly_days = total_days
+
+        super().save(*args, **kwargs)
+
     def save_user(self):
         if self.user == None:
             self.user = User.objects.create_user(username=self.email, email=self.email)
