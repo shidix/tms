@@ -50,7 +50,7 @@
                 </div>
             </div>
             <div class="col-1 p-0">
-                <button class="btn btn-default saveform w-100" data-form="form-search" data-target="emp-list">
+                <button class="btn btn-default saveform w-100" data-form="form-search" data-target="emp-list" id="btn-search">
                     <i class="fas fa-search"></i> </button>
             </div>
         </div>
@@ -60,7 +60,6 @@
 <script>
     // Show "looking for" (sweetalert) message if click on .show-looking button 
     $(document).on('click', '.show-looking', function (e) {
-
             Swal.fire({
                 title: 'Buscando jornadas registradas...',
                 text: 'Por favor, espere un momento.',
@@ -78,6 +77,6 @@
             });
 
     });    
-</script>
 
+</script>
 
