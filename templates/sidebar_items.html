@@ -5,16 +5,16 @@
 {% if user|in_group:"admins" %}
 
     {%comment%} PC VERSION {%endcomment%}
-    <div class="d-none d-lg-block" tyle="border:1px solid blue">
+    <div class="d-none d-lg-block">
         <div class="row menu m-0">
             <div class="col-3 text-center nav-item {%current 'home'%}"><a class="nav-link" aria-current="page" href="{%url 'index'%}">
                 <i class='fas fa-home'></i><span class="px-3">{%trans 'Inicio'%}</span></a></div>
             <div class="col-3 text-center nav-item {%current 'employees'%}">
                 <a class="nav-link" aria-current="page" href="{% url 'employees' %}">
-                <i class='fa fa-medkit'></i><span class="px-3">{%trans 'Empleados'%}</span></a></div>
+                <i class='fa fa-users'></i><span class="px-3">{%trans 'Empleados'%}</span></a></div>
             <div class="col-3 text-center nav-item {%current 'managers'%}">
                 <a class="nav-link" aria-current="page" href="{%url 'managers'%}">
-                <i class='fas fa-users'></i><span class="px-3">{%trans 'Administradores'%}</span></a></div>
+                <i class='fas fa-user-cog'></i><span class="px-3">{%trans 'Administradores'%}</span></a></div>
             {% if user|in_group:"admins" %}
             <div class="col-3 text-center nav-item {%current 'admins'%}">
                 <a class="nav-link" aria-current="page" href="{%url 'admins'%}">
@@ -24,7 +24,7 @@
     </div>
 
     {%comment%} MOBILE VERSION {%endcomment%}
-    <div class="d-lg-none" tyle="border:1px solid red"> 
+    <div class="d-lg-none"> 
         <div class="row menu mv m-0">
             <div class="col-3 text-center nav-item nav-tabs {%current 'home'%} p-1">
                 <a class="nav-link" aria-current="page" href="{% url 'index' %}">
@@ -44,7 +44,7 @@
     <div class="d-none d-lg-block">
         {% if request.user.manager %}
         <div class="row">
-            <div class="col-lg-2 offset-lg-10 col-12">
+            <div class="col-lg-12 col-12">
                 <p class="license w-100 bg-success m-0 p-3">
 		Licencia v&aacute;lida hasta <strong>{{request.user.manager.comp.expiration_date|date:"d/m/Y"}}</strong>
                 </p>
