@@ -22,21 +22,42 @@
         <!-- JQuery -->
         <script src="https://code.jquery.com/jquery-3.5.1.js" ></script>
 
-        <title>{% trans "Aplicación para el fichaje"%}</title>
+        <title>{% trans "Fichamaster, tu plataforma de fichaje"%}</title>
     </head>
     <body>
         <div class="login-container">
             <div class="login-left">
                 <div class="features-container">
-                    <h4 class="apptitle">{% trans "Aplicación para el fichaje" %}</h4>
+			<h1 class="apptitle">{% trans "Fichamaster" %}, </h1>
+			<h2 class="mb-5">{% trans "tu plataforma de fichaje" %}</h2>
 		    {% blocktrans %}
+
+			<div class="row login-text">
+				<div class="col-lg-12 col-12"><h3>Innovación y eficiencia garantizadas</h3></div>
+				<div class="col-lg-3 col-12 pt-3"><h3>Facilidad de uso</h3><br /><strong>Fichamaster</strong> está diseñado para ser intuitivo y fácil de utilizar, permitiendo a los empleados fichar sin complicaciones y a los administradores monitorizar el proceso de forma eficiente. </div>
+				<div class="col-lg-3 col-12 pt-3"><h3>Confiabilidad</h3><br /><strong>Fichamaster</strong> asegura un sistema de fichaje seguro y preciso, minimizando errores humanos y garantizando la integridad de los datos en todo momento para una gestión eficaz. </div>
+				<div class="col-lg-3 col-12 pt-3"><h3>Accesibilidad</h3><br /><strong>Fichamaster</strong> es accesible desde múltiples dispositivos, lo que permite a los empleados fichar desde cualquier lugar, además de tener acceso a sus registros desde su móvil. </div>
+				<div class="col-lg-3 col-12 pt-3"><h3>Métodos de acceso</h3><br /><strong>Fichamaster</strong> ofrece a tu empresa: <br />
+						<i class="fa fa-check"></i> Fichaje presencial.<br />
+						<i class="fa fa-check"></i> Fichaje remoto.
+				</div>
+			</div>
+
+                    {% endblocktrans %}
+
+			<div class="row mt-5">
+			    	<div class="col-lg-12 col-12 text-center"><img src="{% static '/images/fichamaster-capt.png'%}" width=""/></div>
+			</div>
+
+		{% comment %}
+
 		    <p>¡Optimiza la gestión de tu equipo con nuestra innovadora aplicación de fichaje en el trabajo! <br /><br />
 			Simplifica el control de asistencia, reduce errores y ahorra tiempo con una solución fácil de usar y totalmente digital.<br /> <br /> 
 			Desde el registro de entrada y salida hasta el seguimiento en tiempo real, nuestra app te permite gestionar horarios, calcular horas extras y mantener un historial preciso de asistencia, todo desde tu smartphone o pc.<br /><br />
 			Mejora la productividad de tu empresa y garantiza una gestión eficiente del tiempo con nuestra plataforma confiable y segura.<br /> <br />
 			¡Descubre cómo transformar la forma en que controlas el tiempo en tu negocio hoy mismo!<p>
-                    {% endblocktrans %}
 
+		{% endcomment %}
 		{% comment %}
 			<div class="row text-center">
 				<div class="col-lg-8 offset-lg-2 col-12">
@@ -50,15 +71,15 @@
 		{% comment %}
                 <div><img src="{% static '/images/bg-login.png'%}" width="100%"/></div>
 		{% endcomment %}
-		<div class="login-left-bottom p-5 text-center x-small"><img src="{% static '/images/logo-fichaje-negative.png'%}" width="50"/><br/><br/>
+		<div class="login-left-bottom p-5 text-center x-small"><a href="https://www.shidix.com" target="_blank"><img src="{% static '/images/shidix-green.png'%}" width="50"/></a><br/><br/>
 		Para saber más sobre la normativa a aplicar consulta la <a href="https://www.mites.gob.es/ficheros/ministerio/GuiaRegistroJornada.pdf" target="blank_">guía sobre el registro de jornada</a>.
 	       </div>
             </div>
             <div class="login-right">
-		    <div class="logo text-center"><a href="https://www.tms.es" target="_blank"><img src="{% static '/images/logo-fichaje.png'%}" width="100"/></a></div>
+		    <div class="logo text-center"><a href="https://www.tms.es" target="_blank"><img src="{% static '/images/fichamaster-brown.png'%}" width="100"/></a></div>
                 {% block login-right %}
                     <div class="form-container toggle-container mt-5" id="login-form">
-                        <h4 class="title text-center">{% trans "Inicia Sesión" %}
+                        <h4 class="title text-center">{% trans "INICIA SESIÓN" %}
                         {% include "login_form.html" %}
                     </div>
                 {% endblock %}

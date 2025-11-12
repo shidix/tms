@@ -39,13 +39,13 @@
             <div id="notify-panel"></div>
 
 	            <div id="main" class="w-100">
-                    <div class="row header sticky-top bg-white m-0">
-                        <div class="col-lg-1 col-3 text-center p-1">
-                            <a href="{% url 'index' %}" ><img src="{{request.user|comp_logo}}" height="60px" /></a>
+                    <div class="row header sticky-top m-0">
+                        <div class="col-lg-2 col-3 company-logo bg-white text-center">
+                            <a href="{% url 'index' %}" ><img src="{{request.user|comp_logo}}" height="50px" /></a>
                         </div>	
-                        <div class="col-lg-11 col-9">
+                        <div class="col-lg-10 col-9">
                             <div class="row justify-content-end">
-                                <div class="col-12 col-lg-4 d-flex justify-content-center align-items-center  p-0 ">
+                                <div class="col-12 col-lg-4 d-flex justify-content-left align-items-center pl-1">
 
                                   {% trans "Hola" %}, {{request.user.username}}
 
@@ -55,10 +55,10 @@
                                     {% if request.user.manager %}
                                         {% url 'pwa-portal-company-login' request.user.manager.comp.uuid as portal_url %}
                                         <a class="btn btn-xs m-2" href="{{ portal_url|to_main_url }}" target="_blank">
-                                            <i class="fas fa-user-clock"></i>&nbsp;<span class="d-none d-lg-inline">{% trans 'Portal de fichaje' %}</span> </a>
+						<i class="fas fa-user-clock"></i>&nbsp <span class="d-none d-lg-inline">{% trans 'Portal de fichaje' %}</span> </a>
 
                                         {% url 'managers-view-portal-login-url' as view_portal_url %}
-                                        <a class="btn btn-xs ark-alert m-2" href="#" data-url="{{ view_portal_url|to_admin_url }}" data-uuid="{{request.user.manager.comp.uuid}}" title="{% trans 'Url del portal' %}"><i class="fas fa-paper-plane"></i>&nbsp;<span class="d-none d-lg-inline">URL Portal</span></a>
+					<a class="btn btn-xs ark-alert m-2" href="#" data-url="{{ view_portal_url|to_admin_url }}" data-uuid="{{request.user.manager.comp.uuid}}" title="{% trans 'Url del portal' %}"><i class="fas fa-paper-plane"></i>&nbsp;<span class="d-none d-lg-inline">URL Portal</span></a>
 
                                         {% url 'pwa-company-private-zone' request.user.manager.comp.uuid as private_zone_url %}
                                         <a class="btn btn-xs m-2" href="{{ private_zone_url|to_main_url }}" target="_blank">
@@ -67,7 +67,7 @@
                                     {% endif %}
                                     <a class="btn btn-xs m-2 ark" href="#" data-url="{% url 'change-password' %}" data-target-modal="common-modal-md" title="{% trans 'Cambiar contraseña' %}">
                                         <i class="fas fa-key"></i>
-                                        <span class="d-lg-inline d-none">&nbsp; {% trans 'Cambiar contraseña' %}</span>
+					<span class="d-lg-inline d-none">&nbsp;{% trans 'Cambiar contraseña' %}</span>
                                     </a>
 
                                     <a class="btn btn-xs m-2 ark-post" href="#" data-url="{% url 'auth_logout' %}" data-csrf-token="{{ csrf_token }}" title="{% trans 'Salir' %}">

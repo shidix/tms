@@ -41,12 +41,12 @@
     </div>
 {% elif user|in_group:"managers" %}
     {%comment%} PC VERSION {%endcomment%}
-    <div class="d-none d-lg-block" tyle="border:1px solid blue">
+    <div class="d-none d-lg-block">
         {% if request.user.manager %}
         <div class="row">
-            <div class="col-12">
-                <p class="w-100 badge bg-success m-0 p-3 text-white">
-                    Licencia v&aacute;lida hasta {{request.user.manager.comp.expiration_date|date:"d/m/Y"}} 
+            <div class="col-lg-2 offset-lg-10 col-12">
+                <p class="license w-100 bg-success m-0 p-3">
+		Licencia v&aacute;lida hasta <strong>{{request.user.manager.comp.expiration_date|date:"d/m/Y"}}</strong>
                 </p>
             </div>
         </div>
@@ -61,7 +61,7 @@
     </div>
 
     {%comment%} MOBILE VERSION {%endcomment%}
-    <div class="d-lg-none" tyle="border:1px solid red"> 
+    <div class="d-lg-none"> 
         <div class="row menu mv m-0">
             <div class="col-6 text-center nav-item nav-tabs {%current 'home'%} p-1">
                 <a class="nav-link" aria-current="page" href="{% url 'index' %}">
