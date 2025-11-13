@@ -182,3 +182,5 @@ collect_static
 fichamaster.logs
 *.gz
 *.sql
+*.bak
+*.old

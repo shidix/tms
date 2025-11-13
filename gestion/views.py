@@ -37,6 +37,7 @@ def localtime(dt, tz=None):
 
 
 def gantt_plotly_view(items):
+    return None
 
     # Expandimos en filas de un DataFrame
     try:
