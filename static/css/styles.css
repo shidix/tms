@@ -75,26 +75,34 @@ h1 {
 
 .row.main-th {
     background-color: #f1f1f1;
+	color: #599191;
     font-weight: 600;
+    font-size: 0.9rem;
+}
+.row.main-th i {
+	color: #599191;
 }
 
-.list-item {
-	border-bottom: 1px solid #f1f1f1;
-}
-
-.list-item-mob {
-	border: 1px solid #f1f1f1;
-}
 .list-item-cl {
-	border: 1px solid #f1f1f1;
-	border-radius: 5px;
-	margin-bottom: 15px !important;
-	-webkit-box-shadow: 0 1px 5px rgba(0,0,0,0.2);
-	box-shadow: 0 1px 5px rgba(0,0,0,0.2);
+	border-radius: 3px;
+	-webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.2);
+	box-shadow: 0 1px 1px rgba(0,0,0,0.2);
+	align-items: center;
+    font-size: 0.9rem;
 }
 .list-item-cl:hover {
-	border: 1px solid #599191;
+	background: #e9f2f2;
 }
+
+.datetime-in {
+	color: #599191;
+	font-size: 0.9rem !important;
+}
+.datetime-out {
+	color: #dc3545;
+	font-size: 0.9rem !important;
+}
+
 
 th.row.main-th {
     padding-left: 0px !important;    
@@ -326,12 +334,14 @@ img.img-fluid {
 
 .toolbar-search span {
 	font-weight:600;
+	font-size: 0.9rem;
        color: #727272;
        font-style: italic;
        letter-spacing: 0;
 }
 .toolbar-search input {
 	border:1px solid #ced4da !important;
+	font-size: 0.9rem;
 }
 
 .toolbar-search i.fas.fa-search {
@@ -595,6 +605,7 @@ input.btn.btn-sm.btn-success {
 
 .btn-warning {
     color: #3b2f1d;
+    color: #fff;
     background-color: #c19b62;
     border-color: #c19b62;
 }
