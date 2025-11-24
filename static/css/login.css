@@ -108,6 +108,13 @@ p strong {
 	background: #599191;
 }
 
+.login-left img{
+border:1px solid #fff;
+border-radius: 1%; 
+box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+
+}
+
 .login-text {
 	color: #fff;
 	font-size: 1rem;

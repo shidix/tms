@@ -811,6 +811,12 @@ img.img-cart-line {
 	border-radius: 0 8px 8px 0;
 }
 
+.company-logo.default-logo {
+	border-radius: 0;
+	width: 40px !important;
+	height: 40px !important;
+}
+
 .header i, .header a {
 	font-size: 0.9rem;
 	color: #fff !important;

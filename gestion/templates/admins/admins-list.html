@@ -1,4 +1,4 @@
-{% load i18n gestion_tags %}
+{% load i18n gestion_tags static %}
 
 {%comment%} PC VERSION {%endcomment%}
 
@@ -41,6 +41,20 @@
                 showCancelButton: false,
                 confirmButtonText: '{% trans "Cerrar" %}',
             });
+        });
+
+        // Load default img if logo image fails to load or image is broken
+        $('img.company-logo').on('error', function() {
+            $(this).attr('src', '{% static "images/logo-fichaje.png" %}');
+            $(this).addClass('default-logo');
+
+        });
+        $('img.company-logo').each(function() {
+            if (!this.complete || typeof this.naturalWidth === "undefined" || this.naturalWidth === 0) {
+                $(this).attr('src', '{% static "images/logo-fichaje.png" %}');
+                // Fix height and with to 40px
+                $(this).addClass('default-logo');
+            }
         });
     });
 </script>
