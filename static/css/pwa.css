@@ -320,6 +320,10 @@ p.date {
 	font-size: 1.1rem;
 }
 
+.workday-item.pending {
+    background-color: orange;
+}
+
 
 /*********** END CONTENT *************/
 

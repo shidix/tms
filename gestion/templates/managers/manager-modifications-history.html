@@ -1,0 +1,48 @@
+{% load i18n static gestion_tags %}
+
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>{% trans 'Fecha de modificación' %}</th>
+            <th>{% trans 'Solicitado por' %}</th>
+            <th>{% trans 'Fecha inicio' %}</th>
+            <th>{% trans 'Fecha fin' %}</th>
+            <th>{% trans 'Duración' %}</th>
+            <th>{% trans 'Motivo' %}</th>
+            <th>{% trans 'Estado' %}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for modification in modifications %}
+        <tr>
+            <td>{{ modification.mod_date|local_time|date:"D d-m-Y H:i" }}</td>
+            <td>{{ modification.requested_user }}</td>
+            <td>{{ modification.ini_date|local_time|date:"D d-m-Y H:i" }}</td>
+            <td>{{ modification.end_date|local_time|date:"D d-m-Y H:i" }}</td>
+            <td>{{ modification.duration|toDuration }}</td>
+            <td>{{ modification.reason }}</td>
+            <td>
+                {% if modification.status == 0 %}
+                    <span class="badge bg-warning text-dark">{% trans 'Pendiente' %}</span>
+                {% elif modification.status == 1 %}
+                    <span class="badge bg-success text-white">{% trans 'Aprobada' %}</span>
+                {% elif modification.status == 2 %}
+                    <span class="badge bg-danger text-white">{% trans 'Rechazada' %}</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7" class="text-center">{% trans 'No hay modificaciones en el historial.' %}</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="2"> REGISTRO ORIGINAL </td>
+            <td> {{workday.ini_date|local_time|date:"D d-m-Y H:i" }} </td>
+            <td> {{workday.end_date|local_time|date:"D d-m-Y H:i" }} </td>
+            <td> {{workday.duration|toDuration}} </td>
+            <td> - </td>
+            <td> - </td>
+        </tr>
+    </tbody>
+</table>

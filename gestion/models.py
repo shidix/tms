@@ -135,7 +135,7 @@ class Manager(models.Model):
     phone = models.CharField(max_length=20, verbose_name = _('Teléfono de contacto'), null=True, default = '0000000000')
     email = models.EmailField(verbose_name = _('Email de contacto'), default="", null=True)
     user = models.OneToOneField(User, verbose_name='Usuario', on_delete=models.CASCADE, null=True, blank=True, related_name='manager')
-    comp = models.ForeignKey(Company, verbose_name=_("Empresa"), on_delete=models.SET_NULL, blank=True, null=True)
+    comp = models.ForeignKey(Company, verbose_name=_("Empresa"), on_delete=models.SET_NULL, blank=True, null=True, related_name="managers")
     uuid = models.CharField(max_length=200, verbose_name = _('UUID'), default="")
 
     def __str__(self):
@@ -176,7 +176,7 @@ class Manager(models.Model):
 class Employee(models.Model):
     pin = models.CharField(max_length=20, verbose_name = _('PIN'), default="")
     dni = models.CharField(max_length=20, verbose_name = _('DNI'), default="")
-    name = models.CharField(max_length=200, verbose_name = _('Razón Social'), default="")
+    name = models.CharField(max_length=200, verbose_name = _('Nombre completo'), default="")
     phone = models.CharField(max_length=20, verbose_name = _('Teléfono de contacto'), null=True, default = '0000000000')
     weekly_hours = models.DecimalField(max_digits=5, decimal_places=2, verbose_name=_('Horas por semana'), default=40.00)
     weekly_days = models.IntegerField(verbose_name=_('Días por semana'), default=5, help_text=_('Número de días a la semana que trabaja el empleado'))
@@ -322,6 +322,47 @@ class Workday(models.Model):
             return True
         return False
     
+    @property
+    def status_label(self):
+        modifications = self.modifications.all().order_by('-mod_date')
+        labels = ['pending', 'accepted', 'rejected']
+        if modifications.exists():
+            mod = modifications.first()
+            return labels[mod.status]
+        return ""
+
+    @property
+    def modifications_pending(self):
+        modifications = self.modifications.filter(status=0)
+        return modifications.exists()
+    
+    @property
+    def get_ini_date(self):
+        modifications_accepted = self.modifications.filter(status=1).order_by('-mod_date')
+        if modifications_accepted.exists():
+            mod = modifications_accepted.first()
+            return mod.ini_date
+        return self.ini_date
+    
+    @property
+    def get_end_date(self):
+        modifications_accepted = self.modifications.filter(status=1).order_by('-mod_date')
+        if modifications_accepted.exists():
+            mod = modifications_accepted.first()
+            return mod.end_date
+        return self.end_date
+    
+    @property
+    def get_duration(self):
+        modifications_accepted = self.modifications.filter(status=1).order_by('-mod_date')
+        if modifications_accepted.exists():
+            mod = modifications_accepted.first()
+            return mod.duration
+        else:
+            return self.duration
+
+            
+    
     def setIpAddress(self, request):
         ipaddress = "127.0.0.1"
         if 'HTTP_X_FORWARDED_FOR' in request.META:
@@ -338,3 +379,53 @@ class Workday(models.Model):
         verbose_name_plural = _('Asistencias')
 
 
+class WorkdayModification(models.Model):
+    workday = models.ForeignKey(Workday, verbose_name=_('Asistencia'), on_delete=models.CASCADE, null=True, related_name="modifications")
+    mod_date = models.DateTimeField(auto_now=True, null=True, verbose_name=_('Fecha modificación')) # Autodate
+    evaluation_date = models.DateTimeField(default=timezone.now, null=True, verbose_name=_('Fecha evaluación'))
+    ini_date = models.DateTimeField(default=timezone.now, null=True, verbose_name=_('Fecha inicio nueva'))
+    end_date = models.DateTimeField(default=timezone.now, null=True, verbose_name=_('Fecha fin nueva'))
+    reason = models.CharField(max_length=255, verbose_name = _('Motivo'), default="")
+    requested_by = models.ForeignKey(User, verbose_name=_('Modificado por'), on_delete=models.SET_NULL, null=True, related_name="workday_modifications")
+    accepted_by = models.ForeignKey(User, verbose_name=_('Aceptado por'), on_delete=models.SET_NULL, null=True, blank=True, related_name="workday_modifications_accepted")
+    status = models.IntegerField(verbose_name = _('Estado'), default=0, choices=((0, 'Pendiente'), (1, 'Aceptada'), (2, 'Rechazada')))
+
+    @property
+    def duration(self):
+
+        edate = self.end_date.replace(microsecond=0) 
+        idate = self.ini_date.replace(microsecond=0)
+        diff = edate - idate
+        days, seconds = diff.days, diff.seconds
+        return (diff.total_seconds())
+
+    @property
+    def extraday(self):
+        if self.end_date.date() > self.ini_date.date():
+            diff_days = self.end_date.date().day - self.ini_date.date().day
+            return f"(+{diff_days}d)"
+        return ""
+    
+    @property
+    def in_morning(self):
+        local_time = localtime(self.ini_date)
+        if local_time.hour < 14 and local_time.hour >= 6:
+            return True
+        return False
+    
+    @property
+    def in_afternoon(self):
+        if localtime(self.ini_date).hour >= 14 or localtime(self.ini_date).hour < 6:
+            return True
+        return False
+    
+    @property
+    def requested_user(self):
+        if self.requested_by == self.workday.employee.user:
+            return _('Empleado')
+        else:
+            return _('Empresa')
+
+    class Meta:
+        verbose_name = _('Modificación de asistencia')
+        verbose_name_plural = _('Modificaciones de asistencias')

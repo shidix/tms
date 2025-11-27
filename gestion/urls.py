@@ -36,6 +36,11 @@ urlpatterns = [
     path('managers/report-pdf/<slug:worker_uuid>', views.managers_report_pdf, name='managers-report-pdf'),
     path('managers/report-full-pdf/<str:start_date>/<str:end_date>', views.managers_report_full_pdf, name='managers-report-full-pdf'),
 
+    path('managers/modifications/pending/<int:workday_id>/', views.manager_modifications_pending, name='manager-modifications-pending'),
+    path('managers/modifications/approve/<int:modification_id>/', views.manager_modifications_approve, name='manager-modifications-approve'),
+    path('managers/modifications/reject/<int:modification_id>/', views.manager_modifications_reject, name='manager-modifications-reject'),
+    path('managers/modifications/history/<int:workday_id>/', views.manager_modifications_history, name='manager-modifications-history'),
+    
 
 
     #---------------------- EMPLOYEES -----------------------
@@ -50,7 +55,8 @@ urlpatterns = [
     path('employees/show-qr', views.employees_show_qr, name='employees-show-qr'),
     path('employees/search-month', views.employees_search_month, name='employees-search-month'),
     #path('employees/import', views.employees_import, name='employees-import'),
-    
+
+
 
     #---------------------- AUTO -----------------------
     path('autosave_field/', auto_views.autosave_field, name='autosave_field'),

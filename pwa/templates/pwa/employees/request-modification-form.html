@@ -1,0 +1,27 @@
+{% load static i18n %}
+<!--- form for WorkdayModification -->
+<form method="post" action="{% url "pwa-submit-modification" %}" id="frmRequestModification">
+    {% csrf_token %}
+    <input type="hidden" name="workday_id" value="{{ workday.id }}" />
+    <div class="mb-3">
+        <label for="ini_date" class="form-label">{% trans "Nueva hora de entrada" %}</label>
+        <input type="datetime-local" class="form-control" id="ini_date" name="ini_date" value="{{ workday.ini_date|date:'Y-m-d\\TH:i' }}" required />
+    </div>
+    <div class="mb-3">
+        <label for="end_date" class="form-label">{% trans "Nueva hora de salida" %}</label> 
+        <input type="datetime-local" class="form-control" id="end_date" name="end_date" value="{{ workday.end_date|date:'Y-m-d\\TH:i' }}" required />
+    </div>
+    <div class="mb-3">
+        <label for="reason" class="form-label">{% trans "Motivo" %}</label>
+        <input type="text" class="form-control" id="reason" name="reason" required />
+    </div>
+</form>
+<!-- Fields
+    workday = models.ForeignKey(Workday, verbose_name=_('Asistencia'), on_delete=models.CASCADE, null=True, related_name="modifications")
+    mod_date = models.DateTimeField(auto_now=True, null=True, verbose_name=_('Fecha modificación')) # Autodate
+    ini_date = models.DateTimeField(default=timezone.now, null=True, verbose_name=_('Fecha inicio nueva'))
+    end_date = models.DateTimeField(default=timezone.now, null=True, verbose_name=_('Fecha fin nueva'))
+    reason = models.CharField(max_length=255, verbose_name = _('Motivo'), default="")
+    reqeuested_by = models.ForeignKey(User, verbose_name=_('Modificado por'), on_delete=models.SET_NULL, null=True, related_name="workday_modifications")
+    accepted_by = models.ForeignKey(User, verbose_name=_('Aceptado por'), on_delete=models.SET_NULL, null=True, blank=True, related_name="workday_modifications_accepted")
+-->

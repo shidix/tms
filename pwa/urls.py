@@ -31,6 +31,10 @@ urlpatterns = [
     path('employee/check-clock', views.employee_check_clock, name="pwa-check-clock"),
     path('employee/view-clock/<int:id>/<slug:uuid>', views.employee_view_clock, name="pwa-view-clock"),
 
+    # Modification Requests
+    path('employee/request-modification', views.pwa_request_modification, name="pwa-request-modification"),
+    path('employee/submit-modification', views.pwa_submit_modification, name="pwa-submit-modification"),
+
     #path('employee/code-read', views.employee_code_read, name="pwa-code-read"),
     #path('employee/code-finish', views.employee_code_finish, name="pwa-code-finish"),
     #path('employee/qr-finish/<int:obj_id>', views.employee_qr_finish, name="pwa-qr-finish"),

@@ -50,6 +50,19 @@ class ManagerAdmin(admin.ModelAdmin):
 class EmployeeAdmin(admin.ModelAdmin):
     list_display = ('name', 'comp')
 
+class WorkdayModificationAdmin(admin.ModelAdmin):
+    list_display = ('initial_ini_date', 'initial_end_date', 'requested_by', 'ini_date', 'end_date', 'reason', 'status', 'mod_date')
+    list_filter = ('status', 'mod_date')
+    search_fields = ('workday__employee__name', 'requested_by__username', 'reason')
+
+    def initial_ini_date(self, obj):
+        return obj.workday.ini_date
+    initial_ini_date.short_description = "Inicio original"
+    def initial_end_date(self, obj):
+        return obj.workday.end_date
+    initial_end_date.short_description = "Fin original"
+admin.site.register(WorkdayModification, WorkdayModificationAdmin)
+
 #
 #class WasteInFacilityAdmin(admin.ModelAdmin):
 #    list_display = ('code', 'facility', 'waste', 'filling_degree', 'toRoute')

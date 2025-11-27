@@ -1,14 +1,15 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
 from datetime import timedelta
 from datetime import datetime
+from django.template.loader import render_to_string
 
 from tms.decorators import group_required_pwa
 from tms.commons import user_in_group, get_or_none, get_param, show_exc
-from gestion.models import Employee, Manager, Workday, Company
+from gestion.models import Employee, Manager, Workday, Company, WorkdayModification
 import random, json, uuid
 
 
@@ -337,6 +338,58 @@ def pwa_portal_company_login(request, uuid):
     except Exception as e:
         print(show_exc(e))
         return render(request, "pwa/employees/qr-error.html", {})
+
+@group_required_pwa("employees")    
+def pwa_request_modification(request):
+    if request.method == "POST":
+        try:
+            workday_id = get_param(request.POST, "id")
+            workday = get_or_none(Workday, workday_id)
+            if workday == None:
+                return JsonResponse({'error': 'Solicitud no completada.'}, status=404)
+            
+            modifications = workday.modifications.all().order_by('-mod_date')
+            if modifications.exists():
+                mod = modifications.first()
+                if mod.status == 0:
+                    return JsonResponse({'html': 'Ya existe una solicitud pendiente para este registro.'}, status=400)
+            return JsonResponse({'html': render_to_string("pwa/employees/request-modification-form.html", context={"workday": workday}, request=request)}, status=200)
+
+        except Exception as e:
+            print(show_exc(e))
+            return JsonResponse({'error': 'Ha habido un error al procesar la solicitud.'}, status=500)
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+@group_required_pwa("employees")
+def pwa_submit_modification(request):
+    if request.method == "POST":
+        try:
+            workday_id = get_param(request.POST, "workday_id")
+            reason = get_param(request.POST, "reason")
+            new_ini_date_str = get_param(request.POST, "ini_date")
+            new_end_date_str = get_param(request.POST, "end_date")
+
+            workday = get_or_none(Workday, workday_id)
+            if workday == None:
+                return JsonResponse({'error': 'Solicitud no completada. Workday no encontrado.'}, status=404)
+
+            new_ini_date = datetime.strptime(new_ini_date_str, "%Y-%m-%dT%H:%M")
+            new_end_date = datetime.strptime(new_end_date_str, "%Y-%m-%dT%H:%M")
+
+            modification_request = WorkdayModification.objects.create(
+                workday=workday,
+                requested_by=request.user,
+                reason=reason,
+                ini_date=new_ini_date,
+                end_date=new_end_date
+            )
+            modification_request.save()
+
+            return JsonResponse({'message': 'Solicitud de modificación enviada con éxito.'}, status=200)
+        except Exception as e:
+            print(show_exc(e))
+            return JsonResponse({'error': 'Ha habido un error al enviar la solicitud. Por favor, inténtelo de nuevo.'}, status=500)
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
     
 #@group_required_pwa("employees")
 #def employee_code_read(request):

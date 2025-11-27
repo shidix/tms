@@ -12,6 +12,8 @@
 <div class="col-2 d-flex align-items-center">{{item.expiration_date|date:"SHORT_DATE_FORMAT"}}</div>
 
 <div class="col-2 text-right d-flex align-items-center p-0">
+    <a class="btn btn-xs ark-alert" href="#" data-url="{% url 'managers-send-login-url' %}" data-uuid="{{item.managers.first.uuid}}" title="{% trans 'Enviar correo de acceso' %}"><i class="fas fa-paper-plane"></i></a>
+
     {% url 'pwa-company-login' item.uuid|default:'no-uuid-available' as login_url %}
     <a class="btn btn-xs btn-sweet-alert" data-title="Fichaje general" data-url="{{ login_url|to_main_url }}" title="{% trans 'Acceso fichaje general' %}">
         <i class="fas fa-sign-in-alt"></i></a>

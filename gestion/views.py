@@ -3,6 +3,7 @@ from django.core.files.base import ContentFile
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
+from django.template.loader import render_to_string
 from django.urls import reverse
 from datetime import datetime, timedelta
 from django.contrib.auth import login, logout
@@ -18,7 +19,7 @@ from .reports import MonthlyReportPDF
 
 from tms.decorators import group_required
 from tms.commons import get_float, get_int, get_or_none, get_param, get_session, set_session, show_exc, generate_qr, csv_export, MESSAGES, get_city_from_ip
-from .models import Company, Employee, Manager, Workday
+from .models import Company, Employee, Manager, Workday, WorkdayModification
 from .forms import CompanyForm, ManagerForm
 
 import pandas as pd
@@ -811,8 +812,62 @@ def managers_login_by_uuid(request, uuid, comp_uuid):
     except Exception as e:
         print(show_exc(e))
         return redirect(reverse("index"))
+    
+@group_required("managers",) #JsonResponse
+def manager_modifications_pending(request, workday_id):
+    try:
+        workday = get_or_none(Workday, workday_id)
+        if workday == None:
+            return JsonResponse({'icon':'error','title':'No se ha podido encontrar la jornada laboral solicitada.'}, status=404)
+        modification = WorkdayModification.objects.filter(workday=workday, status=0).order_by("-id").first()
+        if modification == None:
+            return JsonResponse({'icon':'info','title':'No hay modificaciones pendientes para esta jornada laboral.'}, status=200)
+        
+        user_employee = workday.employee.user
+        user_manager = request.user
+        if (user_employee == modification.requested_by):
+            title = "Modificación pendiente de aprobación"
+            icon = "info"
+            html = render_to_string("managers/manager-modifications-pending.html", {"workday": workday, "modification": modification}, request=request)
+            return JsonResponse({'icon':icon,'title':title,'html':html, 'width': '50%', 'confirm-url':reverse("manager-modifications-approve", kwargs={"modification_id": modification.id}), 'deny-url':reverse("manager-modifications-reject", kwargs={"modification_id": modification.id})}, status=200)
+        else:
+            return JsonResponse({'icon':'warning','title':'La solicitud está pendiente de aprobación por parte del empleado.'}, status=200)
+        
 
+    except Exception as e:
+        print(show_exc(e))
+        return JsonResponse({'icon':'error','title':'Ha ocurrido un error inesperado. Consulte con el administrador de la plataforma.'}, status=503)
 
+@group_required("managers",)
+def manager_modifications_approve(request, modification_id):
+    modification = get_or_none(WorkdayModification, modification_id)
+    if modification == None:
+        return JsonResponse({'icon':'error','title':'No se ha podido encontrar la modificación solicitada.'}, status=404)
+    modification.accepted_by = request.user
+    modification.status = 1
+    modification.save()
+    html_content = render_to_string("workdays-item.html", {"item": modification.workday}, request=request)
+    return JsonResponse({'icon':'info','title':'Modificación aceptada', 'updated_html': html_content}, status=200)
+
+@group_required("managers",)
+def manager_modifications_reject(request, modification_id):
+    modification = get_or_none(WorkdayModification, modification_id)
+    if modification == None:
+        return JsonResponse({'icon':'error','title':'No se ha podido encontrar la modificación solicitada.'}, status=404)
+    modification.accepted_by = request.user
+    modification.status = 2
+    modification.save()
+    html_content = render_to_string("workdays-item.html", {"item": modification.workday}, request=request)
+    return JsonResponse({'icon':'info','title':'Modificación rechazada', 'updated_html': html_content}, status=200)
+
+@group_required("managers", "employees")
+def manager_modifications_history(request, workday_id): #JsonResponse
+    workday = get_or_none(Workday, workday_id)
+    if workday == None:
+        return JsonResponse({'icon':'error','title':'No se ha podido encontrar la jornada laboral solicitada.'}, status=404)
+    modifications = workday.modifications.all().order_by("-mod_date")
+    html = render_to_string("managers/manager-modifications-history.html", {"workday": workday, "modifications": modifications}, request=request)
+    return JsonResponse({'icon':'info','title':'Historial de modificaciones','html':html, 'width': '90%'}, status=200)
 '''
     ADMINS
 '''
@@ -899,6 +954,8 @@ def admins_remove(request):
     if obj != None:
         obj.delete()
     return render(request, "admins/admins-list.html", {"items": get_admins(request)})
+
+
 
 
 '''

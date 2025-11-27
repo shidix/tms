@@ -415,8 +415,9 @@ span.status-info {
 }
 .license {
 	color: #ffffff;
-	font-size: 1rem;
 	text-align:center;
+	border-left: 1px solid #8edada;
+	border-right: 1px solid #8edada;
 }
 
 span.sub-h2 { 

@@ -3,21 +3,28 @@
     <div class="col-12 col-lg-4"> 
         <strong>{{item.employee.name}}</strong></div>
     <div class="col-6 mt-2 col-lg-2"><span class="d-block d-lg-none"> <small>{% trans 'Hora entrada' %}</small> <br /></span>
-        <span class="datetime-in" >{{item.ini_date|local_time|date:"D d-m-Y H:i"}}</span> </div>
+        <span class="datetime-in" >{{item.get_ini_date|local_time|date:"D d-m-Y H:i"}}</span> </div>
     <div class="col-6 mt-2 col-lg-2"> <span class="d-block d-lg-none"><small>{% trans 'Hora salida' %}</small> <br /></span>
         {% if item.finish %}
-        <span class="datetime-out" >{{item.end_date|local_time|date:"D d-m-Y H:i"}}</span>
+        <span class="datetime-out" >{{item.get_end_date|local_time|date:"D d-m-Y H:i"}}</span>
         {% endif %}
     </div>
     <div class="col-6 mt-2 col-lg-2 text-center"> 
-        <span class="d-block d-lg-none"><small>{{ item.duration | toDuration }}</small> <br /></span>
-        <span class="badge bg-info-outline datetime w-100" >{{ item.duration | toDuration }}</span>
+        <span class="d-block d-lg-none"><small>{{ item.get_duration | toDuration }}</small> <br /></span>
+        <span class="badge bg-info-outline datetime w-100" >{{ item.get_duration | toDuration }}</span>
 
     </div>
 
 
-    <div class="col-12 col-lg-2 text-center">
+    <div class="col-12 col-lg-2 text-right">
+        {% if item.modifications_pending %}
+            <a class="btn btn-xs bg-warning text-dark ark-sw2-get" data-url="{% url 'manager-modifications-pending' item.id %}" title="{% trans 'Modificaciones pendientes' %}" href="#"><i class="fas fa-exclamation-triangle"></i></a>
+        {% endif %}
+        {% if item.modifications.count > 0 %}
+            <a class="btn btn-xs bg-info text-white ark-sw2-get" data-url="{% url 'manager-modifications-history' item.id %}" title="{% trans 'Historial de modificaciones' %}" href="#"><i class="fas fa-history"></i></a>
+        {% endif %}
         <button class="btn btn-xs ark" data-url="{% url 'workdays-form' %}" data-obj_id="{{item.id}}" data-target-modal="common-modal" id="button-{{item.pk}}"><i class="fas fa-edit"></i></button>
          <a class="btn btn-xs ark" data-url="{% url "workdays-remove" %}" data-target="item_list" data-obj_id="{{item.id}}" id="button-remove-{{item.pk}}" title="{% trans 'Borrar' %}" data-confirm="{% trans "Are you sure to remove this element?" %}"><i class="fas fa-trash"></i></a> 
+
     </div>
 </div>
