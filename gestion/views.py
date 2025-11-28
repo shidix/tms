@@ -503,7 +503,7 @@ def manager_modifications_save(request):
 
     except Exception as e:
         print(show_exc(e))
-        return JsonResponse({"message":"Error inesperado."}, status=503)
+        return JsonResponse({"message":f"Error inesperado. {show_exc(e)}"}, status=503)
 
 @group_required("admins", "managers")
 def workdays_remove(request):
