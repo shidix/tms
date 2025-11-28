@@ -34,6 +34,10 @@ urlpatterns = [
     # Modification Requests
     path('employee/request-modification', views.pwa_request_modification, name="pwa-request-modification"),
     path('employee/submit-modification', views.pwa_submit_modification, name="pwa-submit-modification"),
+    path('employee/modifications-pending/<int:workday_id>', views.employee_modifications_pending, name="pwa-modifications-pending"),
+    path('employee/modifications-history/<int:workday_id>', views.employee_modifications_history, name="pwa-modifications-history"),
+    path('employee/modification-approve/<int:mod_id>', views.employee_modification_approve, name="pwa-modification-approve"),
+    path('employee/modification-reject/<int:mod_id>', views.employee_modification_reject, name="pwa-modification-reject"),
 
     #path('employee/code-read', views.employee_code_read, name="pwa-code-read"),
     #path('employee/code-finish', views.employee_code_finish, name="pwa-code-finish"),

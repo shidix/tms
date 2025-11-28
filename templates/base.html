@@ -43,16 +43,17 @@
 
 	            <div id="main" class="w-100">
                     <div class="row header sticky-top m-0">
-                        <div class="col-lg-2 col-3 company-logo bg-white text-center">
+                        <div class="col-lg-2 col-3 company-logo bg-white text-left py-2">
                             <a href="{% url 'index' %}" ><img src="{{request.user|comp_logo}}" height="50px" /></a>
                         </div>	
                         <div class="col-lg-10 col-9">
                             <div class="row justify-content-end">
+				   {%comment%}
                                 <div class="col-12 col-lg-4 d-flex justify-content-left align-items-center pl-1">
-
                                   {% trans "Hola" %}, {{request.user.username}}
                                 </div>
-                                <div class="col-12 col-lg-8 d-flex justify-content-between align-items-center p-0">
+				   {%endcomment%}
+                                <div class="col-12 col-lg-12 d-flex justify-content-between align-items-center p-0">
 
                                     {% if request.user.manager %}
                                         {% url 'pwa-portal-company-login' request.user.manager.comp.uuid as portal_url %}
@@ -71,20 +72,23 @@
                                         <i class="fas fa-key"></i>
 					<span class="d-lg-inline d-none">&nbsp;{% trans 'Cambiar contraseña' %}</span>
                                     </a>
-				{% if request.user.manager %}
-						<div class="row">
-							<div class="col-lg-12 col-12">
-								<p class="license w-100 m-0 p-3">
-								Licencia v&aacute;lida hasta<br /> <strong>{{request.user.manager.comp.expiration_date|date:"d/m/Y"}}</strong>
-								</p>
-							</div>
+				    {% if request.user.manager %}
+					<div class="row">
+						<div class="col-lg-12 col-12">
+							<p class="license w-100 m-0 p-3">
+							Licencia v&aacute;lida hasta <strong>{{request.user.manager.comp.expiration_date|date:"d/m/Y"}}</strong>
+							</p>
 						</div>
-					{% endif %}
-
-                                    <a class="btn btn-xs m-2 ark-post" href="#" data-url="{% url 'auth_logout' %}" data-csrf-token="{{ csrf_token }}" title="{% trans 'Salir' %}">
+					</div>
+				    {% endif %}
+				   
+				    <div class="row text-end px-3">
+				    <div class="col-12">{% trans "Hola" %}, {{request.user.username}} </div>
+                                    <div class="col-12"><a class="btn-xs ark-post" href="#" data-url="{% url 'auth_logout' %}" data-csrf-token="{{ csrf_token }}" title="{% trans 'Cerrar sesión' %}">
                                         <i class="fas fa-sign-out-alt"></i>
                                         <span class="d-lg-inline d-none">&nbsp;{% trans 'Salir'%} </span>
-                                    </a>
+                                    </a></div></div>
+
 			
 
                                     {% comment %} <form action="{% url 'auth_logout' %}" method="post" id="frmLogout" class="m-0">

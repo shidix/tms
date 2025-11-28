@@ -352,8 +352,13 @@ def pwa_request_modification(request):
             if modifications.exists():
                 mod = modifications.first()
                 if mod.status == 0:
-                    return JsonResponse({'html': 'Ya existe una solicitud pendiente para este registro.'}, status=400)
-            return JsonResponse({'html': render_to_string("pwa/employees/request-modification-form.html", context={"workday": workday}, request=request)}, status=200)
+                    if (mod.requested_by == request.user):
+                        return JsonResponse({'html': 'Existe una solicitud pendiente para este registro. Esperando la evaluación de la empresa.', 'deny-url': reverse('pwa-modifications-history', args=[workday.id])}, status=400)
+                    else:
+                        # html_content = render_to_string("pwa/employees/employee-modification-pending.html", context={"workday": workday, "modification": mod}, request=request)
+                        # return JsonResponse({'html': html_content}, status=200)
+                        return JsonResponse({'html': 'La empresa ha solicitado una modificación para este registro. Esperando su evaluación.', 'deny-url': reverse('pwa-modifications-history', args=[workday.id])}, status=400)
+            return JsonResponse({'html': render_to_string("pwa/employees/request-modification-form.html", context={"workday": workday}, request=request), 'deny-url': reverse('pwa-modifications-history', args=[workday.id])}, status=200)
 
         except Exception as e:
             print(show_exc(e))
@@ -390,6 +395,57 @@ def pwa_submit_modification(request):
             print(show_exc(e))
             return JsonResponse({'error': 'Ha habido un error al enviar la solicitud. Por favor, inténtelo de nuevo.'}, status=500)
     return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+@group_required_pwa("employees")
+def employee_modifications_pending(request, workday_id): 
+    try:
+        workdays = Workday.objects.filter(employee=request.user.employee, modifications__status=0).distinct().order_by('-ini_date')
+        return JsonResponse({'html': render_to_string("pwa/employees/employee-modifications-pending.html", context={"workdays": workdays}, request=request)}, status=200)
+    except Exception as e:
+        print(show_exc(e))
+        return JsonResponse({'error': 'Ha habido un error al obtener las modificaciones pendientes.'}, status=500)
+
+@group_required_pwa("employees")
+def employee_modifications_history(request, workday_id):
+    try:
+        workday = get_or_none(Workday, workday_id)
+        if workday == None:
+            return JsonResponse({'error': 'Registro no encontrado.'}, status=404)
+        return JsonResponse({'html': render_to_string("pwa/employees/employee-modifications-history.html", context={"workday": workday}, request=request), 'width': '95%'}, status=200)
+    except Exception as e:
+        print(show_exc(e))
+        return JsonResponse({'error': 'Ha habido un error al obtener el historial de modificaciones.'}, status=500)
+    
+@group_required_pwa("employees")
+def employee_modification_approve(request, mod_id):
+    try:
+        modification = get_or_none(WorkdayModification, mod_id)
+        if modification == None:
+            return JsonResponse({'error': 'Modificación no encontrada.'}, status=404)
+        if modification.status != 0:
+            return JsonResponse({'error': 'La modificación ya ha sido procesada.'}, status=400)
+        
+        modification.approve(request.user)
+        return JsonResponse({'message': 'Modificación aprobada con éxito.'}, status=200)
+    except Exception as e:
+        print(show_exc(e))
+        return JsonResponse({'error': 'Ha habido un error al aprobar la modificación.'}, status=500)
+    
+@group_required_pwa("employees")
+def employee_modification_reject(request, mod_id):
+    try:
+        modification = get_or_none(WorkdayModification, mod_id)
+        if modification == None:
+            return JsonResponse({'error': 'Modificación no encontrada.'}, status=404)
+        if modification.status != 0:
+            return JsonResponse({'error': 'La modificación ya ha sido procesada.'}, status=400)
+        
+        modification.reject(request.user)
+        return JsonResponse({'message': 'Modificación rechazada con éxito.'}, status=200)
+    except Exception as e:
+        print(show_exc(e))
+        return JsonResponse({'error': 'Ha habido un error al rechazar la modificación.'}, status=500)
+
     
 #@group_required_pwa("employees")
 #def employee_code_read(request):

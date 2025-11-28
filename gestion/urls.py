@@ -12,6 +12,9 @@ urlpatterns = [
     path('workdays/remove', views.workdays_remove, name='workdays-remove'),
     path('workdays/client/<int:client_id>/', views.workdays_client, name='workdays-client'),
     path('workdays/search-in-date', views.workdays_search_in_date, name='workdays-search-in-date'),
+    path('workdays/modifications-pending/', views.workdays_modifications_pending, 
+    name='workdays-modifications-pending'),
+
 
     #---------------------- ADMINS -----------------------
     path('admins', views.admins_dashboard, name='admins'),
@@ -40,6 +43,9 @@ urlpatterns = [
     path('managers/modifications/approve/<int:modification_id>/', views.manager_modifications_approve, name='manager-modifications-approve'),
     path('managers/modifications/reject/<int:modification_id>/', views.manager_modifications_reject, name='manager-modifications-reject'),
     path('managers/modifications/history/<int:workday_id>/', views.manager_modifications_history, name='manager-modifications-history'),
+
+    path('managers/modifications/form/', views.manager_modifications_form, name='manager-modifications-form'),
+    path('managers/modifications/save', views.manager_modifications_save, name='manager-modifications-save'),
     
 
 

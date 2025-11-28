@@ -392,12 +392,15 @@ class WorkdayModification(models.Model):
 
     @property
     def duration(self):
-
-        edate = self.end_date.replace(microsecond=0) 
-        idate = self.ini_date.replace(microsecond=0)
-        diff = edate - idate
-        days, seconds = diff.days, diff.seconds
-        return (diff.total_seconds())
+        try:
+             edate = self.end_date.replace(microsecond=0) 
+             idate = self.ini_date.replace(microsecond=0)
+             diff = edate - idate
+             days, seconds = diff.days, diff.seconds
+             return (diff.total_seconds())
+        except Exception as e:
+            print (show_exc(e))
+            return 0
 
     @property
     def extraday(self):

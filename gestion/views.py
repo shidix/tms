@@ -294,7 +294,9 @@ def index(request):
             gantt = gantt_plotly_view(items)
             list_dates = [ datetime.now().date() + timedelta(days=i) for i in range(-6, 1) ]
             listmode = get_param(request.POST, "listmode", "true").lower() == "true"
-            return render(request, "index.html", {"item_list": items, "gantt": gantt, "list_dates": list_dates, 'listmode': listmode}) 
+
+            modifieds = WorkdayModification.objects.filter(status=0, workday__employee__comp=request.user.manager.comp)
+            return render(request, "index.html", {"item_list": items, "gantt": gantt, "list_dates": list_dates, 'listmode': listmode, 'modified': modifieds.count()}) 
     except Exception as e:
         print(show_exc(e))
         return render(request, "workdays-client-error.html", {})
@@ -304,7 +306,14 @@ def workdays_list(request):
     try:
         list_dates = [ datetime.now().date() + timedelta(days=i) for i in range(-6, 1) ]
         listmode = get_param(request.POST, "listmode", "true").lower() == "true"
-        return render(request, "workdays-list.html", {"item_list": get_workdays(request), "list_dates": list_dates, 'listmode': listmode})
+        if request.user.is_superuser or request.user.groups.filter(name__in="admins").exists():
+            modifieds = WorkdayModification.objects.filter(status=0).count()
+        else:
+            modifieds = WorkdayModification.objects.filter(status=0, workday__employee__comp=request.user.manager.comp).count()
+
+
+            
+        return render(request, "workdays-list.html", {"item_list": get_workdays(request), "list_dates": list_dates, 'listmode': listmode, 'modified': modifieds})
     except Exception as e:
         print(show_exc(e))
         return render(request, "workdays-client-error.html", {})
@@ -328,7 +337,15 @@ def workdays_search(request):
             current_date = None
         listmode = get_param(request.GET, "listmode", "true").lower() == "true"
         items = sorted(items, key=lambda x: x.ini_date, reverse=True)
-        return render(request, "workdays-list.html", {"item_list": items, "gantt": chart_div, "list_dates": list_dates, 'listmode': listmode, 'current_date': current_date})
+
+        if request.user.is_superuser:
+            companies = Company.objects.all()
+        else:
+            companies = Company.objects.filter(pk = request.user.manager.comp.pk)
+        employees = Employee.objects.filter(comp__in=companies)
+        modifications = WorkdayModification.objects.filter(status=0, workday__employee__in=employees)
+        workdays_with_modifications = set(mod.workday for mod in modifications)
+        return render(request, "workdays-list.html", {"item_list": items, "gantt": chart_div, "list_dates": list_dates, 'listmode': listmode, 'current_date': current_date, 'modified': len(workdays_with_modifications)})
     except Exception as e:
         print(show_exc(e))
         return render(request, "workdays-client-error.html", {})
@@ -357,13 +374,15 @@ def workdays_search_in_date(request):
             start_date = datetime.strptime(get_param(request.POST, "day"), "%Y-%m-%d").date()
             end_date = start_date
 
+            
+
 
         # set_session(request, "s_idate", get_param(request.POST, "day"))
         # set_session(request, "s_edate", get_param(request.POST, "day"))
         set_session(request, "s_idate", start_date.strftime("%Y-%m-%d"))
         set_session(request, "s_edate", end_date.strftime("%Y-%m-%d"))
+        
 
-        print(start_date, end_date)
         items = get_workdays(request)
         chart_div = gantt_plotly_view(items)
         # last 7 days in list_dates
@@ -373,14 +392,25 @@ def workdays_search_in_date(request):
         listmode = get_param(request.POST, "listmode", "true").lower() == "true"
         items = sorted(items, key=lambda x: x.ini_date, reverse=True)
 
-        
-        return render(request, "workdays-list.html", {"item_list": items, "gantt": chart_div, "list_dates": list_dates, 'current_date': current_date, 'listmode': listmode})
+
+        if request.user.is_superuser:
+            companies = Company.objects.all()
+        else:
+            companies = Company.objects.filter(pk = request.user.manager.comp.pk)
+
+
+        employees = Employee.objects.filter(comp__in=companies)
+        modifications = WorkdayModification.objects.filter(status=0, workday__employee__in=employees)
+        workdays_with_modifications = set(mod.workday for mod in modifications)
+
+        return render(request, "workdays-list.html", {"item_list": items, "gantt": chart_div, "list_dates": list_dates, 'current_date': current_date, 'listmode': listmode, 'modified': len(workdays_with_modifications)})
     except Exception as e:
         print(show_exc(e))
         return render(request, "workdays-client-error.html", {})
 
 @group_required("admins","managers")
 def workdays_form(request):
+    
     obj = get_or_none(Workday, get_param(request.GET, "obj_id"))
     if request.user.is_superuser:
         context = {'obj': obj, 'emp_list': Employee.objects.all()}
@@ -390,6 +420,7 @@ def workdays_form(request):
             
         
     return render(request, "workdays-form.html", context)
+
 
 @group_required("admins","managers")
 def workdays_form_save(request):
@@ -423,6 +454,57 @@ def workdays_form_save(request):
     gantt = gantt_plotly_view(items)
     return render(request, "workdays-list.html", {"item_list":items, "gantt": gantt})
 
+
+@group_required("admins","managers")
+def manager_modifications_form(request):
+    try:
+        workday_id = get_param(request.POST, "id")
+        workday = get_or_none(Workday, workday_id)
+        if workday is None:
+            return JsonResponse({"message":"Parte de trabajo no encontrado."}, status=404)
+        if (WorkdayModification.objects.filter(workday=workday, status=0).exists()):
+            return JsonResponse({"html":"Ya existe una solicitud de modificación pendiente para esta jornada de trabajo."}, status=200)
+        html_content = render_to_string("managers/manager-modifications-form.html", {"workday": workday}, request=request)
+        return JsonResponse({"html": html_content, 'title': "Solicitar modificación de jornada", "confirm-url": reverse("manager-modifications-save")}, status=200)
+    except Exception as e:
+        print(show_exc(e))
+        return JsonResponse({"message":"Error inesperado."}, status=503)
+
+@group_required("admins","managers")
+def manager_modifications_save(request):
+    try:
+        if request.method != "POST":
+            return JsonResponse({"message":"Método no permitido."}, status=405)
+        workday_id = get_param(request.POST, "workday_id")
+        workday = get_or_none(Workday, workday_id)
+        reason = get_param(request.POST, "reason")
+        ini_datetime_str = get_param(request.POST, "ini_date")
+        end_datetime_str = get_param(request.POST, "end_date")
+        if workday is None:
+            return JsonResponse({"message":"Jornada de trabajo no encontrada."}, status=404)
+        if ini_datetime_str == "" or end_datetime_str == "":
+            return JsonResponse({"message":"Las fechas de inicio y fin son obligatorias."}, status=400)
+
+        new_ini_date = datetime.strptime(ini_datetime_str, "%Y-%m-%dT%H:%M")
+        new_end_date = datetime.strptime(end_datetime_str, "%Y-%m-%dT%H:%M")
+        modification = WorkdayModification.objects.create(
+            workday=workday,
+            requested_by=request.user,
+            ini_date=new_ini_date,
+            end_date=new_end_date,
+            reason=reason,
+            status=0,
+        )
+        modification.save()
+
+        html_content = render_to_string("workdays-item.html", {"item": workday})
+        return JsonResponse({"message":"Solicitud de modificación enviada correctamente.", "updated_html": html_content}, status=200)
+
+
+    except Exception as e:
+        print(show_exc(e))
+        return JsonResponse({"message":"Error inesperado."}, status=503)
+
 @group_required("admins", "managers")
 def workdays_remove(request):
     try:
@@ -449,6 +531,20 @@ def workdays_remove(request):
 
 def workdays_client(request, client_id):
     return render(request, "workdays-client-error.html", {})
+
+@group_required("admins", "managers")
+def workdays_modifications_pending(request):
+    try:
+        if request.user.is_superuser:
+            modifications = WorkdayModification.objects.filter(status=0)
+        else:
+            modifications = WorkdayModification.objects.filter(status=0, workday__employee__comp=request.user.manager.comp)
+
+        unique_workdays = modifications.values_list('workday', flat=True).distinct()
+        return render(request, "workdays-list.html", {"item_list": Workday.objects.filter(id__in=unique_workdays).order_by("-ini_date"), "modified": modifications.count()})
+    except Exception as e:
+        print(show_exc(e))
+        return render(request, "workdays-client-error.html", {})
 
 '''
     EMPLOYEES

@@ -21,10 +21,15 @@
             <a class="btn btn-xs bg-warning text-dark ark-sw2-get" data-url="{% url 'manager-modifications-pending' item.id %}" title="{% trans 'Modificaciones pendientes' %}" href="#"><i class="fas fa-exclamation-triangle"></i></a>
         {% endif %}
         {% if item.modifications.count > 0 %}
-            <a class="btn btn-xs bg-info text-white ark-sw2-get" data-url="{% url 'manager-modifications-history' item.id %}" title="{% trans 'Historial de modificaciones' %}" href="#"><i class="fas fa-history"></i></a>
+            <a class="btn btn-xs ark-sw2-get" data-url="{% url 'manager-modifications-history' item.id %}" title="{% trans 'Historial de modificaciones' %}" href="#"><i class="fas fa-history text-info"></i></a>
         {% endif %}
+
+        <button class="btn btn-xs workday-item" data-url="{% url 'manager-modifications-form'%}" id="button-{{item.pk}}" data-csrfmiddlewaretoken="{{ csrf_token }}" data-id="{{item.id}}" ><i class="fas fa-edit"></i></button>
+        {% comment %}
+
         <button class="btn btn-xs ark" data-url="{% url 'workdays-form' %}" data-obj_id="{{item.id}}" data-target-modal="common-modal" id="button-{{item.pk}}"><i class="fas fa-edit"></i></button>
          <a class="btn btn-xs ark" data-url="{% url "workdays-remove" %}" data-target="item_list" data-obj_id="{{item.id}}" id="button-remove-{{item.pk}}" title="{% trans 'Borrar' %}" data-confirm="{% trans "Are you sure to remove this element?" %}"><i class="fas fa-trash"></i></a> 
+         {% endcomment %}
 
     </div>
 </div>

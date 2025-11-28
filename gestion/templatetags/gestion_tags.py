@@ -104,6 +104,8 @@ def day_of_week(mydate, lang='es'):
 @register.filter
 def toDuration(seconds):
     try:
+        if isinstance(seconds, str):
+            seconds = float(seconds)
         days, seconds = divmod(seconds, 86400)
         seconds = int(seconds)
         hours = seconds // 3600
@@ -114,7 +116,7 @@ def toDuration(seconds):
             return f"{int(days):02d}d {int(hours):02d}:{int(minutes):02d}:{int(seconds):02d}"
         return f"{int(hours):02d}:{int(minutes):02d}:{int(seconds):02d}"
     except Exception as e:
-        print (show_exc(e))
+        print (f"{show_exc(e)}, seconds={seconds}")
         return "--:--:--"
 
 @register.filter

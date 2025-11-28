@@ -1,0 +1,20 @@
+{% load static i18n gestion_tags %}
+
+<form class="form m-2" method="POST" action="{% url 'manager-modifications-save' %}" id="form-modifications-pending">
+    <input type="hidden" name="workday_id" value="{{ workday.id }}" />
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-6 form-group text-start mb-3">
+        <label for="ini_date" class="small" >{% trans "Nueva hora de entrada" %}</label>
+        <input type="datetime-local" class="form-control" id="ini_date" name="ini_date" value="{{ workday.get_ini_date|date:'Y-m-d\\TH:i' }}" required />
+    </div>
+    <div class="col-6 form-group text-start mb-3">
+        <label for="end_date" class="small" >{% trans "Nueva hora de salida" %}</label> 
+        <input type="datetime-local" class="form-control" id="end_date" name="end_date" value="{{ workday.get_end_date|date:'Y-m-d\\TH:i' }}" required />
+    </div>
+    <div class="col-12 form-group text-start mb-3">
+        <label for="reason" class="small" >{% trans "Motivo" %}</label>
+        <input type="text" class="form-control" id="reason" name="reason" required />
+    </div>
+    <div class="messages"></div>
+</form>
