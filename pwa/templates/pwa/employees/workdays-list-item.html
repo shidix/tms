@@ -1,11 +1,21 @@
 {% load static gestion_tags i18n %}
       
         <div class="row itemtb pt-2 pb-2 m-0 workday-item {{ item.status_label }}" id="row_{{item.id}}" data-id="{{item.id}}" data-url="{% url 'pwa-request-modification' %}" data-csrfmiddlewaretoken="{{ csrf_token }}">
-            <div class="col-4 text-center text-dark"><span class="badge_ bg-success-outline_">{{item.ini_date|local_time|date:"Y-m-d"}}</span></div>
-            <div class="col-2 text-center text-dark"><span class="badge_ bg-success-outline_">{{item.ini_date|local_time|date:"H:i"}}</span></div>
-            <div class="col-2 text-center text-dark"><span class="badge_ bg-danger-outline_">{{item.end_date|local_time|date:"H:i"}}<small>{{item.extraday}}</small></span></div>
-            <div class="col-4 text-center text-dark">
-                <span class="badge_ bg-primary-outline_">{{item.duration|toDuration}}</span>
+            <div class="col-4 pt-2 pb-2 text-start">
+                <span class="badge_ bg-success-outline_">{{item.get_ini_date|local_time|date:"Y-m-d"}}</span>
+                {% if item.modifications_pending %}
+                    {% if item|can_user_response:request.user %}
+                        <small class="btn btn-xs bg-warning p-1 text-dark"><i class="fa fa-warning" title="{% trans 'Modificación pendiente de aprobación' %}"></i></small>
+                    {% else %}
+                        <small class="btn btn-xs bg-warning p-1 text-dark"><i class="fa fa-clock" title="{% trans 'Modificación pendiente de revisión' %}"></i></small>
+                    {% endif %}
+                {% endif %}
+
+            </div>
+            <div class="col-2 pt-2 pb-2 text-start"><span class="badge_ bg-success-outline_">{{item.get_ini_date|local_time|date:"H:i"}}</span></div>
+            <div class="col-2 pt-2 pb-2 text-start"><span class="badge_ bg-danger-outline_">{{item.get_end_date|local_time|date:"H:i"}}<small>{{item.get_extraday}}</small></span></div>
+            <div class="col-4 pt-2 pb-2 text-end">
+                <span class="badge_ bg-primary-outline_">{{item.get_duration|toDuration}}</span>
                 {% if item.modifications.count > 0 %}
                 <small><i class="fa fa-history" title="{% trans 'Existen modificaciones' %}"></i></small>
                 {% endif %}

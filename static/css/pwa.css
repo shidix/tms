@@ -32,9 +32,10 @@
     padding:0px;
 }
 
+
 h3 {
     color: #333333;
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: 600;
     text-decoration: none !important;
 }
@@ -137,7 +138,7 @@ img.logo {
     text-transform: uppercase;
 }
 .status-bar { 
-    background: #e35000; 
+    background: #3b2f1d; 
     border-radius: 0px 0px 10px 10px;
     color: #ffffff;
     font-size: 0.75rem;
@@ -238,10 +239,24 @@ a.asm {
 .headtb {
     background: #dde5e9;
     color: #6c757d;
+    background: #e2d7c5;
+    color: #3b2f1d;
+}
+
+.head-column {
+    color: #3b2f1d;
+    font-weight: 600;
+}
+
+.mod-text {
+	font-weight: 400;
+	font-size: 0.8rem;
+	color: #666;
 }
 
 .itemtb {
     border-top:1px solid #dfdfdf;
+	color: #666;
 }
 
 .line-register {
@@ -320,9 +335,6 @@ p.date {
 	font-size: 1.1rem;
 }
 
-.workday-item.pending {
-    background-color: orange;
-}
 
 
 /*********** END CONTENT *************/

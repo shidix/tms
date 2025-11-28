@@ -353,11 +353,15 @@ def pwa_request_modification(request):
                 mod = modifications.first()
                 if mod.status == 0:
                     if (mod.requested_by == request.user):
-                        return JsonResponse({'html': 'Existe una solicitud pendiente para este registro. Esperando la evaluación de la empresa.', 'deny-url': reverse('pwa-modifications-history', args=[workday.id])}, status=400)
+                        return JsonResponse({'title': 'Existe una solicitud pendiente para este registro. Esperando la evaluación de la empresa.', 'deny-url': reverse('pwa-modifications-history', args=[workday.id])}, status=400)
                     else:
-                        # html_content = render_to_string("pwa/employees/employee-modification-pending.html", context={"workday": workday, "modification": mod}, request=request)
-                        # return JsonResponse({'html': html_content}, status=200)
-                        return JsonResponse({'html': 'La empresa ha solicitado una modificación para este registro. Esperando su evaluación.', 'deny-url': reverse('pwa-modifications-history', args=[workday.id])}, status=400)
+                        url_confirm = reverse('pwa-modification-approve', args=[mod.id])
+                        url_reject = reverse('pwa-modification-reject', args=[mod.id])
+                        deny_text = "Rechazar"
+                        confirm_text = "Aprobar"
+                        html_content = render_to_string("pwa/employees/employee-modifications-pending.html", context={"workday": workday, "modification": mod}, request=request)
+                        return JsonResponse({'title': 'La empresa ha solicitado una modificación.', 'html': html_content, 'deny-url':
+                                              url_reject, 'confirm-url': url_confirm, 'deny-text': deny_text, 'confirm-text': confirm_text}, status=400)
             return JsonResponse({'html': render_to_string("pwa/employees/request-modification-form.html", context={"workday": workday}, request=request), 'deny-url': reverse('pwa-modifications-history', args=[workday.id])}, status=200)
 
         except Exception as e:
@@ -424,9 +428,15 @@ def employee_modification_approve(request, mod_id):
             return JsonResponse({'error': 'Modificación no encontrada.'}, status=404)
         if modification.status != 0:
             return JsonResponse({'error': 'La modificación ya ha sido procesada.'}, status=400)
+        if not modification.can_user_response(request.user):
+            return JsonResponse({'error': 'No tiene permiso para aprobar esta modificación.'}, status=403)
         
-        modification.approve(request.user)
-        return JsonResponse({'message': 'Modificación aprobada con éxito.'}, status=200)
+        modification.accepted_by = request.user
+        modification.status = 1
+        modification.save()
+        html_content = render_to_string("pwa/employees/employee-modifications-history.html", context={"workday": modification.workday}, request=request)
+        html_updated = render_to_string("pwa/employees/workdays-list-item.html", context={"item": modification.workday, "request": request}, request=request)
+        return JsonResponse({'message': 'Modificación aprobada con éxito.', 'html': html_content, 'updated_html': html_updated}, status=200)
     except Exception as e:
         print(show_exc(e))
         return JsonResponse({'error': 'Ha habido un error al aprobar la modificación.'}, status=500)
@@ -439,9 +449,15 @@ def employee_modification_reject(request, mod_id):
             return JsonResponse({'error': 'Modificación no encontrada.'}, status=404)
         if modification.status != 0:
             return JsonResponse({'error': 'La modificación ya ha sido procesada.'}, status=400)
+        if not modification.can_user_response(request.user):
+            return JsonResponse({'error': 'No tiene permiso para rechazar esta modificación.'}, status=403)
         
-        modification.reject(request.user)
-        return JsonResponse({'message': 'Modificación rechazada con éxito.'}, status=200)
+        modification.accepted_by = request.user
+        modification.status = 2
+        modification.save()
+        html_content = render_to_string("pwa/employees/employee-modifications-history.html", context={"workday": modification.workday}, request=request)
+        html_updated = render_to_string("pwa/employees/workdays-list-item.html", context={"item": modification.workday, "request": request}, request=request)
+        return JsonResponse({'message': 'Modificación rechazada con éxito.', 'html': html_content, 'updated_html': html_updated}, status=200)
     except Exception as e:
         print(show_exc(e))
         return JsonResponse({'error': 'Ha habido un error al rechazar la modificación.'}, status=500)

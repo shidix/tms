@@ -1,12 +1,13 @@
 {% load i18n gestion_tags %}
-
-<h3 class="text-center headtb py-2">{% trans "Registro de fichajes" %}</h3>
+<h3 class="text-center headtb py-2">{% trans "REGISTRO DE FICHAJES" %}
+	<div class="mod-text text-center"><i class="fas fa-info-circle"></i>&nbsp; Pulsa sobre el día que necesites solicitar modificación</div>
+</h3>
 <div class="d-lg-none"> 
-    <div class="row mt-2 m-0 py-2">
-        <div class="col-4 text-center"> <small>{% trans 'Fecha' %}</small> </div>
-        <div class="col-2 text-center"> <small>{% trans 'Entrada' %}</small> </div>
-        <div class="col-2 text-center"> <small>{% trans 'Salida' %}</small> </div>
-        <div class="col-4 text-center"> <small>{% trans 'Tiempo' %}</small> </div>
+    <div class="row mt-2 m-0 pt-2 pb-2">
+        <div class="col-4 head-column text-start"> <small>{% trans 'Fecha' %}</small> </div>
+        <div class="col-2 head-column text-start"> <small>{% trans 'Entrada' %}</small> </div>
+        <div class="col-2 head-column text-start"> <small>{% trans 'Salida' %}</small> </div>
+        <div class="col-4 head-column text-end"> <small>{% trans 'Tiempo' %}</small> </div>
 
     </div>
 </div>

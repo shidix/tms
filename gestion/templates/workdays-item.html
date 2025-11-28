@@ -18,7 +18,13 @@
 
     <div class="col-12 col-lg-2 text-right">
         {% if item.modifications_pending %}
-            <a class="btn btn-xs bg-warning text-dark ark-sw2-get" data-url="{% url 'manager-modifications-pending' item.id %}" title="{% trans 'Modificaciones pendientes' %}" href="#"><i class="fas fa-exclamation-triangle"></i></a>
+            <a class="btn btn-xs bg-warning text-dark ark-sw2-get" data-url="{% url 'manager-modifications-pending' item.id %}" title="{% trans 'Modificaciones pendientes' %}" href="#">
+                {% if item|can_user_response:request.user %}
+                <i class="fas fa-exclamation-triangle"></i>
+                {% else %}
+                <i class="fas fa-question ps-1 pe-1"></i>
+                {% endif %}
+            </a>
         {% endif %}
         {% if item.modifications.count > 0 %}
             <a class="btn btn-xs ark-sw2-get" data-url="{% url 'manager-modifications-history' item.id %}" title="{% trans 'Historial de modificaciones' %}" href="#"><i class="fas fa-history text-info"></i></a>

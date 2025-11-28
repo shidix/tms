@@ -4,6 +4,11 @@ $(document).on('click', '.workday-item, .workday-item-accepted', function () {
     var url = $(this).data('url');
     var csrfmiddlewaretoken = $(this).data('csrfmiddlewaretoken');
     rowClicked = $(this).closest('.list-item-cl');
+    var replace = false;
+    if (rowClicked.length === 0) {
+        rowClicked = $(this);
+        replace = true;
+    }
     $.ajax({
         type: "POST",
         url: url,
@@ -84,9 +89,73 @@ $(document).on('click', '.workday-item, .workday-item-accepted', function () {
                 {
                     icon: 'warning',
                     width: '95%',
-                    title: json_response.html || 'Ha ocurrido un error, por favor inténtelo de nuevo.',
+                    title: json_response.title || 'Ha ocurrido un error, por favor inténtelo de nuevo.',
+                    html: json_response.html || '',
 
+                    showDenyButton: json_response['deny-url'] ? true : false,
+                    denyButtonText: json_response['deny-text'] ? json_response['deny-text'] : 'Historial',
+                    confirmButtonText: json_response['confirm-text'] ? json_response['confirm-text'] : 'Cerrar',
+                    cancelButtonText: 'Cancelar',
+                    showCancelButton: json_response['confirm-url'] && json_response['deny-url'] ? true : false,
+                    allowOutsideClick: false,
+                    preConfirm: () => {
+                        // Just close the modal
+                    }
                 }
+            ).then((result) => {
+                if (result.isConfirmed) {
+                    url_confirm = json_response['confirm-url'];
+                    if (url_confirm) {
+                        // Just open the confirm URL
+                        $.ajax({
+                            type: "GET",
+                            url: url_confirm,
+                            success: function (confirmResponse) {
+                                if (replace) {
+                                    rowClicked.replaceWith(confirmResponse.updated_html);
+                                } else {
+                                    rowClicked.html(confirmResponse.updated_html);
+                                }
+                                var width = confirmResponse.width || '90%';
+                                Swal.fire({
+                                    icon: 'info',
+                                    title: confirmResponse.title || 'Información',
+                                    html: confirmResponse.html,
+                                    width: width,
+                                });
+                            },
+                            error: function (xhr, status, error) {
+                                Swal.fire('Error!', 'Hubo un error al procesar la solicitud: ' + error, 'error');
+                            }
+                        });
+                    }
+                };
+                if (result.isDenied) {
+                    url_deny = json_response['deny-url'];
+                    // Open modification history
+                    $.ajax({
+                        type: "GET",
+                        url: url_deny,
+                        success: function (historyResponse) {
+                            if (replace) {
+                                rowClicked.replaceWith(historyResponse.updated_html);
+                            } else {
+                                rowClicked.html(historyResponse.updated_html);
+                            }
+                            var width = historyResponse.width || '90%';
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Historial de modificaciones',
+                                html: historyResponse.html,
+                                width: width,
+                            });
+                        },
+                        error: function (xhr, status, error) {
+                            Swal.fire('Error!', 'Hubo un error al cargar el historial: ' + error, 'error');
+                        }
+                    });
+                }
+            }
             );
         }
     });

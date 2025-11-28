@@ -1,5 +1,7 @@
+{% load i18n gestion_tags %}
+
 <p>La empresa ha solicitado una modificación de su jornada laboral del {{ workday.ini_date|date:'d/m/Y' }}.</p>
-<p>Horario original: {{ workday.ini_date|date:'d/m/Y H:i' }} - {{ workday.end_date|date:'d/m/Y H:i' }} (duración: {{ workday.duration }}).</p>
-<p>Modificación solicitada: {{ modification.ini_date|date:'d/m/Y H:i' }} - {{ modification.end_date|date:'d/m/Y H:i' }} (duración: {{ modification.duration }}).</p>
+<p>Horario original: {{ workday.ini_date|date:'d/m/Y H:i' }} - {{ workday.end_date|date:'d/m/Y H:i' }} (duración: {{ workday.duration|toDuration }}).</p>
+<p>Modificación solicitada: {{ modification.ini_date|date:'d/m/Y H:i' }} - {{ modification.end_date|date:'d/m/Y H:i' }} (duración: {{ modification.duration|toDuration }}).</p>
 <p>Motivo de la solicitud: {{ modification.reason }}</p>
 <p>Por favor, revise y apruebe o rechace la solicitud.</p>

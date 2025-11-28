@@ -293,9 +293,19 @@ class Workday(models.Model):
     ipaddress = models.GenericIPAddressField(verbose_name=_('IP Address'), null=True, blank=True)
     ipaddress_out = models.GenericIPAddressField(verbose_name=_('IP Address Out'), null=True, blank=True)
 
+    def can_user_response(self, user):
+        try:
+            pending = self.modifications.filter(status=0)
+            if not pending.exists():
+                return False
+            return pending.first().can_user_response(user)
+
+        except Exception as e:
+            print(show_exc(e))
+        return False
+            
     @property
     def duration(self):
-
         edate = self.end_date.replace(microsecond=0) 
         idate = self.ini_date.replace(microsecond=0)
         diff = edate - idate
@@ -428,7 +438,18 @@ class WorkdayModification(models.Model):
             return _('Empleado')
         else:
             return _('Empresa')
+        
+    def can_user_response(self, user):
+        if user == self.requested_by:
+            return False
+        if not(user.groups.filter(name='managers').exists() or user.is_superuser):
+            return False
+        manager = Manager.objects.filter(user=user, comp=self.workday.employee.comp)
+        if not manager.exists():
+            return False
+        return True
 
     class Meta:
         verbose_name = _('Modificación de asistencia')
         verbose_name_plural = _('Modificaciones de asistencias')
+        ordering = ['-mod_date']

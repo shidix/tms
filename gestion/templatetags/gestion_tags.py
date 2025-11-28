@@ -162,3 +162,11 @@ def float_for_js(value):
     except Exception as e:
         print (show_exc(e))
         return value
+    
+@register.filter
+def can_user_response(item, user):
+    try:
+        return item.can_user_response(user)
+    except Exception as e:
+        print (show_exc(e))
+        return False
