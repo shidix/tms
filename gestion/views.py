@@ -495,6 +495,8 @@ def manager_modifications_save(request):
             reason=reason,
             status=0,
         )
+        workday.finish = True
+        workday.save()
         modification.save()
 
         html_content = render_to_string("workdays-item.html", {"item": workday})
