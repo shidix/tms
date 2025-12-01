@@ -112,9 +112,13 @@ $(document).on('click', '.workday-item, .workday-item-accepted', function () {
                             url: url_confirm,
                             success: function (confirmResponse) {
                                 if (replace) {
-                                    rowClicked.replaceWith(confirmResponse.updated_html);
+                                    if (confirmResponse.updated_html) {
+                                        rowClicked.replaceWith(confirmResponse.updated_html);
+                                    }
                                 } else {
-                                    rowClicked.html(confirmResponse.updated_html);
+                                    if (confirmResponse.updated_html) {
+                                        rowClicked.html(confirmResponse.updated_html);
+                                    }
                                 }
                                 var width = confirmResponse.width || '90%';
                                 Swal.fire({
@@ -137,10 +141,12 @@ $(document).on('click', '.workday-item, .workday-item-accepted', function () {
                         type: "GET",
                         url: url_deny,
                         success: function (historyResponse) {
-                            if (replace) {
-                                rowClicked.replaceWith(historyResponse.updated_html);
-                            } else {
-                                rowClicked.html(historyResponse.updated_html);
+                            if (historyResponse.updated_html) {
+                                if (replace) {
+                                    rowClicked.replaceWith(historyResponse.updated_html);
+                                } else {
+                                    rowClicked.html(historyResponse.updated_html);
+                                }
                             }
                             var width = historyResponse.width || '90%';
                             Swal.fire({

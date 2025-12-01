@@ -394,7 +394,9 @@ def pwa_submit_modification(request):
             )
             modification_request.save()
 
-            return JsonResponse({'message': 'Solicitud de modificación enviada con éxito.'}, status=200)
+            html_content = render_to_string("pwa/employees/workdays-list-item.html", context={"item": workday}, request=request)
+
+            return JsonResponse({'message': 'Solicitud de modificación enviada con éxito.', 'updated_html': html_content}, status=200)
         except Exception as e:
             print(show_exc(e))
             return JsonResponse({'error': 'Ha habido un error al enviar la solicitud. Por favor, inténtelo de nuevo.'}, status=500)
