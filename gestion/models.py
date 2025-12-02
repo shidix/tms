@@ -442,9 +442,8 @@ class WorkdayModification(models.Model):
     def can_user_response(self, user):
         if user == self.requested_by:
             return False
-        if not(user.groups.filter(name='managers').exists() or user.is_superuser):
-            return False
-        manager = Manager.objects.filter(user=user, comp=self.workday.employee.comp)
+        employee_comp = self.workday.employee.comp
+        manager = Manager.objects.filter(user=self.requested_by, comp=employee_comp)
         if not manager.exists():
             return False
         return True

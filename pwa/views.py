@@ -37,7 +37,6 @@ def pin_login(request):
                     return redirect(reverse('pwa-employee'))
                 except Exception as e:
                     msg = "Pin no válido"
-                    print(e)
             else:
                 msg = "Bad control"
     return render(request, "pwa-login.html", {'msg': msg})
@@ -207,7 +206,6 @@ def pwa_company_login(request, uuid=None):
                 try:
                     emp = Employee.objects.filter(comp=comp, pin=pin).get()
                     if emp == None:
-                        print(1)
                         return render(request, "pwa/employees/company-login.html", {'comp': comp})
                     
                     if request.user.is_authenticated:
