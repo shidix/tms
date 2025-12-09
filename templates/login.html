@@ -7,7 +7,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-        <meta name="description" content="{% trans "Aplicación para el fichaje"%}">
+        <meta name="description" content="{% trans "Fichamaster: aplicaciócn para fichaje en el trabajo. Control de presencia, informes automáticos y cumplimiento legal."%}">
         <meta name="author" content="{% trans "" %}">
 
         <link rel="stylesheet" href="{% static "css/login.css"%}" type="text/css"/>
@@ -24,66 +24,231 @@
 
         <title>{% trans "Fichamaster, tu plataforma de fichaje"%}</title>
     </head>
-    <body>
-        <div class="login-container">
-            <div class="login-left">
-                <div class="features-container">
-			<h1 class="apptitle">{% trans "Fichamaster" %}, </h1>
-			<h2 class="mb-5">{% trans "tu plataforma de fichaje" %}</h2>
-		    {% blocktrans %}
 
-			<div class="row login-text">
-				<div class="col-lg-12 col-12"><h3>Innovación y eficiencia garantizadas</h3></div>
-				<div class="col-lg-3 col-12 pt-3"><h3>Facilidad de uso</h3><br /><strong>Fichamaster</strong> está diseñado para ser intuitivo y fácil de utilizar, permitiendo a los empleados fichar sin complicaciones y a los administradores monitorizar el proceso de forma eficiente. </div>
-				<div class="col-lg-3 col-12 pt-3"><h3>Confiabilidad</h3><br /><strong>Fichamaster</strong> asegura un sistema de fichaje seguro y preciso, minimizando errores humanos y garantizando la integridad de los datos en todo momento para una gestión eficaz. </div>
-				<div class="col-lg-3 col-12 pt-3"><h3>Accesibilidad</h3><br /><strong>Fichamaster</strong> es accesible desde múltiples dispositivos, lo que permite a los empleados fichar desde cualquier lugar, además de tener acceso a sus registros desde su móvil. </div>
-				<div class="col-lg-3 col-12 pt-3"><h3>Métodos de acceso</h3><br /><strong>Fichamaster</strong> ofrece a tu empresa: <br />
-						<i class="fa fa-check"></i> Fichaje presencial.<br />
-						<i class="fa fa-check"></i> Fichaje remoto.
-				</div>
+
+<body class="min-h-screen bg-slate-50 text-slate-900 antialiased font-sans">
+
+<div class="row">
+  <div class="col-lg-10 offset-lg-1 col-12">
+
+  <header class="">
+    <div class="container">
+      <div class="row header-row">
+          <div class="col-lg-1 logo text-start"><img src="/static/images/fichamaster-white.png"></div>
+          <div class="col-lg-3 brand text-start"><div class="brand-name">Fichamaster</div></div>
+          <div class="col-lg-5 mainmenu text-center pt-3">
+		<p><i class="fa fa-envelope"></i> soporte@fichamaster.com</p>
+          </div>
+          <div class="col-lg-3 actions text-end">
+		<div class="dropdown profile-btn w-100">
+			<a class="btn btn-outline" type="button" id="dropdownProfile" data-bs-toggle="dropdown" aria-expanded="false">Acceder</a>
+			<div class="dropdown-menu user-dropdown" aria-labelledby="dropdownProfile">
+				<div class="login-right">
+				{% block login-right %}
+				    <div class="form-container toggle-container" id="login-form">
+					    <h4 class="title text-center">{% trans "Conéctate" %}
+					{% include "login_form.html" %}
+				    </div>
+				    <strong>¿Aún no tienes cuenta en Fichamaster?</strong>
+					<a class="" href="mailto:soporte@fichamaster.com">Solicitar crear cuenta</a>
+					{% include "account_form.html" %}
+				{% endblock %}
+			    </div>
 			</div>
-
-                    {% endblocktrans %}
-
-			<div class="row mt-5">
-			    	<div class="col-lg-12 col-12 text-center"><img src="{% static '/images/fichamaster-capt.png'%}" width=""/></div>
-			</div>
-
-		{% comment %}
-
-		    <p>¡Optimiza la gestión de tu equipo con nuestra innovadora aplicación de fichaje en el trabajo! <br /><br />
-			Simplifica el control de asistencia, reduce errores y ahorra tiempo con una solución fácil de usar y totalmente digital.<br /> <br /> 
-			Desde el registro de entrada y salida hasta el seguimiento en tiempo real, nuestra app te permite gestionar horarios, calcular horas extras y mantener un historial preciso de asistencia, todo desde tu smartphone o pc.<br /><br />
-			Mejora la productividad de tu empresa y garantiza una gestión eficiente del tiempo con nuestra plataforma confiable y segura.<br /> <br />
-			¡Descubre cómo transformar la forma en que controlas el tiempo en tu negocio hoy mismo!<p>
-
-		{% endcomment %}
-		{% comment %}
-			<div class="row text-center">
-				<div class="col-lg-8 offset-lg-2 col-12">
-					<a href="" class="btn btn-primary btn-block mt-2"> {% trans "Descargar guía" %} </a> <br /> <br />
-					<img src="{% static '/images/caratula-guia.jpg'%}" width="100%"/>
-				</div>
-			</div>
-		{% endcomment %}
-
-                </div>
-		{% comment %}
-                <div><img src="{% static '/images/bg-login.png'%}" width="100%"/></div>
-		{% endcomment %}
-		<div class="login-left-bottom p-5 text-center x-small"><a href="https://www.shidix.com" target="_blank"><img src="{% static '/images/shidix-green.png'%}" width="50"/></a><br/><br/>
-		Para saber más sobre la normativa a aplicar consulta la <a href="https://www.mites.gob.es/ficheros/ministerio/GuiaRegistroJornada.pdf" target="blank_">guía sobre el registro de jornada</a>.
-	       </div>
-            </div>
-            <div class="login-right">
-		    <div class="logo text-center"><a href="https://www.tms.es" target="_blank"><img src="{% static '/images/fichamaster-brown.png'%}" width="100"/></a></div>
-                {% block login-right %}
-                    <div class="form-container toggle-container mt-5" id="login-form">
-                        <h4 class="title text-center">{% trans "INICIA SESIÓN" %}
-                        {% include "login_form.html" %}
-                    </div>
-                {% endblock %}
-            </div>
+		</div>
         </div>
-    </body>
-</html>
+      </div>
+    </div>
+  </header>
+
+  <main class="container hero">
+    <div class="hero-left">
+	<h1>Fichamaster</h1>
+	<h2> Registro de jornada y control presencial</h2>
+	<p>Fichamaster te permite fichar desde cualquier dispositivo, generar informes automáticos y cumplir con la normativa laboral sin complicaciones.</p><br />
+	<div class="hero-ctas">
+		<a class="btn btn-outline text-center w-100 py-3" href="mailto:soporte@fichamaster.com">PRUEBA 1 MES <strong>GRATIS</strong></a>
+		{% include "account_form.html" %}
+	</div>
+    </div>
+    <aside class="hero-right">
+      <div class="panel">
+	<img src="/static/images/fichamaster-picture.jpg" width="100%">
+      </div>
+    </aside>
+  </main>
+
+  <section id="features" class="container section">
+    <h2>Funcionalidades clave</h2>
+    <p>Todo lo que necesitas para registrar jornadas, controlar ausencias y obtener informes.</p>
+
+
+    <div class="cards">
+		<div class="card">
+		  <div class="card-inner">
+			<div class="card-front"><strong>Multiplataforma</strong></div>
+			<div class="card-back"><ul><li>Fichaje desde el PC, móvil o tablet mediante tu navegador web (sin instalar aplicaciones).</li><li>App ligera y web app responsive.</li></ul></div>
+		  </div>
+		</div>
+		<div class="card">
+		  <div class="card-inner">
+			<div class="card-front"><strong>Histórico e Informes</strong></div>
+			<div class="card-back"><ul><li>Exporta por empleado y periodos.</li><li>Formatos CSV y PDF.</li><li>Generación de informes.</li></ul></div>
+		  </div>
+		</div>
+		<div class="card">
+		  <div class="card-inner">
+			<div class="card-front"><strong>Automatizaciones</strong></div>
+			<div class="card-back"><ul><li>Cálculo automático de horas extras.</li><li>Notificaciones.</li></ul></div>
+		  </div>
+		</div>
+		<div class="card">
+		  <div class="card-inner">
+			<div class="card-front"><strong>Métodos de acceso</strong></div>
+			<div class="card-back"><ul><li>Fichaje presencial.</li><li>Fichaje remoto.</ul></div>
+		  </div>
+		</div>
+	</div>
+  </section>
+
+  <section id="pricing" class="container section">
+    <h1>¡Por menos de lo que te cuesta un café!</h1>
+    <h2>Y paga de la forma más cómoda para ti:</h2>
+
+    <br />
+
+<div class="pricing-wrapper">
+
+    <div class="pricing-container">
+
+        <!-- Precio único -->
+        <div class="main-price">
+            <div class="price">45 €/mes</div>
+	    <div class="price-note"><strong>Precio único</strong>. Elige el período de pago más cómodo para ti</div>
+        </div>
+
+        <!-- Planes -->
+        <div class="row w-100 m-0">
+		
+            <!-- Mensual -->
+            <div class="col-lg-4 col-12 plan-card">
+                <h3>Pago Mensual</h3>
+            </div>
+
+            <!-- Semestral -->
+            <div class="col-lg-4 col-12 plan-card">
+                <h3>Pago Semestral</h3>
+            </div>
+
+            <!-- Anual -->
+            <div class="col-lg-4 col-12 plan-card">
+                <h3>Pago Anual</h3>
+            </div>
+        </div><br />
+	
+        <!-- Caracteristicas -->
+        <div class="main-price">
+		<div class="price-note"><strong>Funcionalidades</strong> </div><br />
+        	<div class="row w-100 m-0">
+        	    <div class="col-lg-4 col-12">
+			<ul class="features" style="text-align:center;">
+			    <li>
+				<svg fill="none" stroke="currentColor" stroke-width="2"
+				     viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
+				Fichaje desde móvil, tablet o PC
+			    </li>
+			    <li>
+				<svg fill="none" stroke="currentColor" stroke-width="2"
+				     viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
+				App ligera y web app responsive
+			    </li>
+			    <li>
+				<svg fill="none" stroke="currentColor" stroke-width="2"
+				     viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
+			       Exporta por empleado y por periodo
+			    </li>
+			</ul>
+		    </div>
+        	    <div class="col-lg-4 col-12">
+			<ul class="features">
+			    <li>
+				<svg fill="none" stroke="currentColor" stroke-width="2"
+				     viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
+				Formatos CSV y PDF
+			    </li>
+			    <li>
+				<svg fill="none" stroke="currentColor" stroke-width="2"
+				     viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
+				Generación de informes
+			    </li>
+			    <li>
+				<svg fill="none" stroke="currentColor" stroke-width="2"
+				     viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
+				Cálculo automático de horas extras
+			    </li>
+			</ul>
+		    </div>
+        	    
+		    <div class="col-lg-4 col-12">
+			<ul class="features">
+			    <li>
+				<svg fill="none" stroke="currentColor" stroke-width="2"
+				     viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
+				Notificaciones
+			    </li>
+			    <li>
+				<svg fill="none" stroke="currentColor" stroke-width="2"
+				     viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
+				Fichaje presencial
+			    </li>
+			    <li>
+				<svg fill="none" stroke="currentColor" stroke-width="2"
+				     viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
+				Fichaje remoto
+			    </li>
+			</ul>
+         	</div>
+         </div>
+         <!-- end Caracteristicas -->
+
+    </div>
+</div>
+
+
+  </section>
+
+  <!--
+  <section>
+	<div class="div-animation">
+		Fichamaster gusta porque...  
+		<div class="dropping-texts">
+		  <div>Realmente funciona</div>
+		  <div>Es muy fácil de usar</div>
+		  <div>Cumple la normativa</div>
+		  <div>¡Su precio es único!</div>
+		</div>
+	</div>
+  </section>
+  -->
+
+	<section id="" class="container section">
+		<div class="row w-100 m-0 footer">
+			<div class="col-lg-4 logo-big text-center"><img src="/static/images/fichamaster-white.png" height="80px"></div>
+			<div class="col-lg-4 contact-col text-center" id="contact">
+				<h2>Contacto</h2><br />
+				Correo: &nbsp;<a href="mailto:soporte@fichamaster.com">soporte@fichamaster.com</a><br />
+				Web: &nbsp;<a href="https://fichamaster.com">fichamaster.com</a><br /><br />
+				© 2025 Fichamaster. Todos los derechos reservados.
+			</div>
+			<div class="col-lg-4 links-col text-center"><a href="https://www.shidix.com" target="_blank"><img src="/static/images/shidix-white-logo.png" height="80px"></a></div>
+		</div>
+	</section>
+
+</div>
+</div>
+
+</body>
+
+
+
+

@@ -1,0 +1,95 @@
+
+{% load i18n static %}
+      <form id="contactForm" novalidate>
+	<input type="hidden" name="next" value="{% url 'index' %}" />
+        <div class="row">
+          <div class="field">
+            <label for="name">Nombre</label>
+            <input id="name" name="name" type="text" class="form-control"  placeholder="Ej. María Pérez" required>
+            <div class="error-msg" aria-live="polite" id="nameError"></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="email">Correo electrónico</label>
+            <input id="email" name="email" type="email" class="form-control"  placeholder="tu@ejemplo.com" required>
+            <div class="error-msg" aria-live="polite" id="emailError"></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="phone">Teléfono</label>
+            <input id="phone" name="phone" type="tel" class="form-control"  placeholder="+34 600 123 456" pattern="^[+]?\d[\d\s-]{6,}$" required>
+            <div class="hint">Incluye prefijo internacional si procede (ej. +34).</div>
+            <div class="error-msg" aria-live="polite" id="phoneError"></div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="submit" class="btn btn-primary btn-block mt-2 w-100">Enviar</button>
+          <button type="reset" class="btn btn-outline">Borrar</button>
+        </div>
+      </form>
+
+  <script>
+    // Validación simple y accesible
+    (function(){
+      const form = document.getElementById('contactForm');
+      const nameEl = document.getElementById('name');
+      const emailEl = document.getElementById('email');
+      const phoneEl = document.getElementById('phone');
+
+      function setError(el, msg){
+        const err = document.getElementById(el.id + 'Error');
+        if(msg){
+          el.classList.add('error');
+          err.textContent = msg;
+          el.setAttribute('aria-invalid','true');
+        } else {
+          el.classList.remove('error');
+          err.textContent = '';
+          el.removeAttribute('aria-invalid');
+        }
+      }
+
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        let ok = true;
+
+        if(!nameEl.value.trim()){ setError(nameEl, 'El nombre es obligatorio'); ok = false; } else setError(nameEl,'');
+
+        if(!emailEl.checkValidity()){ setError(emailEl, 'Introduce un correo válido'); ok = false; } else setError(emailEl,'');
+
+        if(!phoneEl.checkValidity()){ setError(phoneEl, 'Introduce un teléfono válido (mín. 7 dígitos)'); ok = false; } else setError(phoneEl,'');
+
+        if(!ok) return;
+
+        // Aquí enviarías los datos con fetch/XHR. Por ahora mostramos un aviso.
+        alert('Formulario enviado:\nNombre: ' + nameEl.value + '\nEmail: ' + emailEl.value + '\nTeléfono: ' + phoneEl.value);
+        form.reset();
+      });
+
+      form.addEventListener('reset', function(){
+        setError(nameEl,''); setError(emailEl,''); setError(phoneEl,'');
+      });
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
