@@ -187,4 +187,18 @@ def csv_export(header, values, file_name="csv_file"):
     except Exception as e:
         return HttpResponse("Error: {}".format(e))
 
-
+def send_email(subject, message, from_email, recipient_list, fail_silently=False, html_message=None):
+    from django.core.mail import send_mail
+    try:
+        send_mail(
+            subject,
+            message,
+            from_email,
+            recipient_list,
+            fail_silently=fail_silently,
+            html_message=html_message
+        )
+        return True
+    except Exception as e:
+        print("Error sending email: {}".format(e))
+        return False

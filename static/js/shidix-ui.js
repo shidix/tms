@@ -236,3 +236,42 @@ $(document).on('click', '.ark-sw2-get', function (e) {
         }
     });
 });
+
+$(document).on('click', '#submitBtnTestPeriod', function (e) {
+    e.preventDefault();
+    var form = $('#askTestPeriodForm');
+    var url = form.attr('action');
+    var data = form.serialize();
+    // Clear previous errors
+    $('#emailError').text('');
+    $('#captchaError').text('');
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: data,
+        success: function (response) {
+            Swal.fire('Enviado!', response.message || 'Su solicitud ha sido enviada.', 'success');
+            // Optionally, reset the form
+            form[0].reset();
+        },
+        error: function (xhr, status, error) {
+            var json_response = xhr.responseJSON;
+            if (xhr.status === 400) {
+                // Validation errors
+                if (json_response.errors) {
+                    if (json_response.errors.email) {
+                        $('#emailError').text(json_response.errors.email);
+                    }
+                    if (json_response.errors.captcha) {
+                        $('#captchaError').text(json_response.errors.captcha);
+                    }
+                } else if (json_response.message) {
+                    Swal.fire('Error!', json_response.message, 'error');
+                }
+            } else {
+                var message = json_response && json_response.message ? json_response.message : error;
+                Swal.fire('Error!', 'Hubo un error al enviar su solicitud: ' + message, 'error');
+            }
+        }
+    });
+});

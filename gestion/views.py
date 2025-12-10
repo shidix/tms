@@ -18,7 +18,7 @@ import os, csv
 from .reports import MonthlyReportPDF
 
 from tms.decorators import group_required
-from tms.commons import get_float, get_int, get_or_none, get_param, get_session, set_session, show_exc, generate_qr, csv_export, MESSAGES, get_city_from_ip
+from tms.commons import get_float, get_int, get_or_none, get_param, get_session, set_session, show_exc, generate_qr, csv_export, MESSAGES, get_city_from_ip, send_email
 from .models import Company, Employee, Manager, Workday, WorkdayModification
 from .forms import CompanyForm, ManagerForm
 
@@ -28,6 +28,9 @@ import plotly.graph_objects as go
 from plotly.offline import plot
 from zoneinfo import ZoneInfo
 from dateutil import relativedelta
+import random
+
+
 
 
 def localtime(dt, tz=None):
@@ -202,6 +205,16 @@ class TMSLoginView(LoginView):
     template_name = 'login.html'
     redirect_authenticated_user = True
 
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        a = random.randint(1, 10)
+        b = random.randint(1, 10)
+        answer = a + b
+        context['captcha_question_value'] = f"Pregunta: {a} + {b} = ?"
+        self.request.session['captcha_answer'] = str(answer)
+        return context
+
     def form_valid(self, form):
         # Perform the login
         login(self.request, form.get_user())
@@ -210,6 +223,41 @@ class TMSLoginView(LoginView):
 
     def get_success_url(self):
         return reverse('index')
+
+def ask_4_test_period(request):
+    try:
+        if request.method != "POST":
+            return JsonResponse({"message":"Método no permitido."}, status=405)
+        email = get_param(request.POST, "email", "")
+        name = get_param(request.POST, "name", "")
+        phone = get_param(request.POST, "phone", "")
+
+        if (email == "" or name == "" or phone == ""):
+            return JsonResponse({"message":"Faltan datos obligatorios. Por favor, rellena todo el formulario."}, status=400)
+        email_message_html = """
+            Nueva solicitud de periodo de prueba:<br><br>
+            Fecha y hora: {}<br>
+            Nombre: {}<br>
+            Email: {}<br>
+            Teléfono: {}<br>
+        """.format(datetime.now().strftime("%Y-%m-%d %H:%M"), name, email, phone)
+        email_message_plain = """
+            Nueva solicitud de periodo de prueba:
+            Fecha y hora: {}
+            Nombre: {}
+            Email: {}
+            Teléfono: {}
+        """.format(datetime.now().strftime("%Y-%m-%d %H:%M"), name, email, phone)
+
+
+        email_subject = "FICHAMASTER. Nueva solicitud de periodo de prueba"
+        send_email(email_subject, email_message_plain, settings.EMAIL_FROM_DEFAULT,['soporte@fichamaster.com'], fail_silently=False, html_message=email_message_html)
+        
+        return JsonResponse({"message":"Solicitud recibida. Nos pondremos en contacto contigo pronto."}, status=200)
+    except Exception as e:
+        print(show_exc(e))
+        return JsonResponse({"message":"Error inesperado."}, status=503)
+
 
 def redraw_plotty(request):
     try:

@@ -1,6 +1,6 @@
 
 {% load i18n static %}
-      <form id="contactForm" novalidate>
+      <form id="contactForm-ext" novalidate>
 	<input type="hidden" name="next" value="{% url 'index' %}" />
         <div class="row">
           <div class="field">
@@ -14,18 +14,159 @@
           <div class="field">
             <label for="email">Correo electrónico</label>
             <input id="email" name="email" type="email" class="form-control"  placeholder="tu@ejemplo.com" required>
-            <div class="error-msg" aria-live="polite" id="emailError"></div>
+            <div class="error-msg alert alert-danger text-white small p-1 bg-danger mt-1" aria-live="polite" id="emailError"></div>
           </div>
         </div>
 
         <div class="row">
           <div class="field">
             <label for="phone">Teléfono</label>
-            <input id="phone" name="phone" type="tel" class="form-control"  placeholder="+34 600 123 456" pattern="^[+]?\d[\d\s-]{6,}$" required>
-            <div class="hint">Incluye prefijo internacional si procede (ej. +34).</div>
-            <div class="error-msg" aria-live="polite" id="phoneError"></div>
+            <input id="phone" name="phone" type="tel" class="form-control"  placeholder="600 123 456" pattern="^[+]?\d[\d\s-]{6,}$" required>
+            <div class="error-msg alert alert-danger text-white small p-1 bg-danger mt-1" aria-live="polite" id="phoneError"></div>
           </div>
         </div>
+        <!-- Add captcha here -->
+        <div class="row">
+          <div class="field">
+            <label for="captcha">¿Sabes matemáticas? <span id="captchaQuestion" aria-live="polite"></span></label>
+            <input id="captcha" name="captcha" type="text" class="form-control" autocomplete="off" placeholder="Respuesta" required aria-describedby="captchaError">
+            <div class="hint small">Resuelve la operación para verificar que no eres un robot.</div>
+            <div class="error-msg bg-danger text-white hide alert alert-danger mt-1" aria-live="polite" id="captchaError"></div>
+          </div>
+        </div>
+
+        <script>
+          $(".error-msg").hide();
+
+        (function(){
+          const form = document.getElementById('contactForm-ext');
+          const qEl = document.getElementById('captchaQuestion');
+          const input = document.getElementById('captcha');
+          const errEl = document.getElementById('captchaError');
+          let expected = null;
+
+          function newChallenge(){
+            const a = Math.floor(Math.random() * 9) + 1;
+            const b = Math.floor(Math.random() * 9) + 1;
+            expected = a + b;
+            qEl.textContent = a + ' + ' + b + ' = ?';
+            input.value = '';
+            clearError();
+          }
+
+          function setError(msg){
+            if(msg){
+              newChallenge();
+
+              input.classList.add('error');
+              errEl.textContent = msg;
+              input.setAttribute('aria-invalid','true');
+              setTimeout(() => {
+                clearError();
+              }, 5000);
+              
+            } else {
+              input.classList.remove('error');
+              errEl.textContent = '';
+              input.removeAttribute('aria-invalid');
+              
+            }
+          }
+
+          function clearError(){ setError(''); }
+
+          newChallenge();
+
+          // regenerate on form reset
+          form.addEventListener('reset', function(){
+            // small timeout so visual reset completes first
+            setTimeout(newChallenge, 0);
+          });
+
+          // validate captcha before the main submit handler runs.
+          form.addEventListener('submit', function(e){
+
+            // Check email format
+            const emailInput = document.getElementById('email');
+            const emailVal = emailInput.value.trim();
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if(!emailPattern.test(emailVal)){
+              $("#emailError").text('Correo electrónico no válido').show();
+              emailInput.focus();
+              emailInput.classList.add('error');
+              emailInput.setAttribute('aria-invalid','true');
+              $("#emailError").fadeOut(5000);
+              e.preventDefault();
+              e.stopImmediatePropagation();
+              return;
+            }
+
+            const val = input.value.trim();
+            if(!val){
+              setError('Responde al captcha');
+              Swal.fire(
+                'Error',
+                'Responde al captcha para continuar.',
+                'error',
+                {allowOutsideClick: false}
+              );
+              e.preventDefault();
+              e.stopImmediatePropagation();
+              input.focus();
+              return;
+            }
+            if(parseInt(val, 10) !== expected){
+              setError('Respuesta incorrecta');
+              $("captchaError").text('Respuesta incorrecta');
+              $("#captchaError").show();
+              $("#captchaError").fadeOut(5000);
+
+
+              e.preventDefault();
+              e.stopImmediatePropagation();
+              input.focus();
+              return;
+            }
+
+            // Check email format
+            clearError();
+            // Send by jquery ajax instead of normal submit
+            e.preventDefault();
+            $.ajax({
+              url: "{% url 'ask-4-test-period' %}",
+              method: "POST",
+              data: {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                captcha: input.value,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+              },
+              success: function(data){
+                Swal.fire(
+                  '¡Formulario enviado!',
+                  'Gracias por contactar con nosotros. Te responderemos lo antes posible.',
+                  'success'
+                );
+                form.reset();
+              },
+              error: function(xhr, status, error){
+                let msg = "Error enviando el formulario.";
+                if(xhr.responseJSON && xhr.responseJSON.message){
+                  msg = xhr.responseJSON.message;
+                }
+                Swal.fire(
+                  'Error',
+                  msg,
+                  'error'
+                );
+                newChallenge();
+              }
+            });
+            // let other handlers proceed
+          }, false);
+        })();
+        </script>
 
         <div class="actions">
           <button type="submit" class="btn btn-primary btn-block mt-2 w-100">Enviar</button>

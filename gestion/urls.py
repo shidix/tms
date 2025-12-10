@@ -4,6 +4,7 @@ from . import views, auto_views
 urlpatterns = [ 
     path('home', views.index, name='index'),
     path('change-password', views.change_password, name='change-password'),
+    path('ask-4-test-period', views.ask_4_test_period, name='ask-4-test-period'),
 
     path('workdays/list', views.workdays_list, name='workdays-list'),
     path('workdays/search', views.workdays_search, name='workdays-search'),
