@@ -74,7 +74,116 @@
     </aside>
   </main>
 
-{% include "account_form.html" %}
+  <div class="row" style="max-width:1320px; margin:auto;">
+          <div class="col-lg-3 col-12 mt-1">	{% include "account_form.html" %}  </div>
+          <div class="col-lg-9 col-12 mt-1">
+		  <section id="pricing" class="container section p-0">
+
+		    <div class="pricing-wrapper">
+		      <div class="pricing-container text-center">
+			 <h1>¡Por menos de lo que te cuesta un café!</h1>
+		    	 <div>Y paga de la forma más cómoda para ti:</div><br />
+
+			<!-- Precio único -->
+			<div class="main-price">
+			    <div class="price">45 €/mes</div>
+			    <div class="price-note"><strong>Precio único</strong>. Elige el período de pago más cómodo para ti</div>
+			</div>
+
+			<!-- Planes -->
+			<div class="row w-100 m-0">
+				
+			    <!-- Mensual -->
+			    <div class="col-lg-4 col-12 plan-card">
+				<h3>Pago Mensual</h3>
+			    </div>
+
+			    <!-- Semestral -->
+			    <div class="col-lg-4 col-12 plan-card">
+				<h3>Pago Semestral</h3>
+			    </div>
+
+			    <!-- Anual -->
+			    <div class="col-lg-4 col-12 plan-card">
+				<h3>Pago Anual</h3>
+			    </div>
+			</div><br />
+			
+			<!-- Caracteristicas -->
+			<div class="main-price">
+				<div class="price-note"><strong>Funcionalidades</strong> </div><br />
+				<div class="row w-100 m-0">
+				    <div class="col-lg-4 col-12">
+					<ul class="features" style="text-align:center;">
+					    <li>
+						<svg fill="none" stroke="currentColor" stroke-width="2"
+						     viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
+						Fichaje desde móvil, tablet o PC
+					    </li>
+					    <li>
+						<svg fill="none" stroke="currentColor" stroke-width="2"
+						     viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
+						App ligera y web app responsive
+					    </li>
+					    <li>
+						<svg fill="none" stroke="currentColor" stroke-width="2"
+						     viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
+					       Exporta por empleado y por periodo
+					    </li>
+					</ul>
+				    </div>
+				    <div class="col-lg-4 col-12">
+					<ul class="features">
+					    <li>
+						<svg fill="none" stroke="currentColor" stroke-width="2"
+						     viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
+						Formatos CSV y PDF
+					    </li>
+					    <li>
+						<svg fill="none" stroke="currentColor" stroke-width="2"
+						     viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
+						Generación de informes
+					    </li>
+					    <li>
+						<svg fill="none" stroke="currentColor" stroke-width="2"
+						     viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
+						Cálculo automático de horas extras
+					    </li>
+					</ul>
+				    </div>
+				    
+				    <div class="col-lg-4 col-12">
+					<ul class="features">
+					    <li>
+						<svg fill="none" stroke="currentColor" stroke-width="2"
+						     viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
+						Notificaciones
+					    </li>
+					    <li>
+						<svg fill="none" stroke="currentColor" stroke-width="2"
+						     viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
+						Fichaje presencial
+					    </li>
+					    <li>
+						<svg fill="none" stroke="currentColor" stroke-width="2"
+						     viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
+						Fichaje remoto
+					    </li>
+					</ul>
+				</div>
+			 </div>
+			 <!-- end Caracteristicas -->
+
+		    </div>
+		</div>
+
+		  </section>
+
+
+	  </div>
+ </div> 
+
+
 
   <section id="features" class="container section">
     <h2>Funcionalidades clave</h2>
@@ -107,112 +216,6 @@
 		  </div>
 		</div>
 	</div>
-  </section>
-
-  <section id="pricing" class="container section">
-    <h1>¡Por menos de lo que te cuesta un café!</h1>
-    <h2>Y paga de la forma más cómoda para ti:</h2>
-
-    <br />
-
-<div class="pricing-wrapper">
-
-    <div class="pricing-container">
-
-        <!-- Precio único -->
-        <div class="main-price">
-            <div class="price">45 €/mes</div>
-	    <div class="price-note"><strong>Precio único</strong>. Elige el período de pago más cómodo para ti</div>
-        </div>
-
-        <!-- Planes -->
-        <div class="row w-100 m-0">
-		
-            <!-- Mensual -->
-            <div class="col-lg-4 col-12 plan-card">
-                <h3>Pago Mensual</h3>
-            </div>
-
-            <!-- Semestral -->
-            <div class="col-lg-4 col-12 plan-card">
-                <h3>Pago Semestral</h3>
-            </div>
-
-            <!-- Anual -->
-            <div class="col-lg-4 col-12 plan-card">
-                <h3>Pago Anual</h3>
-            </div>
-        </div><br />
-	
-        <!-- Caracteristicas -->
-        <div class="main-price">
-		<div class="price-note"><strong>Funcionalidades</strong> </div><br />
-        	<div class="row w-100 m-0">
-        	    <div class="col-lg-4 col-12">
-			<ul class="features" style="text-align:center;">
-			    <li>
-				<svg fill="none" stroke="currentColor" stroke-width="2"
-				     viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
-				Fichaje desde móvil, tablet o PC
-			    </li>
-			    <li>
-				<svg fill="none" stroke="currentColor" stroke-width="2"
-				     viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
-				App ligera y web app responsive
-			    </li>
-			    <li>
-				<svg fill="none" stroke="currentColor" stroke-width="2"
-				     viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
-			       Exporta por empleado y por periodo
-			    </li>
-			</ul>
-		    </div>
-        	    <div class="col-lg-4 col-12">
-			<ul class="features">
-			    <li>
-				<svg fill="none" stroke="currentColor" stroke-width="2"
-				     viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
-				Formatos CSV y PDF
-			    </li>
-			    <li>
-				<svg fill="none" stroke="currentColor" stroke-width="2"
-				     viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
-				Generación de informes
-			    </li>
-			    <li>
-				<svg fill="none" stroke="currentColor" stroke-width="2"
-				     viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
-				Cálculo automático de horas extras
-			    </li>
-			</ul>
-		    </div>
-        	    
-		    <div class="col-lg-4 col-12">
-			<ul class="features">
-			    <li>
-				<svg fill="none" stroke="currentColor" stroke-width="2"
-				     viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
-				Notificaciones
-			    </li>
-			    <li>
-				<svg fill="none" stroke="currentColor" stroke-width="2"
-				     viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
-				Fichaje presencial
-			    </li>
-			    <li>
-				<svg fill="none" stroke="currentColor" stroke-width="2"
-				     viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
-				Fichaje remoto
-			    </li>
-			</ul>
-         	</div>
-         </div>
-         <!-- end Caracteristicas -->
-
-    </div>
-</div>
-
-
   </section>
 
   <!--
