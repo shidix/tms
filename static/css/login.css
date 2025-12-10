@@ -107,7 +107,7 @@ p.block {color: var(--text);}
  transition: opacity 0.5s ease-in-out, max-height 0.5s ease-in-out !important;	
 }
 .user-dropdown {
-	width: 500px !important;
+	width: 399px !important;
 	box-shadow: -1px 2px 19px -11px rgb(0 0 0 / 64%);
 }
 
