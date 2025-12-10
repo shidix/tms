@@ -452,15 +452,3 @@ class WorkdayModification(models.Model):
         verbose_name = _('Modificación de asistencia')
         verbose_name_plural = _('Modificaciones de asistencias')
         ordering = ['-mod_date']
-
-class GeneralSettings(models.Model):
-    creation_date = models.DateTimeField(auto_now_add=True, verbose_name=_('Fecha de creación'))
-    key = models.CharField(max_length=100, verbose_name = _('Clave'), unique=True)
-    value = models.CharField(max_length=200, verbose_name = _('Valor'), default="")
-
-    def __str__(self):
-        return self.key
-
-    class Meta:
-        verbose_name = _('Configuración General')
-        verbose_name_plural = _('Configuraciones Generales')
