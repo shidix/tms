@@ -69,8 +69,17 @@ def employee_home(request):
                 temp_uuid = str(uuid.uuid4())
             request.user.employee.uuid = temp_uuid
             request.user.employee.save()
+
+        pending_modifications = WorkdayModification.objects.filter(workday__employee=request.user.employee, status=0).values('workday').distinct()
         workday = Workday.objects.filter(employee=request.user.employee, finish=False).first()
-        workday_list = Workday.objects.filter(employee=request.user.employee, ini_date__year=today.year, ini_date__month=today.month, finish=True).order_by("-ini_date")
+        workday_list = Workday.objects.filter(employee=request.user.employee, ini_date__year=today.year, ini_date__month=today.month, finish=True)
+        # union with pending modifications
+        workday_list_pendings = Workday.objects.filter(pk__in=[item['workday'] for item in pending_modifications])
+
+
+        workday_list = workday_list | workday_list_pendings
+        
+        workday_list = workday_list.order_by("-ini_date")
         context = {
             "obj": workday, 
             'item_list': workday_list, 
