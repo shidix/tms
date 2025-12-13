@@ -1,6 +1,10 @@
 {% load i18n gestion_tags %}
 <h3 class="text-center headtb py-2">{% trans "REGISTRO DE FICHAJES" %}
-	<div class="mod-text text-center"><i class="fas fa-info-circle"></i>&nbsp; Pulsa sobre el día que necesites solicitar modificación</div>
+	<div class="mod-text text-center"><i class="fas fa-info-circle"></i>&nbsp; Pulsa sobre el día que necesites solicitar modificación.</div>
+    {% if item_pending_modifications.count > 0%}
+    <div class="mod-text text-center"><i class="fas fa-exclamation-triangle"></i>&nbsp; Tienes <strong>{{ item_pending_modifications.count }}</strong> solicitudes de modificación pendientes.</div>
+    {% endif %}
+    
 </h3>
 <div class="d-lg-none"> 
     <div class="row mt-2 m-0 pt-2 pb-2">

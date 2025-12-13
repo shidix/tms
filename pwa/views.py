@@ -83,6 +83,7 @@ def employee_home(request):
         context = {
             "obj": workday, 
             'item_list': workday_list, 
+            'item_pending_modifications': workday_list_pendings,
             'year_list': range(2025, 2050), 
             'current_year': today.year, 
             'month_list': range(1, 13), 
