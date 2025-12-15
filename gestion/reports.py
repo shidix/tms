@@ -160,11 +160,13 @@ class MonthlyReportPDF(FPDF):
                 if key_day not in total_by_day:
                     total_by_day[key_day] = 0
 
-                diff_seconds = (workday.end_date - workday.ini_date).total_seconds()
+                # diff_seconds = (workday.end_date - workday.ini_date).total_seconds()
+                diff_seconds = workday.get_duration()
                 diff_seconds_extra = 0
                 if total_by_day[key_day] + diff_seconds > daily_limit:
                     diff_seconds = daily_limit - total_by_day[key_day]
-                    diff_seconds_extra = (workday.end_date - workday.ini_date).total_seconds() - diff_seconds
+                    diff_seconds_extra = workday.get_duration() - diff_seconds
+                    # diff_seconds_extra = (workday.end_date - workday.ini_date).total_seconds() - diff_seconds
                     total_by_day[key_day] = daily_limit
                 else:
                     total_by_day[key_day] += diff_seconds
