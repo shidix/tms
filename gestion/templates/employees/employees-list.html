@@ -39,6 +39,8 @@
                     <i class="fas fa-trash"></i></a> 
                 <a class="btn btn-xs ark-pdf" data-url="{% url 'managers-report-pdf' item.uuid request.session.s_emp_idate request.session.s_emp_edate%}" data-filename="employee_report_{{item.dni}}.pdf">
                     <i class="fas fa-file-pdf"></i></a>
+                <a class="btn btn-xs ark-email-employee-welcome" data-url="{% url 'employee-send-welcome' %}"  data-uuid="{{item.uuid}}" title="{% trans 'Enviar email de bienvenida' %}" data-csrfmiddlewaretoken="{{ csrf_token }}">
+                    <i class="fas fa-envelope"></i></a>
             </div>
         </div>
     {% endfor %}

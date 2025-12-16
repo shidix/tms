@@ -15,7 +15,6 @@
             </div>
         </div>
         {# --------------------------------- MOVIL/ZONA PRIVADA ------------------------#}
-        {% if comp.clock_pwa_enabled %}
             <div id="div-mobil" class="row m-0 mb-3">
                 <div class="card fm py-4" style="background: #599191; color:white;">
                     <div class="row card-body">
@@ -29,7 +28,6 @@
                     </div>
                 </div>
             </div>
-        {% endif %}
         {# --------------------------------- FICHAJE DIRECTO ------------------------#}
         <div id="div-access" class="row m-0">
             <form method="POST" action="{% url 'pwa-company-login' %}" class="p-0">

@@ -1,0 +1,15 @@
+{% load static %}
+{% comment %} Employee welcome email template in txt mode, no translate{% endcomment %}
+Bienvenid@ {{ employee.name }}.
+
+Su cuenta ha sido creada en la plataforma de gestión de asistencias Fichamaster.
+Su pin es: {{ employee.pin }} 
+Para acceder a su zona privada utilice copie y pegue este enlace:
+
+{{ employee.get_private_zone }} 
+
+Desde esta zona podrá ver sus registros de asistencia, así como solicitar modificaciones si fuera necesario. También podrá revisar y aprobar o rechazar las modificaciones propuestas por su empresa, teniendo acceso en todo momento al historial completo de las modificiaciones.
+Para solicitar, aprobar o rechazar modificaciones, así como para la revisión del historial de modificaciones de un registro sólo tiene que clickear sobre el registro en cuestión y seguir las instrucciones.
+
+Saludos, 
+Equipo de Soporte de Fichamaster

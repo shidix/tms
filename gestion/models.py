@@ -15,6 +15,7 @@ from PIL import Image
 from django.shortcuts import render
 import uuid
 from tms.commons import show_exc, MESSAGES
+from django.template.loader import render_to_string
 
 
 
@@ -195,6 +196,30 @@ class Employee(models.Model):
 
     def __str__(self):
         return self.name
+    
+    @property
+    def get_private_zone(self):
+        data = reverse ('pwa-company-private-zone', kwargs={'uuid': self.comp.uuid})
+        data = "{}{}".format(settings.MAIN_URL, data)
+        return data
+
+    def send_welcome_email(self):
+        try:
+            from django.core.mail import send_mail
+            template_text = 'employees/employee_welcome_txt.html'
+            template_html = 'employees/employee_welcome.html'
+            logo_url = f"{settings.MAIN_URL}/static/images/logo-fichaje.png"
+            context = {'employee': self, 'logo_url': logo_url}
+            subject = _('Bienvenido a la plataforma de gestión de asistencias Fichamaster')
+            message = render_to_string(template_text, context)
+            html_message = render_to_string(template_html, context)
+            from_email = settings.EMAIL_FROM_DEFAULT
+
+            recipient_list = [self.email]
+            send_mail(subject, message, from_email, recipient_list, html_message=html_message)
+        except Exception as e:
+            raise e
+            # print(show_exc(e))
 
     def save(self, *args, **kwargs):
         self.weekly_hours = float(self.mon_hours) + float(self.tue_hours) + float(self.wed_hours) + float(self.thu_hours) + float(self.fri_hours) + float(self.sat_hours) + float(self.sun_hours)

@@ -764,6 +764,22 @@ def employees_show_qr(request):
         print(show_exc(e))
         return render(request, "workdays-client-error.html", {})
 
+@group_required("admins", "managers")
+def employees_send_welcome(request):
+    try:
+        if request.method != "POST":
+            return JsonResponse({"message": "Método no permitido."}, status=405)
+        obj = get_or_none(Employee, get_param(request.POST, "uuid"), "uuid")
+        if obj == None:
+            return JsonResponse({"message": "Empleado no encontrado."}, status=404)
+        if obj.email == "":
+            return JsonResponse({"message": "El empleado no tiene email asignado."}, status=500)
+        obj.send_welcome_email()
+        return JsonResponse({"message": "Email de bienvenida enviado correctamente."})
+    except Exception as e:
+        print(show_exc(e))
+        return JsonResponse({"message": "Ha ocurrido un error inesperado. Consulte con el administrador de la plataforma."}, status=503)
+
 '''
     MANAGERS
 '''

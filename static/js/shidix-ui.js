@@ -236,3 +236,26 @@ $(document).on('click', '.ark-sw2-get', function (e) {
         }
     });
 });
+
+$(document).on('click', '.ark-email-employee-welcome', function (e) {
+    e.preventDefault();
+    var url = $(this).data('url');
+    var uuid = $(this).data('uuid');
+    var csrftoken = $(this).data('csrfmiddlewaretoken');
+    var btnClicked = $(this);
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: {
+            'uuid': uuid,
+            'csrfmiddlewaretoken': csrftoken
+        },
+        success: function (response) {
+            Swal.fire('Enviado!', response.message || 'El email de bienvenida ha sido enviado.', 'success');
+        },
+        error: function (xhr, status, error) {
+            var message = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : error;
+            Swal.fire('Error!', 'Hubo un error al enviar el email de bienvenida: ' + message, 'error');
+        }
+    });
+});
