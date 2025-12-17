@@ -47,6 +47,8 @@ urlpatterns = [
 
     path('managers/modifications/form/', views.manager_modifications_form, name='manager-modifications-form'),
     path('managers/modifications/save', views.manager_modifications_save, name='manager-modifications-save'),
+    path('managers/send-welcome', views.managers_send_welcome, name='managers-send-welcome'),
+    
     
 
 

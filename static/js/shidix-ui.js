@@ -259,3 +259,39 @@ $(document).on('click', '.ark-email-employee-welcome', function (e) {
         }
     });
 });
+
+$(document).on('click', '.send-manager-email', function (e) {
+    e.preventDefault();
+    var url = $(this).data('url');
+    var uuid = $(this).data('uuid');
+    var portal_url = $(this).data('portal-url');
+    var csrftoken = $(this).data('csrfmiddlewaretoken');
+    var btnClicked = $(this);
+    // Show alert to cofirm sending email
+    Swal.fire({
+        title: 'URL de portal de fichaje',
+        html: '<br><strong>' + portal_url + '</strong><br><br> ¿Desea enviar el email con la URL del portal de fichaje a su correo electrónico?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, enviar email',
+        cancelButtonText: 'No, no es necesario',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: {
+                    'uuid': uuid,
+                    'csrfmiddlewaretoken': csrftoken
+                },
+                success: function (response) {
+                    Swal.fire('Enviado!', response.message || 'El email con la URL del portal ha sido enviado.', 'success');
+                },
+                error: function (xhr, status, error) {
+                    var message = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : error;
+                    Swal.fire('Error!', 'Hubo un error al enviar el email con la URL del portal: ' + message, 'error');
+                }
+            });
+        }
+    });
+});

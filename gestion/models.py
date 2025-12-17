@@ -142,6 +142,28 @@ class Manager(models.Model):
     def __str__(self):
         return self.name
 
+    def portal_url(self):
+        data = reverse ('pwa-portal-company-login', kwargs={'uuid': self.comp.uuid})
+        data = "{}{}".format(settings.MAIN_URL, data)
+        return data
+    
+    def send_welcome_email(self):
+        try:
+            from django.core.mail import send_mail
+            template_text = 'managers/manager_welcome_txt.html'
+            template_html = 'managers/manager_welcome.html'
+            logo_url = f"{settings.MAIN_URL}/static/images/logo-fichaje.png"
+            context = {'manager': self, 'logo_url': logo_url}
+            subject = _('Bienvenido a la plataforma de gestión de asistencias Fichamaster')
+            message = render_to_string(template_text, context)
+            html_message = render_to_string(template_html, context)
+            from_email = settings.EMAIL_FROM_DEFAULT
+            recipient_list = [self.email]
+            send_mail(subject, message, from_email, recipient_list, html_message=html_message)
+        except Exception as e:
+            raise e
+            # print(show_exc(e))
+
     def save_user(self):
         try:
             if self.user == None:

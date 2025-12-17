@@ -792,6 +792,22 @@ def get_managers(request):
             full_query |= Q(**{myfilter: search_value})
     return Manager.objects.filter(full_query).order_by("-id")[:50]
 
+@group_required("admins", "managers")
+def managers_send_welcome(request):
+    try:
+        if request.method != "POST":
+            return JsonResponse({"message": "Método no permitido."}, status=405)
+        obj = get_or_none(Manager, get_param(request.POST, "uuid"), "uuid") # obj should be Manager
+        if obj == None:
+            return JsonResponse({"message": "Manager no encontrado."}, status=404)
+        if obj.email == "":
+            return JsonResponse({"message": "El manager no tiene email asignado."}, status=500)
+        obj.send_welcome_email()
+        return JsonResponse({"message": "Email de bienvenida enviado correctamente."})
+    except Exception as e:
+        print(show_exc(e))
+        return JsonResponse({"message": "Ha ocurrido un error inesperado. Consulte con el administrador de la plataforma."}, status=503)
+
 
 @group_required("admins", "managers")
 def managers_report_pdf(request, worker_uuid, start_date=None, end_date=None):
