@@ -50,7 +50,7 @@ def generate_qr_image(url, bg_image=None):
 
     if bg_image:
         logo = Image.open(bg_image)
-        scale = 0.5**0.25 # Scale down the logo
+        scale = 0.10**0.10 # Scale down the logo
         logo_size = (int(logo.size[0] * scale), int(logo.size[1] * scale))
         logo.thumbnail(logo_size)
         pos = ((img.size[0] - logo.size[0]) // 2, (img.size[1] - logo.size[1]) // 2)
