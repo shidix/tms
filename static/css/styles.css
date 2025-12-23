@@ -341,7 +341,7 @@ img.img-fluid {
 }
 .toolbar-search input {
 	border:1px solid #ced4da !important;
-	font-size: 0.9rem;
+	/*font-size: 0.9rem;*/
 }
 
 .toolbar-search i.fas.fa-search {
@@ -372,6 +372,7 @@ a.btn.btn-dark {
 	background: #e2d7c5;
 	color: #3b2f1d;
 	border: 1px solid #3b2f1d;
+	line-height:1;
 }
 
 
@@ -840,6 +841,17 @@ img.img-cart-line {
 	/*color: #fff !important;*/
 	color: #599191 !important;
 	text-decoration: none;
+}
+.header .btn {
+	padding:0;
+}
+
+.days-btn {
+	width: 14.25%;
+	padding:0;
+}
+.days-btn a {
+	font-size: 0.8rem;
 }
 
 i.fas.fa-user-circle, i.fas.fa-sign-out-alt.text-white, a.dropdown-toggle { color: #5b7898 !important; }

@@ -44,52 +44,62 @@
 	            <div id="main" class="w-100">
                     <div class="row header sticky-top m-0">
                         <div class="col-lg-2 col-3 company-logo bg-white text-left py-2">
-                            <a href="{% url 'index' %}" ><img src="{{request.user|comp_logo}}" height="50px" /></a>
+                            <a href="{% url 'index' %}" ><img src="{{request.user|comp_logo}}" height="40px" /></a>
                         </div>	
                         <div class="col-lg-10 col-9">
-                            <div class="row justify-content-end">
+                            <div class="row justify-content-end m-0">
                                 <div class="col-12 col-lg-12 d-flex justify-content-between align-items-center p-0">
 
                                     {% if request.user.manager %}
                                         {% url 'pwa-portal-company-login' request.user.manager.comp.uuid as portal_url %}
-                                        <a class="btn btn-xs m-2" href="{{ portal_url|to_main_url }}" target="_blank">
-						                    <i class="fas fa-user-clock"></i>&nbsp <span class="d-none d-lg-inline">{% trans 'Portal de fichaje' %}</span> </a>
+                                        <a class="btn" href="{{ portal_url|to_main_url }}" target="_blank">
+			                    <i class="fas fa-user-clock"></i>&nbsp <span class="d-none d-lg-inline">{% trans 'Portal de fichaje' %}</span> </a>
 
                                         {% url 'managers-view-portal-login-url' as view_portal_url %}
                     {% comment %}
 					<a class="btn btn-xs ark-alert m-2" href="#" data-url="{{ view_portal_url|to_admin_url }}" data-uuid="{{request.user.manager.comp.uuid}}" title="{% trans 'Url del portal' %}"><i class="fas fa-paper-plane"></i>&nbsp;<span class="d-none d-lg-inline">URL Portal</span></a>
                     {% endcomment %}
-                                                       <a class="btn btn-xs m-2 send-manager-email" href="#" data-url="{% url 'managers-send-welcome' %}" data-portal-url="{{ portal_url|to_main_url }}" data-uuid="{{request.user.manager.uuid}}" data-csrfmiddlewaretoken="{{ csrf_token }}" >
+                                         <a class="btn send-manager-email" href="#" data-url="{% url 'managers-send-welcome' %}" data-portal-url="{{ portal_url|to_main_url }}" data-uuid="{{request.user.manager.uuid}}" data-csrfmiddlewaretoken="{{ csrf_token }}" >
                                                 <i class="fas fa-envelope"></i>&nbsp;<span class="d-none d-lg-inline">{% trans 'URL portal' %}</span></a>
 
                                         {% url 'pwa-company-private-zone' request.user.manager.comp.uuid as private_zone_url %}
 
-                                        <a class="btn btn-xs m-2" href="{{ private_zone_url|to_main_url }}" target="_blank">
+                                        <a class="btn" href="{{ private_zone_url|to_main_url }}" target="_blank">
                                             <i class="fas fa-user-shield"></i>&nbsp;<span class="d-none d-lg-inline">{% trans 'Zona privada' %}</span></a>
      
                                     {% endif %}
-                                    <a class="btn btn-xs m-2 ark" href="#" data-url="{% url 'change-password' %}" data-target-modal="common-modal-md" title="{% trans 'Cambiar contraseña' %}">
+                                    <a class="btn ark" href="#" data-url="{% url 'change-password' %}" data-target-modal="common-modal-md" title="{% trans 'Cambiar contraseña' %}">
                                         <i class="fas fa-key"></i>
 					<span class="d-lg-inline d-none">&nbsp;{% trans 'Cambiar contraseña' %}</span>
                                     </a>
+                    
+				    {%comment%} PC VERSION {%endcomment%}
 				    {% if request.user.manager %}
 					<div class="row">
 						<div class="col-lg-12 col-12">
-							<p class="license w-100 m-0 p-3">
-							Licencia v&aacute;lida hasta <strong>{{request.user.manager.comp.expiration_date|date:"d/m/Y"}}</strong>
+							<p class="license w-100 m-0 p-1">
+							<span class=" d-none d-lg-block">Licencia v&aacute;lida hasta </span><span><strong>{{request.user.manager.comp.expiration_date|date:"d/m/Y"}}</span></strong>
 							</p>
 						</div>
 					</div>
 				    {% endif %}
-				   
-				    <div class="row text-end px-3">
-				    <div class="col-12">{% trans "Hola" %}, {{request.user.username}} </div>
-                                    <div class="col-12"><a class="btn-xs ark-post" href="#" data-url="{% url 'auth_logout' %}" data-csrf-token="{{ csrf_token }}" title="{% trans 'Cerrar sesión' %}">
+				   				   
+				    <div class="row text-center">
+				    	<div class="col-12 d-none d-lg-block">{% trans "Hola" %}, {{request.user.username}} </div>
+                                    	<div class="col-12"><a class="btn-xs ark-post" href="#" data-url="{% url 'auth_logout' %}" data-csrf-token="{{ csrf_token }}" title="{% trans 'Cerrar sesión' %}">
                                         <i class="fas fa-sign-out-alt"></i>
                                         <span class="d-lg-inline d-none">&nbsp;{% trans 'Salir'%} </span>
-                                    </a></div></div>
+                                    	</a></div>
+				    </div>
+				    {%comment%} END PC VERSION {%endcomment%}
 
-			
+
+				    {%comment%} MOBILE VERSION {%endcomment%}
+
+	       	        	    {%comment%} END MOBILE VERSION {%endcomment%}
+	
+
+				   			
 
                                     {% comment %} <form action="{% url 'auth_logout' %}" method="post" id="frmLogout" class="m-0">
                                         {% csrf_token %}

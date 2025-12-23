@@ -1,22 +1,22 @@
 {% load i18n gestion_tags %}
 
-<div class="row toolbar-search p-2 m-0 mb-1">
-    <div class="col-lg-3 p-0"><a  class="btn btn-dark btn-sm ark-post w-75 show-looking" 
+<div class="row toolbar-search p-0 m-0">
+    <div class="col-lg-3 col-3"><a  class="btn btn-dark btn-sm ark-post w-100 show-looking" 
                     data-url="{% url 'employees-search-month' %}" data-csrf-token="{{ csrf_token }}"
                     data-months_ago="1" data-s_emp_name="{{request.session.s_emp_name}}"
                     title="{% trans 'Mes pasado' %}" data-target="emp-list">{% trans 'Mes pasado' %}</a>
     </div>
-    <div class="col-lg-3 p-0"><a  class="btn btn-dark btn-sm ark-post w-75 show-looking" 
+    <div class="col-lg-3 col-3"><a  class="btn btn-dark btn-sm ark-post w-100 show-looking" 
                     data-url="{% url 'employees-search-month' %}" data-csrf-token="{{ csrf_token }}"
                     data-months_ago="0" data-s_emp_name="{{request.session.s_emp_name}}"
                     title="{% trans 'Mes en curso' %}" data-target="emp-list">{% trans 'Mes en curso' %}</a>
     </div>
-    <div class="col-lg-3 p-0"><a  class="btn btn-dark btn-sm ark-post w-75 show-looking" 
+    <div class="col-lg-3 col-3"><a  class="btn btn-dark btn-sm ark-post w-100 show-looking" 
                     data-url="{% url 'employees-search-month' %}" data-csrf-token="{{ csrf_token }}"
                     data-months_ago="-2" data-s_emp_name="{{request.session.s_emp_name}}"
                     title="{% trans 'Semana pasada' %}" data-target="emp-list">{% trans 'Semana pasada' %}</a>
     </div>
-    <div class="col-lg-3 p-0"><a  class="btn btn-dark btn-sm ark-post w-75 show-looking" 
+    <div class="col-lg-3 col-3"><a  class="btn btn-dark btn-sm ark-post w-100 show-looking" 
                     data-url="{% url 'employees-search-month' %}" data-csrf-token="{{ csrf_token }}"
                     data-months_ago="-1" data-s_emp_name="{{request.session.s_emp_name}}"
                     title="{% trans 'Semana actual' %}" data-target="emp-list">{% trans 'Semana actual' %}</a>

@@ -1,22 +1,22 @@
 {% load i18n gestion_tags %}
-<div class="row mb-3 p-2">
-    <div class="col">
-        <a class="btn btn-dark btn-sm ark-post w-75" id="btn-search-current-week" data-url="{% url 'workdays-search-in-date' %}" data-csrf-token="{{ csrf_token }}" data-listmode="{{listmode}}" data-predefined="current_week" data-target="item-list">
+<div class="row mb-3 m-0 p-0">
+    <div class="col-lg-3 col-3">
+        <a class="btn btn-dark btn-sm ark-post w-100" id="btn-search-current-week" data-url="{% url 'workdays-search-in-date' %}" data-csrf-token="{{ csrf_token }}" data-listmode="{{listmode}}" data-predefined="current_week" data-target="item-list">
             {% trans "Semana actual" %}
         </a>
     </div>
-    <div class="col">
-        <a class="btn btn-dark btn-sm ark-post w-75" id="btn-search-last-week" data-url="{% url 'workdays-search-in-date' %}" data-csrf-token="{{ csrf_token }}" data-listmode="{{listmode}}" data-predefined="last_week" data-target="item-list">
+    <div class="col-lg-3 col-3">
+        <a class="btn btn-dark btn-sm ark-post w-100" id="btn-search-last-week" data-url="{% url 'workdays-search-in-date' %}" data-csrf-token="{{ csrf_token }}" data-listmode="{{listmode}}" data-predefined="last_week" data-target="item-list">
             {% trans "Semana pasada" %}
         </a>
     </div>
-    <div class="col">
-        <a class="btn btn-dark btn-sm ark-post w-75" id="btn-search-current-month" data-url="{% url 'workdays-search-in-date' %}" data-csrf-token="{{ csrf_token }}" data-listmode="{{listmode}}" data-predefined="current_month" data-target="item-list">
+    <div class="col-lg-3 col-3">
+        <a class="btn btn-dark btn-sm ark-post w-100" id="btn-search-current-month" data-url="{% url 'workdays-search-in-date' %}" data-csrf-token="{{ csrf_token }}" data-listmode="{{listmode}}" data-predefined="current_month" data-target="item-list">
             {% trans "Mes actual" %}
         </a>
     </div>
-    <div class="col">
-        <a class="btn btn-dark btn-sm ark-post w-75" id="btn-search-last-month" data-url="{% url 'workdays-search-in-date' %}" data-csrf-token="{{ csrf_token }}" data-listmode="{{listmode}}" data-predefined="last_month" data-target="item-list">
+    <div class="col-lg-3 col-3">
+        <a class="btn btn-dark btn-sm ark-post w-100" id="btn-search-last-month" data-url="{% url 'workdays-search-in-date' %}" data-csrf-token="{{ csrf_token }}" data-listmode="{{listmode}}" data-predefined="last_month" data-target="item-list">
             {% trans "Mes pasado" %}
         </a>
     </div>
@@ -24,28 +24,47 @@
 <form class="form m-0" method="GET" action="{% url "workdays-search" %}" id="form-search">
     {%csrf_token%}
     <div class="row">
-        <div class="col-lg-8 col-6">
+        <div class="col-lg-8 col-12">
             <div class="row mb-1">
-                {% for i in list_dates %}
-                <div class="col-lg-1 p-0"><a style="border-radius: 15px;" class="btn btn-{% if forloop.last %}warning{% else %}success{%endif%} btn-sm ark-post w-75 day-search day-{{i|date:'D'}}" 
+		
+		{% for i in list_dates %}
+	
+		{%comment%} --- PC version ---{%endcomment%}            
+                <div class="col-lg-1 col-1 p-0 d-none d-lg-block"><a style="border-radius: 15px;" class="btn btn-{% if forloop.last %}warning{% else %}success{%endif%} btn-sm ark-post w-75 day-search day-{{i|date:'D'}}" 
                      data-url="{% url 'workdays-search-in-date' %}" data-csrf-token="{{ csrf_token }}"
                         data-listmode="{{listmode}}"
                         data-day="{{i|date:'Y-m-d'}}" title="{{i|date:'D'}}" data-target="item-list">{{i|date:'D'}}</a></div>
-                {% endfor %}
+                
+		{%comment%} --- Mobile version ---{%endcomment%}            
+		 <div class="d-lg-none days-btn text-center mb-3"><a class="btn btn-{% if forloop.last %}warning{% else %}success{%endif%} ark-post day-search day-{{i|date:'D'}}" 
+                     data-url="{% url 'workdays-search-in-date' %}" data-csrf-token="{{ csrf_token }}"
+                        data-listmode="{{listmode}}"
+                        data-day="{{i|date:'Y-m-d'}}" title="{{i|date:'D'}}" data-target="item-list">{{i|date:'D'}}</a></div>
+
+		{% endfor %}
                     
                 <div class="col-lg-1 col-4 py-2 text-end d-none d-lg-block"> <span>{% trans "Entre:" %}</span> </div>
-                <div class="col-lg-2 col-6 p-0">
+                <div class="col-lg-2 col-3 p-0">
                     <input type="hidden" name="listmode" value="{{listmode}}">
                     <input type="date" class="autosearch form-control form-control-dark w-100 py-2" name="s_idate" id="s_idate" 
                         value="{{request.session.s_idate}}"/>
                 </div>
-                <div class="col-lg-2 col-6 p-0">
+                <div class="col-lg-2 col-3 p-0">
                     <input type="date" class="autosearch form-control form-control-dark w-100 py-2" name="s_edate" id="s_edate" 
                         value="{{request.session.s_edate}}"/>
                 </div>
+                <div class="col-lg-7 col-5 d-lg-none">
+                    <input type="text" class="form-control form-control-dark w-100 py-2" name="s_name" id="s_name" 
+                        placeholder="Nombre trabajador/a"/>
+                </div>
+		<div class="col-lg-1 col-1 p-0 d-lg-none">
+	            <button id="btn-search-form" class="btn btn-default saveform w-100" data-form="form-search" data-target="item-list">
+                	<i class="fas fa-search"></i> </button>
+        	</div>
+
             </div>
         </div>
-        <div class="col-lg-3 col-5 b-search">
+        <div class="col-lg-3 col-5 b-search d-none d-lg-block">
             <div class="row">
                 <div class="col-lg-5 col-5 py-2 text-end d-none d-lg-block"> <span>{% trans "Trabajador/a:" %}</span> </div>
                 <div class="col-lg-7 col-12">
@@ -54,7 +73,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-1 col-1 p-0">
+        <div class="col-lg-1 col-1 p-0 d-none d-lg-block">
             <button id="btn-search-form" class="btn btn-default saveform w-100" data-form="form-search" data-target="item-list">
                 <i class="fas fa-search"></i> </button>
         </div>

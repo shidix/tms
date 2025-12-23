@@ -1,10 +1,10 @@
 {% load i18n gestion_tags static %}
 
 <div class="row main-th py-3 m-0">
-    <div class="col-lg-4"><i class="fas fa-user orange"></i>&nbsp; {% trans 'Empleado' %}</div>
-    <div class="col-lg-2"><i class="fas fa-sign-in-alt"></i>&nbsp; {% trans 'Hora entrada' %}</div>
-    <div class="col-lg-2"><i class="fas fa-sign-out-alt"></i>&nbsp; {% trans 'Hora salida' %}</div>
-    <div class="col-lg-2 text-center"><i class='far fa-clock'></i>&nbsp; {% trans 'Tiempo' %}</div>
+    <div class="col-lg-4 d-none d-lg-block"><i class="fas fa-user orange"></i>&nbsp; {% trans 'Empleado' %}</div>
+    <div class="col-lg-2 d-none d-lg-block"><i class="fas fa-sign-in-alt"></i>&nbsp; {% trans 'Hora entrada' %}</div>
+    <div class="col-lg-2 d-none d-lg-block"><i class="fas fa-sign-out-alt"></i>&nbsp; {% trans 'Hora salida' %}</div>
+    <div class="col-lg-2 d-none d-lg-block text-center"><i class='far fa-clock'></i>&nbsp; {% trans 'Tiempo' %}</div>
     <div class="col-lg-2 text-end">
         {% if modified > 0 %} <span class="btn badge bg-warning text-white ark" title="{% trans 'Click para ver las solicitudes de modificación' %}" data-url="{% url 'workdays-modifications-pending' %}" data-target="item-list"><i class="fas fa-exclamation-triangle text-white"></i><small>&nbsp;{{ modified }}</small></span>{% endif %}
     </div>
