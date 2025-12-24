@@ -55,7 +55,7 @@
                                     </div>
                                 </p>
                                 <p class="text-center">
-                                                                                                                                        <img class="w-25" src="{{ comp.get_qr_login }}" alt="Logo Empresa" class="img-fluid mb-2" >
+                                                                                                                                        <img class="w-25 show-big-img" src="{{ comp.get_qr_login }}" alt="Logo Empresa" class="img-fluid mb-2" >
                                                                                                                                     </p>
                             </div>
                         </div>
@@ -75,82 +75,6 @@
     </div> 
  </div>
 
-    {%comment%}
-<div style="max-width: 800px; overflow-y: auto;" class="mx-auto">
-	<div class="row p-1 mt-3 head-fichamaster-logo">
-        	<div class="col-12 m-1 text-center">
-					<img src="/static/images/logo-fichaje.png" width="60"> Fichamaster
-		</div> 
-	</div> 
-
-    <div class="row p-1">
-        {% if comp.clock_pwa_enabled %}
-        <div class="col-12 m-1">
-            <div class="card fm" style="background: #599191;color:white;">
-                <div class="card-body text-center">
-                    <h5 class="card-title"><strong>{{comp.name}}</strong></h5>
-                    <p class="card-text">Si eres empleado, escanea el siguiente QR para acceder a tu zona privada:</p>
-                    <p class="card-text w-50 mx-auto">
-                        <img src="{{comp.get_qr_private_zone}}" alt="QR Code" class="img-fluid">
-                    </p>
-                </div>
-            </div>
-        </div>
-        {% else %}
-        <div class="col-12 m-1">
-            <div class="card fm">
-                <div class="card-body text-center">
-                    <h5 class="card-title"><strong>{{comp.name}}</strong></h5>
-                    <p class="card-text">
-                        <div class="w-50 mx-auto">
-                        {{ comp.view_logo }}
-                        </div>
-                    </p>
-                </div>
-            </div>
-        </div>
-        {% endif %}
-        <div class="col-12 m-1">
-            <form method="POST" action="{% url 'pwa-company-login' %}">
-                {% csrf_token %}
-                <input type="hidden" name="uuid" value="{{comp.uuid}}">
-
-                <div class="card fm">
-                    <div class="card-body text-center">
-                        <p class="card-text">
-                            Introduce tu PIN para registrar tu entrada/salida.
-                        </p>
-                        <p class="card-text ">
-                            <div class="row d-flex justify-content-center align-items-center m-0">
-                                <div class="form-group col-lg-6 col-10">
-                                    <input type="text" class="form-control input text-center p-4" id="pin" placeholder="Introduce el PIN para fichar" name="pin" required>
-                                    <div class="invalid-feedback">
-                                        Introduce un PIN válido.
-                                    </div>
-                                </div>
-                            Si no lo recuerdas, pregunta al responsable de tu centro de trabajo.
-                                <div class="form-group col-lg-12 col-10 mt-3">
-                                    <input type="submit" class="btn btn-primary p-5 lg-font" value="Fichar">
-                                </div>
-                                <div class="col-lg-12 col-10 mt-3">
-                                </div>
-                            </div>
-
-                        </div>
-                        </p>
-                    </div>
-	
-                </div>
-            </form>
-        </div>
-	<div class="col-12 m-1 text-center">
-					<img src="/static/images/logo-fichaje.png" width="60"> Fichamaster
-		</div> 
-
-    </div>
-</div>
-    {%endcomment%}
-
 <script>
     const pinInput = document.getElementById('pin');
     // Send if the user presses Enter
@@ -160,6 +84,34 @@
             document.querySelector('form').submit();
         }
     });
+    
+    // Open show big-img modal with  sweet alert; confirm button in order to print; 
+    $('.show-big-img').on('click', function() {
+        const imgSrc = $(this).attr('src');
+        Swal.fire({
+            title: '{% trans "Escanea este código QR" %}',
+            imageUrl: imgSrc,
+            imageAlt: 'QR Code',
+            showCancelButton: true,
+            confirmButtonText: '{% trans "Imprimir" %}',
+            cancelButtonText: '{% trans "Cerrar" %}',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write('<html><head><title>{% trans "Imprimir Código QR" %}</title></head><body style="text-align: center;">');
+                printWindow.document.write('<h1> {{comp.name}} </h1>');
+                printWindow.document.write('<br>');
+                printWindow.document.write('<img src="' + imgSrc + '" alt="QR Code">');
+                printWindow.document.write('<br><p>Escanea este código QR para acceder al portal de fichaje.</p>');
+                printWindow.document.write('</body></html>');
+                printWindow.document.close();
+                printWindow.focus();
+                printWindow.print();
+                printWindow.close();
+            }
+        });
+    });
+ 
 
 </script>
 
